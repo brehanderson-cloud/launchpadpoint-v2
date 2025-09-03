@@ -16,10 +16,125 @@ const ResumeBuilder = () => {
   const [textInput, setTextInput] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [currentStep, setCurrentStep] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editableData, setEditableData] = useState({});
   const fileInputRef = useRef(null);
 
   const navigateBack = () => {
     window.location.href = '/dashboard';
+  };
+
+  // Rocket Logo Component
+  const RocketLogo = ({ size = 24, color = "white" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" fill={color}/>
+      <path d="M12 16L14 21H10L12 16Z" fill={color}/>
+      <circle cx="8" cy="12" r="2" fill={color} opacity="0.6"/>
+      <circle cx="16" cy="12" r="2" fill={color} opacity="0.6"/>
+    </svg>
+  );
+
+  // Parse actual resume content
+  const parseActualResumeContent = (content) => {
+    const lines = content.split('\n').filter(line => line.trim());
+    const data = {
+      personal: {},
+      experience: [],
+      education: [],
+      skills: { technical: [], soft: [] }
+    };
+
+    // Extract email and phone
+    const emailMatch = content.match(/[\w\.-]+@[\w\.-]+\.\w+/);
+    const phoneMatch = content.match(/\(?(\d{3})\)?[-.\s]?(\d{3})[-.\s]?(\d{4})/);
+    
+    // Extract name (assume it's one of the first few lines)
+    const nameCandidate = lines.slice(0, 3).find(line => 
+      line.length > 5 && line.length < 50 && !emailMatch && !phoneMatch && 
+      !line.toLowerCase().includes('resume') && !line.toLowerCase().includes('cv')
+    );
+
+    data.personal = {
+      name: nameCandidate || "Your Name",
+      email: emailMatch ? emailMatch[0] : "your.email@email.com",
+      phone: phoneMatch ? phoneMatch[0] : "(555) 123-4567",
+      location: "City, State"
+    };
+
+    // Extract experience (look for company/job patterns)
+    const experiencePattern = /(\d{4})\s*[-–]\s*(\d{4}|present|current)/gi;
+    const experienceMatches = content.match(experiencePattern);
+    
+    if (experienceMatches && experienceMatches.length > 0) {
+      // Try to find job titles and companies
+      const jobKeywords = ['developer', 'engineer', 'manager', 'analyst', 'coordinator', 'specialist', 'director'];
+      const experienceLines = lines.filter(line => 
+        jobKeywords.some(keyword => line.toLowerCase().includes(keyword)) ||
+        experiencePattern.test(line)
+      );
+
+      data.experience = experienceLines.slice(0, 3).map((line, i) => ({
+        company: "Previous Company",
+        position: line.length < 100 ? line : "Previous Role",
+        duration: experienceMatches[i] || "2022 - Present",
+        achievements: [
+          "Key responsibility or achievement",
+          "Another accomplishment with impact",
+          "Third achievement with metrics"
+        ]
+      }));
+    } else {
+      data.experience = [{
+        company: "Previous Company",
+        position: "Your Previous Role",
+        duration: "2022 - Present",
+        achievements: [
+          "Describe your key achievements",
+          "Include specific metrics when possible",
+          "Show impact of your work"
+        ]
+      }];
+    }
+
+    // Extract education
+    const educationKeywords = ['university', 'college', 'bachelor', 'master', 'degree', 'phd'];
+    const educationLines = lines.filter(line => 
+      educationKeywords.some(keyword => line.toLowerCase().includes(keyword))
+    );
+
+    if (educationLines.length > 0) {
+      data.education = [{
+        institution: educationLines.find(line => line.toLowerCase().includes('university')) || "Your University",
+        degree: educationLines.find(line => line.toLowerCase().includes('bachelor') || line.toLowerCase().includes('master')) || "Your Degree",
+        year: "2020",
+        gpa: ""
+      }];
+    } else {
+      data.education = [{
+        institution: "Your University",
+        degree: "Your Degree",
+        year: "2020",
+        gpa: ""
+      }];
+    }
+
+    // Extract skills (look for technical terms)
+    const techSkills = ['javascript', 'python', 'java', 'react', 'node', 'sql', 'aws', 'git', 'html', 'css'];
+    const softSkills = ['leadership', 'communication', 'teamwork', 'problem solving', 'project management'];
+    
+    const foundTechSkills = techSkills.filter(skill => 
+      content.toLowerCase().includes(skill)
+    );
+    const foundSoftSkills = softSkills.filter(skill => 
+      content.toLowerCase().includes(skill.toLowerCase())
+    );
+
+    data.skills = {
+      technical: foundTechSkills.length > 0 ? foundTechSkills : ['Your', 'Technical', 'Skills'],
+      soft: foundSoftSkills.length > 0 ? foundSoftSkills : ['Leadership', 'Communication', 'Problem Solving']
+    };
+
+    return data;
   };
 
   const parseResumeContent = useCallback(async (content, fileName = '') => {
@@ -31,93 +146,43 @@ const ResumeBuilder = () => {
     setCurrentStep('');
 
     const steps = [
-      { progress: 10, message: "Initializing AI parser..." },
-      { progress: 25, message: "Extracting personal information..." },
-      { progress: 45, message: "Analyzing work experience..." },
-      { progress: 60, message: "Processing education details..." },
-      { progress: 75, message: "Identifying skills and keywords..." },
-      { progress: 85, message: "Calculating ATS compatibility..." },
-      jobDescription ? { progress: 95, message: "Analyzing job fit and generating suggestions..." } : { progress: 95, message: "Generating intelligent suggestions..." },
+      { progress: 15, message: "Reading your resume content..." },
+      { progress: 30, message: "Extracting contact information..." },
+      { progress: 50, message: "Analyzing work experience..." },
+      { progress: 70, message: "Processing education and skills..." },
+      { progress: 85, message: "Running intelligent analysis..." },
       { progress: 100, message: "Analysis complete!" }
-    ].filter(Boolean);
+    ];
 
-    let currentExtractedData = {};
+    let parsedData = {};
 
     for (let step of steps) {
       await new Promise(resolve => setTimeout(resolve, 800));
       setParseProgress(step.progress);
       setCurrentStep(step.message);
       
-      if (step.progress === 25) {
-        const personalData = {
-          name: "John Doe",
-          email: "john.doe@email.com",
-          phone: "(555) 123-4567",
-          location: "San Francisco, CA",
-          linkedin: "linkedin.com/in/johndoe",
-        };
-        currentExtractedData.personal = personalData;
-        setExtractedData(prev => ({ ...prev, personal: personalData }));
-        setPreviewSections(prev => [...prev, { type: 'personal', data: personalData, timestamp: Date.now() }]);
+      if (step.progress === 30) {
+        parsedData = parseActualResumeContent(content);
+        setExtractedData(parsedData);
+        setEditableData(parsedData);
+        setPreviewSections([{ type: 'personal', data: parsedData.personal, timestamp: Date.now() }]);
       }
       
-      if (step.progress === 45) {
-        const workData = [
-          {
-            company: "Tech Innovations LLC",
-            position: "Senior Software Developer",
-            duration: "2022 - Present",
-            achievements: [
-              "Led development of microservices architecture serving 100K+ users",
-              "Improved application performance by 45% through code optimization",
-              "Mentored team of 5 junior developers on best practices"
-            ]
-          },
-          {
-            company: "StartupCorp",
-            position: "Full Stack Developer", 
-            duration: "2020 - 2022",
-            achievements: [
-              "Built responsive web applications using React and Node.js",
-              "Worked on cross-functional teams in agile environment",
-              "Helped reduce bug count through comprehensive testing"
-            ]
-          }
-        ];
-        currentExtractedData.experience = workData;
-        setExtractedData(prev => ({ ...prev, experience: workData }));
-        setPreviewSections(prev => [...prev, { type: 'experience', data: workData, timestamp: Date.now() }]);
+      if (step.progress === 50) {
+        setPreviewSections(prev => [...prev, { type: 'experience', data: parsedData.experience, timestamp: Date.now() }]);
       }
       
-      if (step.progress === 60) {
-        const eduData = [
-          {
-            institution: "University of Technology",
-            degree: "Bachelor of Science in Computer Science",
-            year: "2020",
-            gpa: "3.7"
-          }
-        ];
-        currentExtractedData.education = eduData;
-        setExtractedData(prev => ({ ...prev, education: eduData }));
-        setPreviewSections(prev => [...prev, { type: 'education', data: eduData, timestamp: Date.now() }]);
+      if (step.progress === 70) {
+        setPreviewSections(prev => [...prev, 
+          { type: 'education', data: parsedData.education, timestamp: Date.now() },
+          { type: 'skills', data: parsedData.skills, timestamp: Date.now() }
+        ]);
       }
       
-      if (step.progress === 75) {
-        const skillsData = {
-          technical: ["JavaScript", "React", "Node.js", "Python", "SQL", "AWS"],
-          soft: ["Leadership", "Team Collaboration", "Problem Solving", "Communication"]
-        };
-        currentExtractedData.skills = skillsData;
-        setExtractedData(prev => ({ ...prev, skills: skillsData }));
-        setPreviewSections(prev => [...prev, { type: 'skills', data: skillsData, timestamp: Date.now() }]);
-      }
-      
-      if (step.progress === 95) {
+      if (step.progress === 85) {
         // Run the intelligent analysis
-        const analysisResults = analyzeResumeWithAI(currentExtractedData, jobDescription);
+        const analysisResults = analyzeResumeWithAI(parsedData, jobDescription);
         
-        // Set the intelligent suggestions and scores
         setSuggestions(analysisResults.suggestions);
         setAtsScore(analysisResults.scores.ats);
         setMatchScore(analysisResults.scores.jobMatch);
@@ -194,10 +259,14 @@ const ResumeBuilder = () => {
 
   const handleExport = (format) => {
     if (format === 'pdf') {
-      alert("PDF Export coming soon!\n\nFor now, you can:\n• Screenshot the preview\n• Copy the text content\n• Print the page (Ctrl+P)");
+      window.print();
     } else if (format === 'docx') {
       alert("DOCX Export coming soon!\n\nThis will generate a Word document with professional formatting.");
     }
+  };
+
+  const handleEdit = () => {
+    setIsEditing(!isEditing);
   };
 
   const handleSave = () => {
@@ -233,9 +302,16 @@ const ResumeBuilder = () => {
     }
   };
 
+  // LaunchpadPoint brand colors
+  const brandColors = {
+    primary: '#667eea',
+    secondary: '#764ba2',
+    accent: '#4f46e5'
+  };
+
   const containerStyle = {
     minHeight: '100vh',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    background: `linear-gradient(135deg, ${brandColors.primary} 0%, ${brandColors.secondary} 100%)`,
     padding: '1rem'
   };
 
@@ -250,7 +326,7 @@ const ResumeBuilder = () => {
   return (
     <div style={containerStyle}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        {/* Header */}
+        {/* Header with Logo */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <button 
             onClick={navigateBack} 
@@ -270,33 +346,39 @@ const ResumeBuilder = () => {
             <ArrowLeft size={20} />
             <span>Back to Dashboard</span>
           </button>
-          <button 
-            onClick={handleSave} 
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              background: '#22c55e',
-              color: 'white',
-              padding: '0.5rem 1rem',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '1rem'
-            }}
-          >
-            <Save size={16} />
-            <span>Save Resume</span>
-          </button>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button 
+              onClick={handleSave} 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: '#22c55e',
+                color: 'white',
+                padding: '0.5rem 1rem',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '1rem'
+              }}
+            >
+              <Save size={16} />
+              <span>Save Resume</span>
+            </button>
+          </div>
         </div>
 
-        {/* Title */}
+        {/* Title with Logo */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: 'white', marginBottom: '1rem' }}>
-            AI-Powered Resume Builder
-          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
+            <RocketLogo size={48} color="white" />
+            <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: 'white', margin: 0 }}>
+              LaunchpadPoint Resume Builder
+            </h1>
+          </div>
           <p style={{ fontSize: '1.2rem', color: 'rgba(255,255,255,0.9)', maxWidth: '600px', margin: '0 auto' }}>
-            Upload your resume and job description to get AI-powered optimization and real-time job matching
+            Create professional resumes with AI-powered optimization and real-time job matching
           </p>
         </div>
 
@@ -307,7 +389,7 @@ const ResumeBuilder = () => {
             {/* Job Description Input */}
             <div style={cardStyle}>
               <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Target size={24} color="#3b82f6" />
+                <Target size={24} color={brandColors.accent} />
                 Target Job Description
               </h2>
               <textarea
@@ -318,18 +400,19 @@ const ResumeBuilder = () => {
                   width: '100%',
                   height: '120px',
                   padding: '1rem',
-                  border: '2px solid #e5e7eb',
+                  border: `2px solid ${brandColors.primary}`,
                   borderRadius: '12px',
                   resize: 'vertical',
                   fontSize: '1rem',
-                  boxSizing: 'border-box'
+                  boxSizing: 'border-box',
+                  outline: 'none'
                 }}
               />
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.875rem' }}>
                 <span style={{ color: '#6b7280' }}>
                   {jobDescription.length} characters {jobDescription.length > 100 && '✓ Ready for matching'}
                 </span>
-                <span style={{ color: '#3b82f6', fontWeight: '600' }}>
+                <span style={{ color: brandColors.accent, fontWeight: '600' }}>
                   {jobDescription ? 'Job targeting enabled' : 'Optional but recommended'}
                 </span>
               </div>
@@ -344,11 +427,11 @@ const ResumeBuilder = () => {
                   style={{
                     padding: '1.5rem',
                     borderRadius: '12px',
-                    border: parseMethod === 'upload' ? '2px solid #3b82f6' : '2px solid #e5e7eb',
+                    border: parseMethod === 'upload' ? `2px solid ${brandColors.accent}` : '2px solid #e5e7eb',
                     cursor: 'pointer',
                     textAlign: 'center',
-                    background: parseMethod === 'upload' ? '#eff6ff' : 'white',
-                    color: parseMethod === 'upload' ? '#1d4ed8' : 'inherit'
+                    background: parseMethod === 'upload' ? `${brandColors.accent}15` : 'white',
+                    color: parseMethod === 'upload' ? brandColors.accent : 'inherit'
                   }}
                 >
                   <Upload size={32} style={{ margin: '0 auto 0.5rem', display: 'block' }} />
@@ -361,11 +444,11 @@ const ResumeBuilder = () => {
                   style={{
                     padding: '1.5rem',
                     borderRadius: '12px',
-                    border: parseMethod === 'paste' ? '2px solid #3b82f6' : '2px solid #e5e7eb',
+                    border: parseMethod === 'paste' ? `2px solid ${brandColors.accent}` : '2px solid #e5e7eb',
                     cursor: 'pointer',
                     textAlign: 'center',
-                    background: parseMethod === 'paste' ? '#eff6ff' : 'white',
-                    color: parseMethod === 'paste' ? '#1d4ed8' : 'inherit'
+                    background: parseMethod === 'paste' ? `${brandColors.accent}15` : 'white',
+                    color: parseMethod === 'paste' ? brandColors.accent : 'inherit'
                   }}
                 >
                   <Clipboard size={32} style={{ margin: '0 auto 0.5rem', display: 'block' }} />
@@ -390,13 +473,14 @@ const ResumeBuilder = () => {
                     onClick={() => !isProcessing && fileInputRef.current?.click()}
                     style={{
                       padding: '3rem',
-                      border: '3px dashed #d1d5db',
+                      border: `3px dashed ${brandColors.primary}`,
                       borderRadius: '12px',
                       textAlign: 'center',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      background: `${brandColors.primary}05`
                     }}
                   >
-                    <FileText size={48} style={{ margin: '0 auto 1rem', color: '#9ca3af', display: 'block' }} />
+                    <FileText size={48} style={{ margin: '0 auto 1rem', color: brandColors.primary, display: 'block' }} />
                     <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
                       {isProcessing ? 'Processing your resume...' : 'Drop your resume here or click to upload'}
                     </div>
@@ -418,11 +502,12 @@ const ResumeBuilder = () => {
                       width: '100%',
                       height: '200px',
                       padding: '1rem',
-                      border: '2px solid #e5e7eb',
+                      border: `2px solid ${brandColors.primary}`,
                       borderRadius: '12px',
                       resize: 'vertical',
                       fontSize: '1rem',
-                      boxSizing: 'border-box'
+                      boxSizing: 'border-box',
+                      outline: 'none'
                     }}
                     disabled={isProcessing}
                   />
@@ -434,7 +519,7 @@ const ResumeBuilder = () => {
                       onClick={handleTextParse}
                       disabled={isProcessing || !textInput.trim()}
                       style={{
-                        background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                        background: `linear-gradient(135deg, ${brandColors.primary}, ${brandColors.secondary})`,
                         color: 'white',
                         padding: '0.75rem 2rem',
                         border: 'none',
@@ -457,12 +542,12 @@ const ResumeBuilder = () => {
               <div style={cardStyle}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <span style={{ fontSize: '1.125rem', fontWeight: '600', color: '#374151' }}>AI Processing Resume</span>
-                  <span style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#3b82f6' }}>{parseProgress}%</span>
+                  <span style={{ fontSize: '1.125rem', fontWeight: 'bold', color: brandColors.accent }}>{parseProgress}%</span>
                 </div>
                 <div style={{ width: '100%', height: '8px', backgroundColor: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
                   <div style={{ 
                     height: '100%', 
-                    background: 'linear-gradient(90deg, #3b82f6, #1d4ed8)', 
+                    background: `linear-gradient(90deg, ${brandColors.primary}, ${brandColors.secondary})`, 
                     width: `${parseProgress}%`,
                     transition: 'width 0.5s ease'
                   }}></div>
@@ -478,13 +563,13 @@ const ResumeBuilder = () => {
             {suggestions.length > 0 && (
               <div style={cardStyle}>
                 <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Lightbulb size={24} color="#f59e0b" />
-                  Intelligent Analysis Results
+                  <RocketLogo size={24} color={brandColors.accent} />
+                  LaunchpadPoint Analysis
                 </h3>
                 
                 {/* Summary */}
                 <div style={{ 
-                  background: '#f8fafc', 
+                  background: `${brandColors.primary}10`, 
                   borderRadius: '8px', 
                   padding: '1rem', 
                   marginBottom: '1.5rem',
@@ -585,19 +670,22 @@ const ResumeBuilder = () => {
             )}
           </div>
 
-          {/* Right Column */}
+          {/* Right Column - Resume Preview */}
           <div>
             {/* Enhanced Scores Dashboard */}
             {(atsScore > 0 || matchScore > 0 || overallScore > 0) && (
               <div style={cardStyle}>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#1f2937' }}>Resume Analytics Dashboard</h3>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <RocketLogo size={24} color={brandColors.accent} />
+                  Resume Analytics Dashboard
+                </h3>
                 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
-                  <div style={{ textAlign: 'center', padding: '1rem', background: '#f8fafc', borderRadius: '8px' }}>
-                    <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#3b82f6' }}>{overallScore}%</div>
+                  <div style={{ textAlign: 'center', padding: '1rem', background: `${brandColors.primary}10`, borderRadius: '8px' }}>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold', color: brandColors.accent }}>{overallScore}%</div>
                     <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Overall Score</div>
                   </div>
-                  <div style={{ textAlign: 'center', padding: '1rem', background: '#f8fafc', borderRadius: '8px' }}>
+                  <div style={{ textAlign: 'center', padding: '1rem', background: `${brandColors.secondary}10`, borderRadius: '8px' }}>
                     <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#16a34a' }}>{contentScore}%</div>
                     <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Content Quality</div>
                   </div>
@@ -626,12 +714,12 @@ const ResumeBuilder = () => {
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
                         <h4 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#374151' }}>Job Match Score</h4>
-                        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#2563eb' }}>{matchScore}%</div>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: brandColors.accent }}>{matchScore}%</div>
                       </div>
                       <div style={{ width: '100%', height: '8px', backgroundColor: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
                         <div style={{ 
                           height: '100%', 
-                          background: 'linear-gradient(90deg, #2563eb, #3b82f6)', 
+                          background: `linear-gradient(90deg, ${brandColors.primary}, ${brandColors.secondary})`, 
                           width: `${matchScore}%`,
                           transition: 'width 1s ease'
                         }}></div>
@@ -648,14 +736,14 @@ const ResumeBuilder = () => {
             {/* Live Resume Preview */}
             <div style={{ ...cardStyle, overflow: 'hidden', padding: 0 }}>
               <div style={{ 
-                background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', 
+                background: `linear-gradient(135deg, ${brandColors.primary}, ${brandColors.secondary})`, 
                 color: 'white', 
                 padding: '1.5rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.75rem'
               }}>
-                <Eye size={24} />
+                <RocketLogo size={32} color="white" />
                 <div>
                   <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>Live Resume Preview</h3>
                   {jobDescription && (
@@ -670,7 +758,7 @@ const ResumeBuilder = () => {
                     {section.type === 'personal' && (
                       <div style={{ borderBottom: '2px solid #f3f4f6', paddingBottom: '1.5rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem', gap: '0.75rem' }}>
-                          <User size={24} color="#3b82f6" />
+                          <User size={24} color={brandColors.accent} />
                           <h4 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>Contact Information</h4>
                         </div>
                         <h2 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '0.5rem' }}>{section.data.name}</h2>
@@ -695,7 +783,7 @@ const ResumeBuilder = () => {
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                               {exp.achievements.map((achievement, j) => (
                                 <li key={j} style={{ color: '#374151', marginBottom: '0.25rem', paddingLeft: '1rem', position: 'relative' }}>
-                                  <span style={{ position: 'absolute', left: 0, color: '#3b82f6', fontWeight: 'bold' }}>•</span>
+                                  <span style={{ position: 'absolute', left: 0, color: brandColors.accent, fontWeight: 'bold' }}>•</span>
                                   {achievement}
                                 </li>
                               ))}
@@ -740,7 +828,7 @@ const ResumeBuilder = () => {
                                   borderRadius: '20px',
                                   fontSize: '0.875rem',
                                   fontWeight: '600',
-                                  background: isJobMatch ? '#22c55e' : '#3b82f6',
+                                  background: isJobMatch ? '#22c55e' : brandColors.accent,
                                   color: 'white',
                                   boxShadow: isJobMatch ? '0 0 0 2px #bbf7d0' : 'none'
                                 }}>
@@ -782,11 +870,11 @@ const ResumeBuilder = () => {
                 
                 {previewSections.length === 0 && !isProcessing && (
                   <div style={{ textAlign: 'center', padding: '4rem 0' }}>
-                    <FileText size={48} style={{ margin: '0 auto 1rem', color: '#d1d5db', display: 'block' }} />
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#6b7280', marginBottom: '0.5rem' }}>Ready for Intelligent Analysis</h3>
+                    <RocketLogo size={64} color="#d1d5db" />
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#6b7280', marginBottom: '0.5rem', marginTop: '1rem' }}>Ready for LaunchpadPoint Analysis</h3>
                     <p style={{ color: '#9ca3af', marginBottom: '1rem' }}>Upload or paste your resume to get detailed AI-powered suggestions</p>
                     {jobDescription && (
-                      <p style={{ color: '#3b82f6', fontSize: '0.875rem' }}>Job description loaded - your resume will be analyzed for relevance and optimized for this specific role</p>
+                      <p style={{ color: brandColors.accent, fontSize: '0.875rem' }}>Job description loaded - your resume will be analyzed for relevance and optimized for this specific role</p>
                     )}
                   </div>
                 )}
@@ -822,7 +910,7 @@ const ResumeBuilder = () => {
                       }}
                     >
                       <Download size={16} />
-                      <span>PDF</span>
+                      <span>Print/PDF</span>
                     </button>
                     <button 
                       onClick={() => handleExport('docx')}
@@ -830,7 +918,7 @@ const ResumeBuilder = () => {
                         display: 'flex', 
                         alignItems: 'center', 
                         gap: '0.5rem',
-                        background: '#2563eb', 
+                        background: brandColors.accent, 
                         color: 'white', 
                         padding: '0.5rem 1rem', 
                         border: 'none', 
@@ -842,20 +930,23 @@ const ResumeBuilder = () => {
                       <Download size={16} />
                       <span>DOCX</span>
                     </button>
-                    <button style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '0.5rem',
-                      background: '#8b5cf6', 
-                      color: 'white', 
-                      padding: '0.5rem 1rem', 
-                      border: 'none', 
-                      borderRadius: '8px', 
-                      cursor: 'pointer',
-                      fontSize: '0.875rem'
-                    }}>
+                    <button 
+                      onClick={handleEdit}
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '0.5rem',
+                        background: brandColors.secondary, 
+                        color: 'white', 
+                        padding: '0.5rem 1rem', 
+                        border: 'none', 
+                        borderRadius: '8px', 
+                        cursor: 'pointer',
+                        fontSize: '0.875rem'
+                      }}
+                    >
                       <Edit3 size={16} />
-                      <span>Edit</span>
+                      <span>{isEditing ? 'View' : 'Edit'}</span>
                     </button>
                   </div>
                 </div>
