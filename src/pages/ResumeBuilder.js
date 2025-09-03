@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { Upload, FileText, Clipboard, Sparkles, CheckCircle, TrendingUp, User, Briefcase, GraduationCap, Award, Download, Eye, Edit3, Target, Lightbulb, ArrowLeft, Save } from 'lucide-react';
+import { Upload, FileText, Clipboard, Sparkles, CheckCircle, TrendingUp, User, Briefcase, GraduationCap, Award, Download, Eye, Edit3, Target, Lightbulb, ArrowLeft, Save, AlertTriangle, Info } from 'lucide-react';
+import { analyzeResumeWithAI } from '../utils/resumeAnalyzer';
 
 const ResumeBuilder = () => {
   const [parseMethod, setParseMethod] = useState('upload');
@@ -7,8 +8,11 @@ const ResumeBuilder = () => {
   const [parseProgress, setParseProgress] = useState(0);
   const [suggestions, setSuggestions] = useState([]);
   const [previewSections, setPreviewSections] = useState([]);
+  const [extractedData, setExtractedData] = useState({});
   const [atsScore, setAtsScore] = useState(0);
   const [matchScore, setMatchScore] = useState(0);
+  const [overallScore, setOverallScore] = useState(0);
+  const [contentScore, setContentScore] = useState(0);
   const [textInput, setTextInput] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [currentStep, setCurrentStep] = useState('');
@@ -18,41 +22,12 @@ const ResumeBuilder = () => {
     window.location.href = '/dashboard';
   };
 
-  const generateJobMatchSuggestions = (jobDesc) => {
-    const suggestions = [];
-    
-    if (jobDesc.toLowerCase().includes('leadership')) {
-      suggestions.push({
-        id: `job-lead-${Date.now()}`,
-        type: 'job-match',
-        icon: Target,
-        title: "Highlight Leadership Experience",
-        message: "This role emphasizes leadership. Consider adding specific examples of team management and project leadership.",
-        action: "Add Leadership Examples",
-        matchImprovement: "+15% match score"
-      });
-    }
-    
-    if (jobDesc.toLowerCase().includes('agile') || jobDesc.toLowerCase().includes('scrum')) {
-      suggestions.push({
-        id: `job-agile-${Date.now()}`,
-        type: 'job-match',
-        icon: Target,
-        title: "Add Agile/Scrum Experience",
-        message: "The job mentions Agile methodologies. Highlight your experience with Scrum, sprint planning, or agile development.",
-        action: "Update Skills",
-        matchImprovement: "+12% match score"
-      });
-    }
-
-    return suggestions;
-  };
-
   const parseResumeContent = useCallback(async (content, fileName = '') => {
     setIsProcessing(true);
     setParseProgress(0);
     setSuggestions([]);
     setPreviewSections([]);
+    setExtractedData({});
     setCurrentStep('');
 
     const steps = [
@@ -62,9 +37,11 @@ const ResumeBuilder = () => {
       { progress: 60, message: "Processing education details..." },
       { progress: 75, message: "Identifying skills and keywords..." },
       { progress: 85, message: "Calculating ATS compatibility..." },
-      jobDescription ? { progress: 92, message: "Matching against job requirements..." } : null,
+      jobDescription ? { progress: 95, message: "Analyzing job fit and generating suggestions..." } : { progress: 95, message: "Generating intelligent suggestions..." },
       { progress: 100, message: "Analysis complete!" }
     ].filter(Boolean);
+
+    let currentExtractedData = {};
 
     for (let step of steps) {
       await new Promise(resolve => setTimeout(resolve, 800));
@@ -79,6 +56,8 @@ const ResumeBuilder = () => {
           location: "San Francisco, CA",
           linkedin: "linkedin.com/in/johndoe",
         };
+        currentExtractedData.personal = personalData;
+        setExtractedData(prev => ({ ...prev, personal: personalData }));
         setPreviewSections(prev => [...prev, { type: 'personal', data: personalData, timestamp: Date.now() }]);
       }
       
@@ -93,20 +72,21 @@ const ResumeBuilder = () => {
               "Improved application performance by 45% through code optimization",
               "Mentored team of 5 junior developers on best practices"
             ]
+          },
+          {
+            company: "StartupCorp",
+            position: "Full Stack Developer", 
+            duration: "2020 - 2022",
+            achievements: [
+              "Built responsive web applications using React and Node.js",
+              "Worked on cross-functional teams in agile environment",
+              "Helped reduce bug count through comprehensive testing"
+            ]
           }
         ];
+        currentExtractedData.experience = workData;
+        setExtractedData(prev => ({ ...prev, experience: workData }));
         setPreviewSections(prev => [...prev, { type: 'experience', data: workData, timestamp: Date.now() }]);
-        
-        setTimeout(() => {
-          setSuggestions(prev => [...prev, {
-            id: `exp-${Date.now()}`,
-            type: 'enhancement',
-            icon: TrendingUp,
-            title: "Quantify Your Impact",
-            message: "Add specific metrics and percentages to make achievements more compelling",
-            action: "Enhance Now"
-          }]);
-        }, 1000);
       }
       
       if (step.progress === 60) {
@@ -118,6 +98,8 @@ const ResumeBuilder = () => {
             gpa: "3.7"
           }
         ];
+        currentExtractedData.education = eduData;
+        setExtractedData(prev => ({ ...prev, education: eduData }));
         setPreviewSections(prev => [...prev, { type: 'education', data: eduData, timestamp: Date.now() }]);
       }
       
@@ -126,32 +108,21 @@ const ResumeBuilder = () => {
           technical: ["JavaScript", "React", "Node.js", "Python", "SQL", "AWS"],
           soft: ["Leadership", "Team Collaboration", "Problem Solving", "Communication"]
         };
+        currentExtractedData.skills = skillsData;
+        setExtractedData(prev => ({ ...prev, skills: skillsData }));
         setPreviewSections(prev => [...prev, { type: 'skills', data: skillsData, timestamp: Date.now() }]);
       }
       
-      if (step.progress === 85) {
-        const score = 87;
-        setAtsScore(score);
-        setTimeout(() => {
-          setSuggestions(prev => [...prev, {
-            id: `ats-${Date.now()}`,
-            type: 'success',
-            icon: CheckCircle,
-            title: "Excellent ATS Compatibility!",
-            message: "Your resume is well-optimized for applicant tracking systems",
-            action: "Download Resume"
-          }]);
-        }, 800);
-      }
-
-      if (step.progress === 92 && jobDescription) {
-        const matchScoreValue = 78;
-        setMatchScore(matchScoreValue);
+      if (step.progress === 95) {
+        // Run the intelligent analysis
+        const analysisResults = analyzeResumeWithAI(currentExtractedData, jobDescription);
         
-        setTimeout(() => {
-          const jobSuggestions = generateJobMatchSuggestions(jobDescription);
-          setSuggestions(prev => [...prev, ...jobSuggestions]);
-        }, 1000);
+        // Set the intelligent suggestions and scores
+        setSuggestions(analysisResults.suggestions);
+        setAtsScore(analysisResults.scores.ats);
+        setMatchScore(analysisResults.scores.jobMatch);
+        setOverallScore(analysisResults.scores.overall);
+        setContentScore(analysisResults.scores.content);
       }
     }
 
@@ -191,18 +162,33 @@ const ResumeBuilder = () => {
   };
 
   const handleSuggestionAction = (suggestion) => {
-    if (suggestion.action === "Download Resume") {
-      alert("Resume download feature coming soon! For now, you can copy the preview content or print the page (Ctrl+P).");
-    } else if (suggestion.action === "Add Leadership Examples") {
-      alert("Leadership Tips:\n\n• Led team of X developers\n• Managed $X budget\n• Increased team productivity by X%\n• Mentored X junior staff members\n\nAdd specific numbers to make your leadership impact measurable!");
-    } else if (suggestion.action === "Enhance Now") {
-      alert("Enhancement Tips:\n\n• Add specific percentages (improved by 45%)\n• Include dollar amounts (saved $50K annually)\n• Mention team sizes (team of 12)\n• Use action verbs (led, optimized, implemented)\n• Quantify results (increased efficiency by 30%)");
-    } else if (suggestion.action === "Update Skills") {
-      alert("Agile/Scrum Tips:\n\n• Specify methodologies (Scrum, Kanban)\n• Mention sprint planning experience\n• Include stakeholder management\n• Highlight cross-functional collaboration\n• Add any certifications (CSM, PSM)");
-    } else {
-      alert(`${suggestion.title}\n\n${suggestion.message}\n\nThis feature will be fully implemented in the next update!`);
+    let alertMessage = `${suggestion.title}\n\n${suggestion.message}`;
+    
+    if (suggestion.examples) {
+      alertMessage += '\n\nExamples:\n' + suggestion.examples.join('\n');
     }
     
+    if (suggestion.before && suggestion.after) {
+      alertMessage += '\n\nBefore:\n' + suggestion.before;
+      alertMessage += '\n\nAfter:\n' + suggestion.after;
+    }
+    
+    if (suggestion.missingSkills) {
+      alertMessage += '\n\nMissing Skills: ' + suggestion.missingSkills.join(', ');
+    }
+    
+    if (suggestion.replacements) {
+      alertMessage += '\n\nSuggested Replacements:\n';
+      Object.entries(suggestion.replacements).forEach(([weak, strong]) => {
+        alertMessage += `• ${weak} → ${strong}\n`;
+      });
+    }
+    
+    if (suggestion.recommendation) {
+      alertMessage += '\n\nRecommendation: ' + suggestion.recommendation;
+    }
+    
+    alert(alertMessage);
     dismissSuggestion(suggestion.id);
   };
 
@@ -216,9 +202,34 @@ const ResumeBuilder = () => {
 
   const handleSave = () => {
     if (previewSections.length > 0) {
-      alert("Resume saved successfully!\n\n✅ ATS Score: " + atsScore + "%\n✅ Content: " + previewSections.length + " sections\n✅ Last updated: " + new Date().toLocaleTimeString() + "\n\nResume history feature coming soon!");
+      alert(`Resume saved successfully!\n\n✅ Overall Score: ${overallScore}%\n✅ ATS Score: ${atsScore}%\n✅ Content Score: ${contentScore}%\n✅ Sections: ${previewSections.length}\n✅ Last updated: ${new Date().toLocaleTimeString()}\n\nResume history feature coming soon!`);
     } else {
       alert("Please parse your resume first before saving.");
+    }
+  };
+
+  const getSuggestionIcon = (suggestion) => {
+    switch (suggestion.type) {
+      case 'critical': return AlertTriangle;
+      case 'job-match': return Target;
+      case 'enhancement': return TrendingUp;
+      case 'structure': return Edit3;
+      default: return Info;
+    }
+  };
+
+  const getSuggestionStyle = (suggestion) => {
+    switch (suggestion.type) {
+      case 'critical':
+        return { borderColor: '#fca5a5', backgroundColor: '#fef2f2', iconColor: '#dc2626' };
+      case 'job-match':
+        return { borderColor: '#bbf7d0', backgroundColor: '#f0fdf4', iconColor: '#16a34a' };
+      case 'enhancement':
+        return { borderColor: '#bfdbfe', backgroundColor: '#eff6ff', iconColor: '#2563eb' };
+      case 'structure':
+        return { borderColor: '#c4b5fd', backgroundColor: '#f5f3ff', iconColor: '#7c3aed' };
+      default:
+        return { borderColor: '#d1d5db', backgroundColor: '#f9fafb', iconColor: '#6b7280' };
     }
   };
 
@@ -463,80 +474,112 @@ const ResumeBuilder = () => {
               </div>
             )}
 
-            {/* Smart Suggestions */}
+            {/* Enhanced Smart Suggestions */}
             {suggestions.length > 0 && (
               <div style={cardStyle}>
                 <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Lightbulb size={24} color="#f59e0b" />
-                  AI Suggestions
+                  Intelligent Analysis Results
                 </h3>
+                
+                {/* Summary */}
+                <div style={{ 
+                  background: '#f8fafc', 
+                  borderRadius: '8px', 
+                  padding: '1rem', 
+                  marginBottom: '1.5rem',
+                  fontSize: '0.875rem',
+                  color: '#374151'
+                }}>
+                  Found {suggestions.length} improvement opportunities: {suggestions.filter(s => s.type === 'critical').length} critical issues, {suggestions.filter(s => s.type === 'job-match').length} job match improvements, {suggestions.filter(s => s.type === 'enhancement').length} content enhancements
+                </div>
+
                 <div>
-                  {suggestions.map((suggestion) => (
-                    <div 
-                      key={suggestion.id} 
-                      style={{
-                        border: suggestion.type === 'job-match' ? '2px solid #bbf7d0' : '2px solid #dbeafe',
-                        backgroundColor: suggestion.type === 'job-match' ? '#f0fdf4' : '#eff6ff',
-                        borderRadius: '12px',
-                        padding: '1rem',
-                        marginBottom: '1rem'
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'start', gap: '0.75rem' }}>
-                        <div style={{ 
-                          padding: '0.5rem', 
-                          borderRadius: '8px', 
-                          backgroundColor: suggestion.type === 'job-match' ? '#dcfce7' : '#dbeafe',
-                          color: suggestion.type === 'job-match' ? '#16a34a' : '#2563eb'
-                        }}>
-                          <suggestion.icon size={20} />
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '0.5rem' }}>
-                            {suggestion.title}
+                  {suggestions.map((suggestion) => {
+                    const SuggestionIcon = getSuggestionIcon(suggestion);
+                    const suggestionStyle = getSuggestionStyle(suggestion);
+                    
+                    return (
+                      <div 
+                        key={suggestion.id} 
+                        style={{
+                          border: `2px solid ${suggestionStyle.borderColor}`,
+                          backgroundColor: suggestionStyle.backgroundColor,
+                          borderRadius: '12px',
+                          padding: '1rem',
+                          marginBottom: '1rem'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'start', gap: '0.75rem' }}>
+                          <div style={{ 
+                            padding: '0.5rem', 
+                            borderRadius: '8px', 
+                            backgroundColor: 'white',
+                            color: suggestionStyle.iconColor,
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                          }}>
+                            <SuggestionIcon size={20} />
                           </div>
-                          <div style={{ fontSize: '0.875rem', color: '#374151', marginBottom: '0.75rem' }}>
-                            {suggestion.message}
-                          </div>
-                          {suggestion.matchImprovement && (
-                            <div style={{ fontSize: '0.875rem', color: '#16a34a', fontWeight: '600', marginBottom: '0.75rem' }}>
-                              {suggestion.matchImprovement}
+                          <div style={{ flex: 1 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                              <span style={{ fontWeight: 'bold', color: '#1f2937' }}>
+                                {suggestion.title}
+                              </span>
+                              <span style={{ 
+                                fontSize: '0.75rem', 
+                                padding: '0.25rem 0.5rem', 
+                                borderRadius: '12px',
+                                background: suggestionStyle.iconColor,
+                                color: 'white',
+                                textTransform: 'uppercase',
+                                fontWeight: '600'
+                              }}>
+                                {suggestion.category || suggestion.type}
+                              </span>
                             </div>
-                          )}
-                          <div style={{ display: 'flex', gap: '0.5rem' }}>
-                            <button
-                              onClick={() => handleSuggestionAction(suggestion)}
-                              style={{
-                                padding: '0.5rem 1rem',
-                                borderRadius: '8px',
-                                border: 'none',
-                                fontWeight: '600',
-                                fontSize: '0.875rem',
-                                cursor: 'pointer',
-                                background: suggestion.type === 'job-match' ? '#16a34a' : '#2563eb',
-                                color: 'white'
-                              }}
-                            >
-                              {suggestion.action}
-                            </button>
-                            <button
-                              onClick={() => dismissSuggestion(suggestion.id)}
-                              style={{
-                                padding: '0.5rem 0.75rem',
-                                background: 'none',
-                                border: 'none',
-                                color: '#6b7280',
-                                fontSize: '0.875rem',
-                                cursor: 'pointer'
-                              }}
-                            >
-                              Dismiss
-                            </button>
+                            <div style={{ fontSize: '0.875rem', color: '#374151', marginBottom: '0.75rem' }}>
+                              {suggestion.message}
+                            </div>
+                            {suggestion.matchImprovement && (
+                              <div style={{ fontSize: '0.875rem', color: '#16a34a', fontWeight: '600', marginBottom: '0.75rem' }}>
+                                Impact: {suggestion.matchImprovement}
+                              </div>
+                            )}
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                              <button
+                                onClick={() => handleSuggestionAction(suggestion)}
+                                style={{
+                                  padding: '0.5rem 1rem',
+                                  borderRadius: '8px',
+                                  border: 'none',
+                                  fontWeight: '600',
+                                  fontSize: '0.875rem',
+                                  cursor: 'pointer',
+                                  background: suggestionStyle.iconColor,
+                                  color: 'white'
+                                }}
+                              >
+                                {suggestion.action || 'View Details'}
+                              </button>
+                              <button
+                                onClick={() => dismissSuggestion(suggestion.id)}
+                                style={{
+                                  padding: '0.5rem 0.75rem',
+                                  background: 'none',
+                                  border: 'none',
+                                  color: '#6b7280',
+                                  fontSize: '0.875rem',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                Dismiss
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -544,29 +587,40 @@ const ResumeBuilder = () => {
 
           {/* Right Column */}
           <div>
-            {/* Scores Dashboard */}
-            {(atsScore > 0 || matchScore > 0) && (
+            {/* Enhanced Scores Dashboard */}
+            {(atsScore > 0 || matchScore > 0 || overallScore > 0) && (
               <div style={cardStyle}>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#1f2937' }}>Resume Analytics</h3>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#1f2937' }}>Resume Analytics Dashboard</h3>
                 
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <div style={{ textAlign: 'center', padding: '1rem', background: '#f8fafc', borderRadius: '8px' }}>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#3b82f6' }}>{overallScore}%</div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Overall Score</div>
+                  </div>
+                  <div style={{ textAlign: 'center', padding: '1rem', background: '#f8fafc', borderRadius: '8px' }}>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#16a34a' }}>{contentScore}%</div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Content Quality</div>
+                  </div>
+                </div>
+
                 <div style={{ display: 'grid', gridTemplateColumns: matchScore > 0 ? '1fr 1fr' : '1fr', gap: '1.5rem' }}>
-                  {atsScore > 0 && (
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                        <h4 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#374151' }}>ATS Compatibility</h4>
-                        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#16a34a' }}>{atsScore}%</div>
-                      </div>
-                      <div style={{ width: '100%', height: '8px', backgroundColor: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
-                        <div style={{ 
-                          height: '100%', 
-                          background: 'linear-gradient(90deg, #16a34a, #22c55e)', 
-                          width: `${atsScore}%`,
-                          transition: 'width 1s ease'
-                        }}></div>
-                      </div>
-                      <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem' }}>Excellent for applicant tracking systems</p>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                      <h4 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#374151' }}>ATS Compatibility</h4>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#16a34a' }}>{atsScore}%</div>
                     </div>
-                  )}
+                    <div style={{ width: '100%', height: '8px', backgroundColor: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{ 
+                        height: '100%', 
+                        background: 'linear-gradient(90deg, #16a34a, #22c55e)', 
+                        width: `${atsScore}%`,
+                        transition: 'width 1s ease'
+                      }}></div>
+                    </div>
+                    <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem' }}>
+                      {atsScore >= 80 ? 'Excellent' : atsScore >= 60 ? 'Good' : 'Needs improvement'} for ATS systems
+                    </p>
+                  </div>
 
                   {matchScore > 0 && (
                     <div>
@@ -582,7 +636,9 @@ const ResumeBuilder = () => {
                           transition: 'width 1s ease'
                         }}></div>
                       </div>
-                      <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem' }}>Strong match for target position</p>
+                      <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem' }}>
+                        {matchScore >= 75 ? 'Strong' : matchScore >= 50 ? 'Moderate' : 'Weak'} match for target position
+                      </p>
                     </div>
                   )}
                 </div>
@@ -727,10 +783,10 @@ const ResumeBuilder = () => {
                 {previewSections.length === 0 && !isProcessing && (
                   <div style={{ textAlign: 'center', padding: '4rem 0' }}>
                     <FileText size={48} style={{ margin: '0 auto 1rem', color: '#d1d5db', display: 'block' }} />
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#6b7280', marginBottom: '0.5rem' }}>Ready to Parse Your Resume</h3>
-                    <p style={{ color: '#9ca3af', marginBottom: '1rem' }}>Upload or paste your resume to see the live preview</p>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#6b7280', marginBottom: '0.5rem' }}>Ready for Intelligent Analysis</h3>
+                    <p style={{ color: '#9ca3af', marginBottom: '1rem' }}>Upload or paste your resume to get detailed AI-powered suggestions</p>
                     {jobDescription && (
-                      <p style={{ color: '#3b82f6', fontSize: '0.875rem' }}>Job description loaded - your resume will be optimized for this position</p>
+                      <p style={{ color: '#3b82f6', fontSize: '0.875rem' }}>Job description loaded - your resume will be analyzed for relevance and optimized for this specific role</p>
                     )}
                   </div>
                 )}
@@ -747,7 +803,7 @@ const ResumeBuilder = () => {
                   alignItems: 'center'
                 }}>
                   <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-                    Last updated: {new Date().toLocaleTimeString()}
+                    Analyzed: {new Date().toLocaleTimeString()} • {suggestions.length} suggestions
                   </div>
                   <div style={{ display: 'flex', gap: '0.75rem' }}>
                     <button 
