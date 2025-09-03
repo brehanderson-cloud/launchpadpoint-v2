@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { Upload, FileText, Clipboard, Sparkles, CheckCircle, TrendingUp, User, Briefcase, GraduationCap, Award, Download, Eye, Edit3, Target, Lightbulb, ArrowLeft, Save, Share } from 'lucide-react';
+import { Upload, FileText, Clipboard, Sparkles, CheckCircle, TrendingUp, User, Briefcase, GraduationCap, Award, Download, Eye, Edit3, Target, Lightbulb, ArrowLeft, Save } from 'lucide-react';
 
 const ResumeBuilder = () => {
   const [parseMethod, setParseMethod] = useState('upload');
@@ -26,7 +26,6 @@ const ResumeBuilder = () => {
         id: `job-lead-${Date.now()}`,
         type: 'job-match',
         icon: Target,
-        priority: 'high',
         title: "Highlight Leadership Experience",
         message: "This role emphasizes leadership. Consider adding specific examples of team management and project leadership.",
         action: "Add Leadership Examples",
@@ -39,7 +38,6 @@ const ResumeBuilder = () => {
         id: `job-agile-${Date.now()}`,
         type: 'job-match',
         icon: Target,
-        priority: 'medium',
         title: "Add Agile/Scrum Experience",
         message: "The job mentions Agile methodologies. Highlight your experience with Scrum, sprint planning, or agile development.",
         action: "Update Skills",
@@ -224,193 +222,80 @@ const ResumeBuilder = () => {
     }
   };
 
-  const styles = {
-    container: {
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      padding: '1rem'
-    },
-    maxWidth: {
-      maxWidth: '1200px',
-      margin: '0 auto'
-    },
-    header: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '2rem'
-    },
-    backButton: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.5rem',
-      background: 'rgba(255,255,255,0.2)',
-      color: 'white',
-      padding: '0.5rem 1rem',
-      border: 'none',
-      borderRadius: '8px',
-      cursor: 'pointer',
-      fontSize: '1rem'
-    },
-    saveButton: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.5rem',
-      background: '#22c55e',
-      color: 'white',
-      padding: '0.5rem 1rem',
-      border: 'none',
-      borderRadius: '8px',
-      cursor: 'pointer',
-      fontSize: '1rem'
-    },
-    title: {
-      textAlign: 'center',
-      marginBottom: '2rem'
-    },
-    mainTitle: {
-      fontSize: '3rem',
-      fontWeight: 'bold',
-      color: 'white',
-      marginBottom: '1rem'
-    },
-    subtitle: {
-      fontSize: '1.2rem',
-      color: 'rgba(255,255,255,0.9)',
-      maxWidth: '600px',
-      margin: '0 auto'
-    },
-    card: {
-      background: 'white',
-      borderRadius: '16px',
-      padding: '1.5rem',
-      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-      marginBottom: '1.5rem'
-    },
-    cardTitle: {
-      fontSize: '1.5rem',
-      fontWeight: 'bold',
-      marginBottom: '1rem',
-      color: '#1f2937',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.5rem'
-    },
-    methodButton: {
-      padding: '1.5rem',
-      borderRadius: '12px',
-      border: '2px solid #e5e7eb',
-      cursor: 'pointer',
-      textAlign: 'center',
-      transition: 'all 0.2s',
-      background: 'white'
-    },
-    methodButtonActive: {
-      borderColor: '#3b82f6',
-      backgroundColor: '#eff6ff',
-      color: '#1d4ed8',
-      transform: 'scale(1.02)'
-    },
-    uploadArea: {
-      padding: '3rem',
-      border: '3px dashed #d1d5db',
-      borderRadius: '12px',
-      textAlign: 'center',
-      cursor: 'pointer',
-      transition: 'all 0.3s'
-    },
-    textarea: {
-      width: '100%',
-      height: '200px',
-      padding: '1rem',
-      border: '2px solid #e5e7eb',
-      borderRadius: '12px',
-      resize: 'vertical',
-      fontSize: '1rem'
-    },
-    parseButton: {
-      background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-      color: 'white',
-      padding: '0.75rem 2rem',
-      border: 'none',
-      borderRadius: '12px',
-      fontSize: '1rem',
-      fontWeight: '600',
-      cursor: 'pointer'
-    },
-    progressBar: {
-      width: '100%',
-      height: '8px',
-      backgroundColor: '#e5e7eb',
-      borderRadius: '4px',
-      overflow: 'hidden'
-    },
-    progressFill: {
-      height: '100%',
-      background: 'linear-gradient(90deg, #3b82f6, #1d4ed8)',
-      transition: 'width 0.5s ease'
-    },
-    suggestion: {
-      border: '2px solid #dbeafe',
-      backgroundColor: '#eff6ff',
-      borderRadius: '12px',
-      padding: '1rem',
-      marginBottom: '1rem'
-    },
-    suggestionJobMatch: {
-      borderColor: '#bbf7d0',
-      backgroundColor: '#f0fdf4'
-    },
-    suggestionSuccess: {
-      borderColor: '#bbf7d0',
-      backgroundColor: '#f0fdf4'
-    },
-    skillTag: {
-      display: 'inline-block',
-      padding: '0.5rem 1rem',
-      margin: '0.25rem',
-      borderRadius: '20px',
-      fontSize: '0.875rem',
-      fontWeight: '600',
-      background: '#3b82f6',
-      color: 'white'
-    },
-    skillTagMatch: {
-      background: '#22c55e',
-      boxShadow: '0 0 0 2px #bbf7d0'
-    }
+  const containerStyle = {
+    minHeight: '100vh',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    padding: '1rem'
+  };
+
+  const cardStyle = {
+    background: 'white',
+    borderRadius: '16px',
+    padding: '1.5rem',
+    boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+    marginBottom: '1.5rem'
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.maxWidth}>
+    <div style={containerStyle}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         {/* Header */}
-        <div style={styles.header}>
-          <button onClick={navigateBack} style={styles.backButton}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <button 
+            onClick={navigateBack} 
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              background: 'rgba(255,255,255,0.2)',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '1rem'
+            }}
+          >
             <ArrowLeft size={20} />
             <span>Back to Dashboard</span>
           </button>
-          <button onClick={handleSave} style={styles.saveButton}>
+          <button 
+            onClick={handleSave} 
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              background: '#22c55e',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '1rem'
+            }}
+          >
             <Save size={16} />
             <span>Save Resume</span>
           </button>
         </div>
 
         {/* Title */}
-        <div style={styles.title}>
-          <h1 style={styles.mainTitle}>AI-Powered Resume Builder</h1>
-          <p style={styles.subtitle}>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: 'white', marginBottom: '1rem' }}>
+            AI-Powered Resume Builder
+          </h1>
+          <p style={{ fontSize: '1.2rem', color: 'rgba(255,255,255,0.9)', maxWidth: '600px', margin: '0 auto' }}>
             Upload your resume and job description to get AI-powered optimization and real-time job matching
           </p>
         </div>
 
-        {/* Main Content */}
-        <div style={{ display: window.innerWidth >= 1024 ? 'grid' : 'block', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+        {/* Main Content Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth >= 1024 ? '1fr 1fr' : '1fr', gap: '2rem' }}>
           {/* Left Column */}
           <div>
             {/* Job Description Input */}
-            <div style={styles.card}>
-              <h2 style={styles.cardTitle}>
+            <div style={cardStyle}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <Target size={24} color="#3b82f6" />
                 Target Job Description
               </h2>
@@ -418,7 +303,16 @@ const ResumeBuilder = () => {
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
                 placeholder="Paste the job description here to get tailored suggestions and match scoring..."
-                style={{ ...styles.textarea, height: '120px' }}
+                style={{
+                  width: '100%',
+                  height: '120px',
+                  padding: '1rem',
+                  border: '2px solid #e5e7eb',
+                  borderRadius: '12px',
+                  resize: 'vertical',
+                  fontSize: '1rem',
+                  boxSizing: 'border-box'
+                }}
               />
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.875rem' }}>
                 <span style={{ color: '#6b7280' }}>
@@ -431,17 +325,22 @@ const ResumeBuilder = () => {
             </div>
 
             {/* Input Method Selection */}
-            <div style={styles.card}>
-              <h2 style={styles.cardTitle}>Choose Input Method</h2>
+            <div style={cardStyle}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Choose Input Method</h2>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <button
                   onClick={() => setParseMethod('upload')}
                   style={{
-                    ...styles.methodButton,
-                    ...(parseMethod === 'upload' ? styles.methodButtonActive : {})
+                    padding: '1.5rem',
+                    borderRadius: '12px',
+                    border: parseMethod === 'upload' ? '2px solid #3b82f6' : '2px solid #e5e7eb',
+                    cursor: 'pointer',
+                    textAlign: 'center',
+                    background: parseMethod === 'upload' ? '#eff6ff' : 'white',
+                    color: parseMethod === 'upload' ? '#1d4ed8' : 'inherit'
                   }}
                 >
-                  <Upload size={32} style={{ margin: '0 auto 0.5rem' }} />
+                  <Upload size={32} style={{ margin: '0 auto 0.5rem', display: 'block' }} />
                   <div style={{ fontWeight: '600', marginBottom: '0.25rem' }}>Upload File</div>
                   <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>PDF, DOC, DOCX, TXT</div>
                 </button>
@@ -449,11 +348,16 @@ const ResumeBuilder = () => {
                 <button
                   onClick={() => setParseMethod('paste')}
                   style={{
-                    ...styles.methodButton,
-                    ...(parseMethod === 'paste' ? styles.methodButtonActive : {})
+                    padding: '1.5rem',
+                    borderRadius: '12px',
+                    border: parseMethod === 'paste' ? '2px solid #3b82f6' : '2px solid #e5e7eb',
+                    cursor: 'pointer',
+                    textAlign: 'center',
+                    background: parseMethod === 'paste' ? '#eff6ff' : 'white',
+                    color: parseMethod === 'paste' ? '#1d4ed8' : 'inherit'
                   }}
                 >
-                  <Clipboard size={32} style={{ margin: '0 auto 0.5rem' }} />
+                  <Clipboard size={32} style={{ margin: '0 auto 0.5rem', display: 'block' }} />
                   <div style={{ fontWeight: '600', marginBottom: '0.25rem' }}>Paste Text</div>
                   <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Copy & Paste</div>
                 </button>
@@ -461,7 +365,7 @@ const ResumeBuilder = () => {
             </div>
 
             {/* Upload/Paste Area */}
-            <div style={styles.card}>
+            <div style={cardStyle}>
               {parseMethod === 'upload' ? (
                 <div>
                   <input
@@ -473,9 +377,15 @@ const ResumeBuilder = () => {
                   />
                   <div
                     onClick={() => !isProcessing && fileInputRef.current?.click()}
-                    style={styles.uploadArea}
+                    style={{
+                      padding: '3rem',
+                      border: '3px dashed #d1d5db',
+                      borderRadius: '12px',
+                      textAlign: 'center',
+                      cursor: 'pointer'
+                    }}
                   >
-                    <FileText size={48} style={{ margin: '0 auto 1rem', color: '#9ca3af' }} />
+                    <FileText size={48} style={{ margin: '0 auto 1rem', color: '#9ca3af', display: 'block' }} />
                     <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
                       {isProcessing ? 'Processing your resume...' : 'Drop your resume here or click to upload'}
                     </div>
@@ -493,7 +403,16 @@ const ResumeBuilder = () => {
                     value={textInput}
                     onChange={(e) => setTextInput(e.target.value)}
                     placeholder="Paste your complete resume content here..."
-                    style={styles.textarea}
+                    style={{
+                      width: '100%',
+                      height: '200px',
+                      padding: '1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '12px',
+                      resize: 'vertical',
+                      fontSize: '1rem',
+                      boxSizing: 'border-box'
+                    }}
                     disabled={isProcessing}
                   />
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
@@ -504,9 +423,15 @@ const ResumeBuilder = () => {
                       onClick={handleTextParse}
                       disabled={isProcessing || !textInput.trim()}
                       style={{
-                        ...styles.parseButton,
-                        opacity: (isProcessing || !textInput.trim()) ? 0.5 : 1,
-                        cursor: (isProcessing || !textInput.trim()) ? 'not-allowed' : 'pointer'
+                        background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                        color: 'white',
+                        padding: '0.75rem 2rem',
+                        border: 'none',
+                        borderRadius: '12px',
+                        fontSize: '1rem',
+                        fontWeight: '600',
+                        cursor: (isProcessing || !textInput.trim()) ? 'not-allowed' : 'pointer',
+                        opacity: (isProcessing || !textInput.trim()) ? 0.5 : 1
                       }}
                     >
                       {isProcessing ? 'Processing...' : 'Parse Resume'}
@@ -518,16 +443,21 @@ const ResumeBuilder = () => {
 
             {/* Processing Status */}
             {isProcessing && (
-              <div style={styles.card}>
+              <div style={cardStyle}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <span style={{ fontSize: '1.125rem', fontWeight: '600', color: '#374151' }}>AI Processing Resume</span>
                   <span style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#3b82f6' }}>{parseProgress}%</span>
                 </div>
-                <div style={styles.progressBar}>
-                  <div style={{ ...styles.progressFill, width: `${parseProgress}%` }}></div>
+                <div style={{ width: '100%', height: '8px', backgroundColor: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ 
+                    height: '100%', 
+                    background: 'linear-gradient(90deg, #3b82f6, #1d4ed8)', 
+                    width: `${parseProgress}%`,
+                    transition: 'width 0.5s ease'
+                  }}></div>
                 </div>
                 <div style={{ fontSize: '0.875rem', color: '#6b7280', fontStyle: 'italic', marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Sparkles size={16} style={{ animation: 'spin 1s linear infinite' }} />
+                  <Sparkles size={16} />
                   {currentStep}
                 </div>
               </div>
@@ -535,8 +465,8 @@ const ResumeBuilder = () => {
 
             {/* Smart Suggestions */}
             {suggestions.length > 0 && (
-              <div style={styles.card}>
-                <h3 style={styles.cardTitle}>
+              <div style={cardStyle}>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Lightbulb size={24} color="#f59e0b" />
                   AI Suggestions
                 </h3>
@@ -545,9 +475,11 @@ const ResumeBuilder = () => {
                     <div 
                       key={suggestion.id} 
                       style={{
-                        ...styles.suggestion,
-                        ...(suggestion.type === 'job-match' ? styles.suggestionJobMatch : {}),
-                        ...(suggestion.type === 'success' ? styles.suggestionSuccess : {})
+                        border: suggestion.type === 'job-match' ? '2px solid #bbf7d0' : '2px solid #dbeafe',
+                        backgroundColor: suggestion.type === 'job-match' ? '#f0fdf4' : '#eff6ff',
+                        borderRadius: '12px',
+                        padding: '1rem',
+                        marginBottom: '1rem'
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'start', gap: '0.75rem' }}>
@@ -614,8 +546,8 @@ const ResumeBuilder = () => {
           <div>
             {/* Scores Dashboard */}
             {(atsScore > 0 || matchScore > 0) && (
-              <div style={styles.card}>
-                <h3 style={styles.cardTitle}>Resume Analytics</h3>
+              <div style={cardStyle}>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#1f2937' }}>Resume Analytics</h3>
                 
                 <div style={{ display: 'grid', gridTemplateColumns: matchScore > 0 ? '1fr 1fr' : '1fr', gap: '1.5rem' }}>
                   {atsScore > 0 && (
@@ -624,8 +556,13 @@ const ResumeBuilder = () => {
                         <h4 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#374151' }}>ATS Compatibility</h4>
                         <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#16a34a' }}>{atsScore}%</div>
                       </div>
-                      <div style={styles.progressBar}>
-                        <div style={{ ...styles.progressFill, width: `${atsScore}%`, background: 'linear-gradient(90deg, #16a34a, #22c55e)' }}></div>
+                      <div style={{ width: '100%', height: '8px', backgroundColor: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
+                        <div style={{ 
+                          height: '100%', 
+                          background: 'linear-gradient(90deg, #16a34a, #22c55e)', 
+                          width: `${atsScore}%`,
+                          transition: 'width 1s ease'
+                        }}></div>
                       </div>
                       <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem' }}>Excellent for applicant tracking systems</p>
                     </div>
@@ -637,8 +574,13 @@ const ResumeBuilder = () => {
                         <h4 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#374151' }}>Job Match Score</h4>
                         <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#2563eb' }}>{matchScore}%</div>
                       </div>
-                      <div style={styles.progressBar}>
-                        <div style={{ ...styles.progressFill, width: `${matchScore}%` }}></div>
+                      <div style={{ width: '100%', height: '8px', backgroundColor: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
+                        <div style={{ 
+                          height: '100%', 
+                          background: 'linear-gradient(90deg, #2563eb, #3b82f6)', 
+                          width: `${matchScore}%`,
+                          transition: 'width 1s ease'
+                        }}></div>
                       </div>
                       <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem' }}>Strong match for target position</p>
                     </div>
@@ -648,7 +590,7 @@ const ResumeBuilder = () => {
             )}
 
             {/* Live Resume Preview */}
-            <div style={{ ...styles.card, overflow: 'hidden', padding: 0 }}>
+            <div style={{ ...cardStyle, overflow: 'hidden', padding: 0 }}>
               <div style={{ 
                 background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', 
                 color: 'white', 
@@ -668,12 +610,7 @@ const ResumeBuilder = () => {
               
               <div style={{ padding: '2rem' }}>
                 {previewSections.map((section, index) => (
-                  <div key={`${section.type}-${section.timestamp}`} style={{ 
-                    marginBottom: '2rem',
-                    opacity: 0,
-                    animation: 'fadeIn 0.6s ease-out forwards',
-                    animationDelay: `${index * 0.2}s`
-                  }}>
+                  <div key={`${section.type}-${section.timestamp}`} style={{ marginBottom: '2rem' }}>
                     {section.type === 'personal' && (
                       <div style={{ borderBottom: '2px solid #f3f4f6', paddingBottom: '1.5rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem', gap: '0.75rem' }}>
@@ -682,16 +619,9 @@ const ResumeBuilder = () => {
                         </div>
                         <h2 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '0.5rem' }}>{section.data.name}</h2>
                         <div style={{ color: '#6b7280', lineHeight: 1.6 }}>
-                          <p style={{ margin: '0.25rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <span style={{ width: '8px', height: '8px', backgroundColor: '#22c55e', borderRadius: '50%' }}></span>
-                            {section.data.location}
-                          </p>
-                          {section.data.linkedin && (
-                            <p style={{ margin: '0.25rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                              <span style={{ width: '8px', height: '8px', backgroundColor: '#1d4ed8', borderRadius: '50%' }}></span>
-                              {section.data.linkedin}
-                            </p>
-                          )}
+                          <p style={{ margin: '0.25rem 0' }}>{section.data.email} • {section.data.phone}</p>
+                          <p style={{ margin: '0.25rem 0' }}>{section.data.location}</p>
+                          {section.data.linkedin && <p style={{ margin: '0.25rem 0' }}>{section.data.linkedin}</p>}
                         </div>
                       </div>
                     )}
@@ -708,14 +638,8 @@ const ResumeBuilder = () => {
                             <p style={{ fontSize: '1.125rem', fontWeight: '600', color: '#16a34a', margin: '0 0 0.75rem 0' }}>{exp.company} • {exp.duration}</p>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                               {exp.achievements.map((achievement, j) => (
-                                <li key={j} style={{ 
-                                  color: '#374151', 
-                                  marginBottom: '0.25rem',
-                                  display: 'flex',
-                                  alignItems: 'flex-start',
-                                  gap: '0.75rem'
-                                }}>
-                                  <span style={{ color: '#3b82f6', fontWeight: 'bold', marginTop: '0.25rem' }}>▪</span>
+                                <li key={j} style={{ color: '#374151', marginBottom: '0.25rem', paddingLeft: '1rem', position: 'relative' }}>
+                                  <span style={{ position: 'absolute', left: 0, color: '#3b82f6', fontWeight: 'bold' }}>•</span>
                                   {achievement}
                                 </li>
                               ))}
@@ -754,8 +678,15 @@ const ResumeBuilder = () => {
                               const isJobMatch = jobDescription && jobDescription.toLowerCase().includes(skill.toLowerCase());
                               return (
                                 <span key={i} style={{
-                                  ...styles.skillTag,
-                                  ...(isJobMatch ? styles.skillTagMatch : {})
+                                  display: 'inline-block',
+                                  padding: '0.5rem 1rem',
+                                  margin: '0.25rem',
+                                  borderRadius: '20px',
+                                  fontSize: '0.875rem',
+                                  fontWeight: '600',
+                                  background: isJobMatch ? '#22c55e' : '#3b82f6',
+                                  color: 'white',
+                                  boxShadow: isJobMatch ? '0 0 0 2px #bbf7d0' : 'none'
                                 }}>
                                   {skill}
                                   {isJobMatch && <span style={{ marginLeft: '0.25rem' }}>✓</span>}
@@ -771,9 +702,15 @@ const ResumeBuilder = () => {
                               const isJobMatch = jobDescription && jobDescription.toLowerCase().includes(skill.toLowerCase());
                               return (
                                 <span key={i} style={{
-                                  ...styles.skillTag,
-                                  background: '#8b5cf6',
-                                  ...(isJobMatch ? { ...styles.skillTagMatch, background: '#22c55e' } : {})
+                                  display: 'inline-block',
+                                  padding: '0.5rem 1rem',
+                                  margin: '0.25rem',
+                                  borderRadius: '20px',
+                                  fontSize: '0.875rem',
+                                  fontWeight: '600',
+                                  background: isJobMatch ? '#22c55e' : '#8b5cf6',
+                                  color: 'white',
+                                  boxShadow: isJobMatch ? '0 0 0 2px #bbf7d0' : 'none'
                                 }}>
                                   {skill}
                                   {isJobMatch && <span style={{ marginLeft: '0.25rem' }}>✓</span>}
@@ -789,7 +726,7 @@ const ResumeBuilder = () => {
                 
                 {previewSections.length === 0 && !isProcessing && (
                   <div style={{ textAlign: 'center', padding: '4rem 0' }}>
-                    <FileText size={48} style={{ margin: '0 auto 1rem', color: '#d1d5db' }} />
+                    <FileText size={48} style={{ margin: '0 auto 1rem', color: '#d1d5db', display: 'block' }} />
                     <h3 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#6b7280', marginBottom: '0.5rem' }}>Ready to Parse Your Resume</h3>
                     <p style={{ color: '#9ca3af', marginBottom: '1rem' }}>Upload or paste your resume to see the live preview</p>
                     {jobDescription && (
@@ -871,32 +808,8 @@ const ResumeBuilder = () => {
           </div>
         </div>
       </div>
-
-      <style>
-        {`
-          @keyframes fadeIn {
-            from {
-              opacity: 0;
-              transform: translateY(20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-          
-          @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
-        `}
-      </style>
     </div>
   );
 };
 
-export default ResumeBuilder;: '8px', backgroundColor: '#3b82f6', borderRadius: '50%' }}></span>
-                            {section.data.email} • {section.data.phone}
-                          </p>
-                          <p style={{ margin: '0.25rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <span style={{ width: '8px', height
+export default ResumeBuilder;
