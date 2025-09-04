@@ -1,53 +1,139 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Send, Brain, Target, TrendingUp, Users, Zap, Star, ChevronRight, Play, Mic, MicOff, Video, CheckCircle, Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, Brain, Video, TrendingUp, Users, Zap, Target, CheckCircle, Clock, Star } from 'lucide-react';
 
 const NextGenCareerPlatform = () => {
   const [activeModule, setActiveModule] = useState('dashboard');
-  const [userProfile] = useState({
-    name: 'Alex Johnson',
-    currentRole: 'Senior Software Engineer',
-    experience: '5 years',
-    skills: ['React', 'Node.js', 'Python', 'AWS', 'Leadership'],
-    careerScore: 87,
-    marketValue: 118000
-  });
 
-  // LaunchpadPoint Logo
-  const LaunchpadLogo = ({ size = 32 }) => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <div 
-        style={{ 
-          width: size, 
-          height: size,
-          background: 'linear-gradient(135deg, #1E90FF 0%, #4169E1 50%, #8A2BE2 100%)',
-          borderRadius: '50% 50% 50% 20%',
-          position: 'relative',
-          transform: 'rotate(-45deg)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <div style={{
-          width: '35%',
-          height: '35%',
-          background: '#00BFFF',
-          borderRadius: '50%',
-          transform: 'rotate(45deg)'
-        }}></div>
+  // Exact LaunchpadPoint Logo matching your reference
+  const LaunchpadLogo = ({ size = 32, showText = true }) => {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <svg 
+          width={size} 
+          height={size} 
+          viewBox="0 0 100 100"
+          style={{ display: 'block' }}
+        >
+          {/* Main rocket body - elongated and sleek */}
+          <path
+            d="M50 10 
+               C58 10 65 17 65 25
+               L65 75
+               C65 80 60 85 55 85
+               L45 85
+               C40 85 35 80 35 75
+               L35 25
+               C35 17 42 10 50 10 Z"
+            fill="url(#mainRocketGradient)"
+          />
+          
+          {/* Rocket nose cone - sharp point */}
+          <path
+            d="M35 25 
+               C35 15 42 5 50 5
+               C58 5 65 15 65 25
+               L60 30
+               L40 30 Z"
+            fill="url(#noseGradient)"
+          />
+          
+          {/* Left wing */}
+          <path
+            d="M30 60
+               L35 50
+               L35 80
+               L30 75 Z"
+            fill="url(#wingGradient)"
+          />
+          
+          {/* Right wing */}
+          <path
+            d="M65 50
+               L70 60
+               L70 75
+               L65 80 Z"
+            fill="url(#wingGradient)"
+          />
+          
+          {/* Window */}
+          <circle
+            cx="50"
+            cy="35"
+            r="7"
+            fill="#00BFFF"
+            opacity="0.9"
+          />
+          
+          {/* Window highlight */}
+          <circle
+            cx="48"
+            cy="33"
+            r="3"
+            fill="#87CEEB"
+            opacity="0.6"
+          />
+          
+          {/* Exhaust flame */}
+          <path
+            d="M42 85
+               L46 95
+               L50 88
+               L54 95
+               L58 85
+               L54 98
+               L50 92
+               L46 98 Z"
+            fill="url(#flameGradient)"
+          />
+          
+          {/* Body panels */}
+          <rect x="40" y="45" width="20" height="2" fill="rgba(255,255,255,0.2)" rx="1" />
+          <rect x="40" y="55" width="20" height="2" fill="rgba(255,255,255,0.2)" rx="1" />
+          
+          <defs>
+            <linearGradient id="mainRocketGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#1E90FF" />
+              <stop offset="40%" stopColor="#4169E1" />
+              <stop offset="100%" stopColor="#0052CC" />
+            </linearGradient>
+            
+            <linearGradient id="noseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#87CEEB" />
+              <stop offset="50%" stopColor="#00BFFF" />
+              <stop offset="100%" stopColor="#1E90FF" />
+            </linearGradient>
+            
+            <linearGradient id="wingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#9370DB" />
+              <stop offset="50%" stopColor="#8A2BE2" />
+              <stop offset="100%" stopColor="#4B0082" />
+            </linearGradient>
+            
+            <linearGradient id="flameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#FF6B35" />
+              <stop offset="30%" stopColor="#FF8C42" />
+              <stop offset="70%" stopColor="#F7931E" />
+              <stop offset="100%" stopColor="#FFD700" />
+            </linearGradient>
+          </defs>
+        </svg>
+        
+        {showText && (
+          <span style={{
+            fontWeight: 'bold',
+            fontSize: size > 32 ? '1.2rem' : size > 24 ? '1rem' : '0.9rem',
+            background: 'linear-gradient(135deg, #1E90FF, #8A2BE2)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            color: 'transparent',
+            letterSpacing: '-0.3px'
+          }}>
+            LaunchpadPoint
+          </span>
+        )}
       </div>
-      <span style={{
-        fontWeight: 'bold',
-        fontSize: '1.1rem',
-        background: 'linear-gradient(135deg, #1E90FF, #8A2BE2)',
-        backgroundClip: 'text',
-        WebkitBackgroundClip: 'text',
-        color: 'transparent'
-      }}>
-        LaunchpadPoint
-      </span>
-    </div>
-  );
+    );
+  };
 
   const modules = [
     { id: 'dashboard', name: 'Dashboard', icon: Brain, color: '#667eea' },
@@ -63,38 +149,6 @@ const NextGenCareerPlatform = () => {
   };
 
   const CareerDashboard = () => {
-    const [insights, setInsights] = useState([]);
-    
-    useEffect(() => {
-      const mockInsights = [
-        {
-          type: 'opportunity',
-          title: 'High-Match Job Alert',
-          content: 'Senior React Developer at TechCorp matches 94% of your profile',
-          urgency: 'high',
-          action: 'View Details',
-          time: '2 hours ago'
-        },
-        {
-          type: 'market',
-          title: 'Salary Increase Detected', 
-          content: 'React developers saw 15% salary increase this month',
-          urgency: 'medium',
-          action: 'Update Rate',
-          time: '4 hours ago'
-        },
-        {
-          type: 'skill',
-          title: 'Trending Skill Alert',
-          content: 'TypeScript demand up 40% - Add to your profile?',
-          urgency: 'low', 
-          action: 'Learn More',
-          time: '1 day ago'
-        }
-      ];
-      setInsights(mockInsights);
-    }, []);
-
     return (
       <div style={{ padding: '1rem' }}>
         {/* Career Score Hero */}
@@ -110,7 +164,7 @@ const NextGenCareerPlatform = () => {
             Career Intelligence Score
           </h3>
           <div style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>
-            {userProfile.careerScore}
+            87
           </div>
           <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>+5 this week</div>
           
@@ -140,10 +194,10 @@ const NextGenCareerPlatform = () => {
             textAlign: 'center'
           }}>
             <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#10b981', marginBottom: '0.25rem' }}>
-              ${Math.round(userProfile.marketValue/1000)}K
+              $118K
             </div>
             <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>Market Value</div>
-            <div style={{ fontSize: '0.7rem', color: '#10b981' }}>↗️ +$3K this month</div>
+            <div style={{ fontSize: '0.7rem', color: '#10b981' }}>↗ +$3K this month</div>
           </div>
           
           <div style={{ 
@@ -173,34 +227,86 @@ const NextGenCareerPlatform = () => {
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {insights.map((insight, index) => (
-              <div key={index} style={{
-                padding: '0.75rem',
-                border: '1px solid #e5e7eb',
-                borderRadius: '0.5rem',
-                background: insight.urgency === 'high' ? '#fef2f2' : '#f9fafb'
-              }}>
-                <h4 style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.25rem', margin: '0 0 0.25rem 0' }}>
-                  {insight.title}
-                </h4>
-                <p style={{ fontSize: '0.8rem', color: '#6b7280', lineHeight: '1.4', margin: '0 0 0.5rem 0' }}>
-                  {insight.content}
-                </p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>{insight.time}</span>
-                  <button style={{
-                    fontSize: '0.75rem',
-                    color: '#3b82f6',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontWeight: '500'
-                  }}>
-                    {insight.action}
-                  </button>
-                </div>
+            <div style={{
+              padding: '0.75rem',
+              border: '1px solid #e5e7eb',
+              borderRadius: '0.5rem',
+              background: '#fef2f2'
+            }}>
+              <h4 style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.25rem', margin: '0 0 0.25rem 0' }}>
+                High-Match Job Alert
+              </h4>
+              <p style={{ fontSize: '0.8rem', color: '#6b7280', lineHeight: '1.4', margin: '0 0 0.5rem 0' }}>
+                Senior React Developer at TechCorp matches 94% of your profile
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>2 hours ago</span>
+                <button style={{
+                  fontSize: '0.75rem',
+                  color: '#3b82f6',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: '500'
+                }}>
+                  View Details
+                </button>
               </div>
-            ))}
+            </div>
+
+            <div style={{
+              padding: '0.75rem',
+              border: '1px solid #e5e7eb',
+              borderRadius: '0.5rem',
+              background: '#f9fafb'
+            }}>
+              <h4 style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.25rem', margin: '0 0 0.25rem 0' }}>
+                Salary Increase Detected
+              </h4>
+              <p style={{ fontSize: '0.8rem', color: '#6b7280', lineHeight: '1.4', margin: '0 0 0.5rem 0' }}>
+                React developers saw 15% salary increase this month
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>4 hours ago</span>
+                <button style={{
+                  fontSize: '0.75rem',
+                  color: '#3b82f6',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: '500'
+                }}>
+                  Update Rate
+                </button>
+              </div>
+            </div>
+
+            <div style={{
+              padding: '0.75rem',
+              border: '1px solid #e5e7eb',
+              borderRadius: '0.5rem',
+              background: '#f0f9ff'
+            }}>
+              <h4 style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.25rem', margin: '0 0 0.25rem 0' }}>
+                Trending Skill Alert
+              </h4>
+              <p style={{ fontSize: '0.8rem', color: '#6b7280', lineHeight: '1.4', margin: '0 0 0.5rem 0' }}>
+                TypeScript demand up 40% - Add to your profile?
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>1 day ago</span>
+                <button style={{
+                  fontSize: '0.75rem',
+                  color: '#3b82f6',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: '500'
+                }}>
+                  Learn More
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -224,10 +330,10 @@ const NextGenCareerPlatform = () => {
               </div>
               <div>
                 <h4 style={{ fontSize: '0.9rem', fontWeight: '600', margin: '0 0 0.25rem 0' }}>
-                  Current: {userProfile.currentRole}
+                  Current: Senior Software Engineer
                 </h4>
                 <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
-                  ${Math.round(userProfile.marketValue/1000)}K • 87% market fit
+                  $118K • 87% market fit
                 </p>
               </div>
             </div>
@@ -361,7 +467,7 @@ const NextGenCareerPlatform = () => {
             color: 'white', 
             fontWeight: 'bold' 
           }}>
-            {userProfile.name.split(' ').map(n => n[0]).join('')}
+            AJ
           </div>
         </div>
       </div>
