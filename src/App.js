@@ -1,4 +1,5 @@
 import NextGenCareerPlatform from './pages/NextGenCareerPlatform';
+import AIAssistant from './pages/AIAssistant';
 import AdvancedAICareerAssistant from './pages/AdvancedAICareerAssistant';
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -433,6 +434,7 @@ function App() {
     <Router>
       <div style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}>
         <Routes>
+  <Route path="/ai-assistant" element={<AIAssistant />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/resume-builder" element={<ResumeBuilder />} />
