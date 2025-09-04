@@ -1,3 +1,4 @@
+import NextGenCareerPlatform from './pages/NextGenCareerPlatform';
 import AdvancedAICareerAssistant from './pages/AdvancedAICareerAssistant';
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -436,6 +437,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/resume-builder" element={<ResumeBuilder />} />
        <Route path="/ai-assistant" element={<AdvancedAICareerAssistant />} />
+  <Route path="/career-intelligence" element={<NextGenCareerPlatform />} />
   </Routes>
       </div>
     </Router>
