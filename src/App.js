@@ -435,7 +435,8 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/resume-builder" element={<ResumeBuilder />} />
-        </Routes>
+       <Route path="/ai-assistant" element={<AdvancedAICareerAssistant />} />
+  </Routes>
       </div>
     </Router>
   );
