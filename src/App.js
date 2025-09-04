@@ -1,5 +1,5 @@
 import NextGenCareerPlatform from './pages/NextGenCareerPlatform';
-import AIAssistant from './pages/AIAssistant';
+import AIAssistant from './pages/AdvancedAICareerAssistant';
 import AdvancedAICareerAssistant from './pages/AdvancedAICareerAssistant';
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
