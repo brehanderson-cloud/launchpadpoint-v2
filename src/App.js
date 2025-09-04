@@ -1,9 +1,8 @@
-import NextGenCareerPlatform from './pages/NextGenCareerPlatform';
-import AIAssistant from './pages/AdvancedAICareerAssistant';
-import AdvancedAICareerAssistant from './pages/AdvancedAICareerAssistant';
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ResumeBuilder from './pages/ResumeBuilder';
+import NextGenCareerPlatform from './pages/NextGenCareerPlatform';
+import AdvancedAICareerAssistant from './pages/AdvancedAICareerAssistant';
 
 // Landing Page Component with Real Rocket Logo
 const LandingPage = () => {
@@ -213,7 +212,7 @@ const LandingPage = () => {
           </button>
           
           <button 
-            onClick={() => window.location.href = '/dashboard'}
+            onClick={() => window.location.href = '/ai-assistant'}
             style={{ 
               background: 'transparent', 
               color: 'white', 
@@ -379,6 +378,44 @@ const Dashboard = () => (
         </button>
         
         <button 
+          onClick={() => window.location.href = '/ai-assistant'}
+          style={{ 
+            background: '#8b5cf6', 
+            color: 'white', 
+            padding: '1.5rem', 
+            border: 'none', 
+            borderRadius: '8px', 
+            fontSize: '1.1rem', 
+            cursor: 'pointer',
+            fontWeight: '600',
+            textAlign: 'left'
+          }}
+        >
+          <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🤖</div>
+          <div>AI Assistant</div>
+          <div style={{ fontSize: '0.9rem', opacity: '0.8', marginTop: '0.25rem' }}>Career guidance & strategy</div>
+        </button>
+        
+        <button 
+          onClick={() => window.location.href = '/career-intelligence'}
+          style={{ 
+            background: '#10b981', 
+            color: 'white', 
+            padding: '1.5rem', 
+            border: 'none', 
+            borderRadius: '8px', 
+            fontSize: '1.1rem', 
+            cursor: 'pointer',
+            fontWeight: '600',
+            textAlign: 'left'
+          }}
+        >
+          <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🚀</div>
+          <div>Career Intelligence</div>
+          <div style={{ fontSize: '0.9rem', opacity: '0.8', marginTop: '0.25rem' }}>Advanced analytics & insights</div>
+        </button>
+        
+        <button 
           style={{ 
             background: '#e2e8f0', 
             color: '#4a5568', 
@@ -434,13 +471,12 @@ function App() {
     <Router>
       <div style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}>
         <Routes>
-  <Route path="/ai-assistant" element={<AIAssistant />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/resume-builder" element={<ResumeBuilder />} />
-       <Route path="/ai-assistant" element={<AdvancedAICareerAssistant />} />
-  <Route path="/career-intelligence" element={<NextGenCareerPlatform />} />
-  </Routes>
+          <Route path="/ai-assistant" element={<AdvancedAICareerAssistant />} />
+          <Route path="/career-intelligence" element={<NextGenCareerPlatform />} />
+        </Routes>
       </div>
     </Router>
   );
