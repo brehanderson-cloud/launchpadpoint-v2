@@ -222,6 +222,181 @@ const LandingPage = ({ isDarkMode, setIsDarkMode }) => {
           and professional optimization to accelerate your career development
           journey.
         </p>
+
+        {/* Action Buttons */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: window.innerWidth < 768 ? "column" : "row",
+            gap: "1rem",
+            marginBottom: "3rem",
+          }}
+        >
+          <button
+            onClick={() => (window.location.href = "/resume-builder")}
+            style={{
+              background: "linear-gradient(135deg, #00A8FF 0%, #0078FF 100%)",
+              color: "white",
+              padding: "1rem 2rem",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "1.1rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              boxShadow: "0 4px 15px rgba(0, 168, 255, 0.4)",
+              transition: "all 0.3s ease",
+            }}
+          >
+            <div>Create Professional Resume</div>
+            <div style={{ fontSize: "0.9rem", opacity: 0.9, marginTop: "0.25rem" }}>
+              $29.99 • Instant Access
+            </div>
+          </button>
+
+          <button
+            onClick={() => (window.location.href = "/dashboard")}
+            style={{
+              background: "rgba(255, 255, 255, 0.15)",
+              color: "white",
+              padding: "1rem 2rem",
+              border: "2px solid rgba(255, 255, 255, 0.3)",
+              borderRadius: "8px",
+              fontSize: "1.1rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              backdropFilter: "blur(10px)",
+              transition: "all 0.3s ease",
+            }}
+          >
+            Start Free Trial
+          </button>
+
+          <button
+            onClick={() => (window.location.href = "/ai-assistant")}
+            style={{
+              background: "transparent",
+              color: "white",
+              padding: "1rem 2rem",
+              border: "2px solid white",
+              borderRadius: "8px",
+              fontSize: "1.1rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+            }}
+          >
+            Try AI Assistant
+          </button>
+        </div>
+
+        {/* Features Grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "2rem",
+            maxWidth: "1000px",
+            width: "100%",
+          }}
+        >
+          <div
+            style={{
+              background: "rgba(255, 255, 255, 0.1)",
+              padding: "2rem",
+              borderRadius: "16px",
+              textAlign: "center",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            <div
+              style={{
+                width: "64px",
+                height: "64px",
+                background: "rgba(0, 168, 255, 0.2)",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 1rem",
+              }}
+            >
+              <RocketLogo size={32} />
+            </div>
+            <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem", fontWeight: "bold" }}>
+              AI Resume Builder
+            </h3>
+            <p style={{ opacity: 0.9, lineHeight: 1.6 }}>
+              Create tailored, professional resumes that match job requirements with intelligent analysis and optimization.
+            </p>
+          </div>
+
+          <div
+            style={{
+              background: "rgba(255, 255, 255, 0.1)",
+              padding: "2rem",
+              borderRadius: "16px",
+              textAlign: "center",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            <div
+              style={{
+                width: "64px",
+                height: "64px",
+                background: "rgba(64, 224, 208, 0.2)",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 1rem",
+                fontSize: "2rem",
+              }}
+            >
+              🎯
+            </div>
+            <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem", fontWeight: "bold" }}>
+              Job Matching
+            </h3>
+            <p style={{ opacity: 0.9, lineHeight: 1.6 }}>
+              Find relevant opportunities that align with your skills and get real-time compatibility scoring.
+            </p>
+          </div>
+
+          <div
+            style={{
+              background: "rgba(255, 255, 255, 0.1)",
+              padding: "2rem",
+              borderRadius: "16px",
+              textAlign: "center",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            <div
+              style={{
+                width: "64px",
+                height: "64px",
+                background: "rgba(123, 104, 238, 0.2)",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 1rem",
+                fontSize: "2rem",
+              }}
+            >
+              ♿
+            </div>
+            <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem", fontWeight: "bold" }}>
+              Accessibility First
+            </h3>
+            <p style={{ opacity: 0.9, lineHeight: 1.6 }}>
+              WCAG 2.1 AA compliant with 15+ accessibility features including dyslexia-friendly fonts ensuring everyone can access career opportunities.
+            </p>
+          </div>
+        </div>
       </main>
 
       {/* Footer */}
@@ -255,84 +430,277 @@ const LandingPage = ({ isDarkMode, setIsDarkMode }) => {
   );
 };
 
-// Dashboard
-const Dashboard = () => (
-  <div
-    style={{ padding: "2rem", minHeight: "100vh", background: "#f7fafc" }}
-  >
-    <h1
-      style={{ fontSize: "2.5rem", marginBottom: "1rem", color: "#2d3748" }}
-    >
-      Dashboard
-    </h1>
+// Enhanced Dashboard with Dark Mode Support
+const Dashboard = ({ isDarkMode }) => {
+  const bgColor = isDarkMode ? "#111827" : "#f7fafc";
+  const cardBg = isDarkMode ? "#1f2937" : "white";
+  const textColor = isDarkMode ? "#f9fafb" : "#2d3748";
+  const mutedColor = isDarkMode ? "#9ca3af" : "#4a5568";
+
+  return (
     <div
       style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-        gap: "1rem",
-        marginBottom: "2rem",
+        padding: "2rem",
+        minHeight: "100vh",
+        background: bgColor,
+        transition: "all 0.3s ease",
       }}
     >
+      <h1 style={{ fontSize: "2.5rem", marginBottom: "1rem", color: textColor }}>
+        Dashboard
+      </h1>
+
+      {/* Stats Cards */}
       <div
         style={{
-          background: "white",
-          padding: "1.5rem",
-          borderRadius: "8px",
-          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+          gap: "1rem",
+          marginBottom: "2rem",
         }}
       >
-        <h3 style={{ color: "#4a5568", marginBottom: "0.5rem" }}>
-          Applications
-        </h3>
-        <p
-          style={{ fontSize: "2rem", fontWeight: "bold", color: "#3182ce" }}
+        <div
+          style={{
+            background: cardBg,
+            padding: "1.5rem",
+            borderRadius: "8px",
+            boxShadow: isDarkMode
+              ? "0 2px 4px rgba(0,0,0,0.3)"
+              : "0 2px 4px rgba(0,0,0,0.1)",
+          }}
         >
-          0
-        </p>
+          <h3 style={{ color: mutedColor, marginBottom: "0.5rem" }}>Applications</h3>
+          <p style={{ fontSize: "2rem", fontWeight: "bold", color: "#3182ce" }}>0</p>
+        </div>
+        <div
+          style={{
+            background: cardBg,
+            padding: "1.5rem",
+            borderRadius: "8px",
+            boxShadow: isDarkMode
+              ? "0 2px 4px rgba(0,0,0,0.3)"
+              : "0 2px 4px rgba(0,0,0,0.1)",
+          }}
+        >
+          <h3 style={{ color: mutedColor, marginBottom: "0.5rem" }}>Resume Score</h3>
+          <p style={{ fontSize: "2rem", fontWeight: "bold", color: "#38a169" }}>-</p>
+        </div>
+        <div
+          style={{
+            background: cardBg,
+            padding: "1.5rem",
+            borderRadius: "8px",
+            boxShadow: isDarkMode
+              ? "0 2px 4px rgba(0,0,0,0.3)"
+              : "0 2px 4px rgba(0,0,0,0.1)",
+          }}
+        >
+          <h3 style={{ color: mutedColor, marginBottom: "0.5rem" }}>Job Matches</h3>
+          <p style={{ fontSize: "2rem", fontWeight: "bold", color: "#8b5cf6" }}>0</p>
+        </div>
       </div>
-      <div
-        style={{
-          background: "white",
-          padding: "1.5rem",
-          borderRadius: "8px",
-          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-        }}
-      >
-        <h3 style={{ color: "#4a5568", marginBottom: "0.5rem" }}>
-          Resume Score
-        </h3>
-        <p
-          style={{ fontSize: "2rem", fontWeight: "bold", color: "#38a169" }}
+
+      {/* Quick Actions */}
+      <div style={{ marginBottom: "2rem" }}>
+        <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem", color: textColor }}>
+          Quick Actions
+        </h2>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "1rem",
+          }}
         >
-          -
-        </p>
+          <button
+            onClick={() => (window.location.href = "/resume-builder")}
+            style={{
+              background: "#3182ce",
+              color: "white",
+              padding: "1.5rem",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "1.1rem",
+              cursor: "pointer",
+              fontWeight: "600",
+              textAlign: "left",
+              transition: "transform 0.2s ease",
+            }}
+            onMouseEnter={(e) => (e.target.style.transform = "translateY(-2px)")}
+            onMouseLeave={(e) => (e.target.style.transform = "translateY(0)")}
+          >
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>📄</div>
+            <div>Build Resume</div>
+            <div style={{ fontSize: "0.9rem", opacity: "0.8", marginTop: "0.25rem" }}>
+              AI-powered optimization
+            </div>
+          </button>
+
+          <button
+            onClick={() => (window.location.href = "/ai-assistant")}
+            style={{
+              background: "#8b5cf6",
+              color: "white",
+              padding: "1.5rem",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "1.1rem",
+              cursor: "pointer",
+              fontWeight: "600",
+              textAlign: "left",
+              transition: "transform 0.2s ease",
+            }}
+            onMouseEnter={(e) => (e.target.style.transform = "translateY(-2px)")}
+            onMouseLeave={(e) => (e.target.style.transform = "translateY(0)")}
+          >
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>🤖</div>
+            <div>AI Assistant</div>
+            <div style={{ fontSize: "0.9rem", opacity: "0.8", marginTop: "0.25rem" }}>
+              Career guidance & strategy
+            </div>
+          </button>
+
+          <button
+            onClick={() => (window.location.href = "/career-intelligence")}
+            style={{
+              background: "#10b981",
+              color: "white",
+              padding: "1.5rem",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "1.1rem",
+              cursor: "pointer",
+              fontWeight: "600",
+              textAlign: "left",
+              transition: "transform 0.2s ease",
+            }}
+            onMouseEnter={(e) => (e.target.style.transform = "translateY(-2px)")}
+            onMouseLeave={(e) => (e.target.style.transform = "translateY(0)")}
+          >
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>🚀</div>
+            <div>Career Intelligence</div>
+            <div style={{ fontSize: "0.9rem", opacity: "0.8", marginTop: "0.25rem" }}>
+              Advanced analytics & insights
+            </div>
+          </button>
+
+          <button
+            style={{
+              background: isDarkMode ? "#374151" : "#e2e8f0",
+              color: mutedColor,
+              padding: "1.5rem",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "1.1rem",
+              cursor: "not-allowed",
+              fontWeight: "600",
+              textAlign: "left",
+              opacity: "0.6",
+            }}
+            disabled
+          >
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>🔍</div>
+            <div>Find Jobs</div>
+            <div style={{ fontSize: "0.9rem", opacity: "0.8", marginTop: "0.25rem" }}>
+              Coming Soon
+            </div>
+          </button>
+
+          <button
+            style={{
+              background: isDarkMode ? "#374151" : "#e2e8f0",
+              color: mutedColor,
+              padding: "1.5rem",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "1.1rem",
+              cursor: "not-allowed",
+              fontWeight: "600",
+              textAlign: "left",
+              opacity: "0.6",
+            }}
+            disabled
+          >
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>🤝</div>
+            <div>Network</div>
+            <div style={{ fontSize: "0.9rem", opacity: "0.8", marginTop: "0.25rem" }}>
+              Coming Soon
+            </div>
+          </button>
+
+          <button
+            style={{
+              background: isDarkMode ? "#374151" : "#e2e8f0",
+              color: mutedColor,
+              padding: "1.5rem",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "1.1rem",
+              cursor: "not-allowed",
+              fontWeight: "600",
+              textAlign: "left",
+              opacity: "0.6",
+            }}
+            disabled
+          >
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>📊</div>
+            <div>Analytics</div>
+            <div style={{ fontSize: "0.9rem", opacity: "0.8", marginTop: "0.25rem" }}>
+              Coming Soon
+            </div>
+          </button>
+        </div>
       </div>
+
+      {/* Recent Activity */}
       <div
         style={{
-          background: "white",
+          background: cardBg,
           padding: "1.5rem",
           borderRadius: "8px",
-          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+          boxShadow: isDarkMode
+            ? "0 2px 4px rgba(0,0,0,0.3)"
+            : "0 2px 4px rgba(0,0,0,0.1)",
         }}
       >
-        <h3 style={{ color: "#4a5568", marginBottom: "0.5rem" }}>
-          Job Matches
+        <h3 style={{ fontSize: "1.25rem", marginBottom: "1rem", color: textColor }}>
+          Recent Activity
         </h3>
-        <p
-          style={{ fontSize: "2rem", fontWeight: "bold", color: "#8b5cf6" }}
-        >
-          0
-        </p>
+        <div style={{ color: mutedColor, fontStyle: "italic" }}>
+          Welcome to LaunchpadPoint V2! Start by building your resume or trying our AI assistant to unlock more features.
+        </div>
+      </div>
+
+      {/* Settings Toggle */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: "2rem",
+          right: "2rem",
+          background: cardBg,
+          padding: "1rem",
+          borderRadius: "50%",
+          boxShadow: isDarkMode
+            ? "0 4px 12px rgba(0,0,0,0.4)"
+            : "0 4px 12px rgba(0,0,0,0.15)",
+          cursor: "pointer",
+          transition: "all 0.3s ease",
+        }}
+        onClick={() => (window.location.href = "/")}
+        title="Back to Home"
+      >
+        <div style={{ fontSize: "1.5rem" }}>🏠</div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     document.body.style.background = isDarkMode ? "#111827" : "#ffffff";
+    document.body.style.transition = "background 0.3s ease";
   }, [isDarkMode]);
 
   return (
@@ -340,6 +708,7 @@ function App() {
       <div
         style={{
           fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+          minHeight: "100vh",
         }}
       >
         <Routes>
@@ -349,7 +718,10 @@ function App() {
               <LandingPage isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
             }
           />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route
+            path="/dashboard"
+            element={<Dashboard isDarkMode={isDarkMode} />}
+          />
           <Route path="/resume-builder" element={<ResumeBuilder />} />
           <Route path="/ai-assistant" element={<AdvancedAICareerAssistant />} />
           <Route path="/career-intelligence" element={<NextGenCareerPlatform />} />
