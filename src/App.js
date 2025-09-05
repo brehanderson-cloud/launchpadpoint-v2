@@ -1,180 +1,362 @@
-import React, { useState } from 'react'; import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; import { motion } from 'framer-motion'; import ResumeBuilder from './pages/ResumeBuilder'; import NextGenCareerPlatform from './pages/NextGenCareerPlatform'; import AdvancedAICareerAssistant from './pages/AdvancedAICareerAssistant';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ResumeBuilder from "./pages/ResumeBuilder";
+import NextGenCareerPlatform from "./pages/NextGenCareerPlatform";
+import AdvancedAICareerAssistant from "./pages/AdvancedAICareerAssistant";
 
-// 🔹 Rocket Logo Component const RocketLogo = ({ size = 32 }) => ( <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200 }} style={{ width: size, height: size, background: 'linear-gradient(135deg, #00A8FF, #7B68EE)', borderRadius: '50% 50% 50% 0', transform: 'rotate(-45deg)', position: 'relative', display: 'inline-block' }}
+// Rocket Logo Component
+const RocketLogo = ({ size = 32, className = "" }) => (
+  <div
+    className={className}
+    style={{
+      width: size,
+      height: size,
+      background:
+        "linear-gradient(135deg, #00A8FF 0%, #0078FF 50%, #7B68EE 100%)",
+      borderRadius: "50% 50% 50% 0",
+      position: "relative",
+      transform: "rotate(-45deg)",
+      display: "inline-block",
+    }}
+  >
+    <div
+      style={{
+        position: "absolute",
+        top: "30%",
+        left: "30%",
+        width: "40%",
+        height: "40%",
+        background: "#40E0D0",
+        borderRadius: "50%",
+        opacity: 0.8,
+      }}
+    ></div>
+    <div
+      style={{
+        position: "absolute",
+        bottom: "-10px",
+        left: "20%",
+        width: "20%",
+        height: "30%",
+        background: "linear-gradient(135deg, #7B68EE 0%, #9932CC 100%)",
+        borderRadius: "0 0 50% 50%",
+      }}
+    ></div>
+    <div
+      style={{
+        position: "absolute",
+        bottom: "-8px",
+        right: "20%",
+        width: "15%",
+        height: "25%",
+        background: "linear-gradient(135deg, #7B68EE 0%, #9932CC 100%)",
+        borderRadius: "0 0 50% 50%",
+      }}
+    ></div>
+  </div>
+);
 
-> 
+// Landing Page
+const LandingPage = ({ isDarkMode, setIsDarkMode }) => {
+  const [isDyslexiaFont, setIsDyslexiaFont] = useState(false);
 
-<div style={{
-  position: 'absolute',
-  top: '30%',
-  left: '30%',
-  width: '40%',
-  height: '40%',
-  background: '#40E0D0',
-  borderRadius: '50%',
-  opacity: 0.8
-}}></div>
-<div style={{
-  position: 'absolute',
-  bottom: '-10px',
-  left: '20%',
-  width: '20%',
-  height: '30%',
-  background: 'linear-gradient(135deg, #7B68EE, #9932CC)',
-  borderRadius: '0 0 50% 50%'
-}}></div>
+  const fontFamily = isDyslexiaFont
+    ? "OpenDyslexic, Arial, sans-serif"
+    : "Inter, -apple-system, BlinkMacSystemFont, sans-serif";
 
-</motion.div> );
+  const background = isDarkMode
+    ? "linear-gradient(135deg, #1f2937 0%, #111827 100%)"
+    : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
 
-// 🔹 Reusable Feature Card const FeatureCard = ({ icon, title, description }) => ( <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }} className="p-6 rounded-2xl bg-white/10 backdrop-blur-lg border border-white/20 text-center"
-
-> 
-
-<div className="w-16 h-16 flex items-center justify-center rounded-full bg-white/20 mx-auto mb-4 text-2xl">
-  {icon}
-</div>
-<h3 className="text-xl font-bold mb-2">{title}</h3>
-<p className="opacity-90 leading-relaxed">{description}</p>
-
-</motion.div> );
-
-// 🔹 Landing Page const LandingPage = ({ isDarkMode, toggleDarkMode }) => { const [isDyslexiaFont, setIsDyslexiaFont] = useState(false);
-
-const fontFamily = isDyslexiaFont ? 'OpenDyslexic, Arial, sans-serif' : 'Inter, sans-serif';
-
-return ( <div className={min-h-screen flex flex-col ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}} style={{ fontFamily }}> <style> {@import url('https://fonts.googleapis.com/css2?family=OpenDyslexic&display=swap');} </style>
-
-{/* Header */}
-  <header className={`flex justify-between items-center px-6 py-4 ${isDarkMode ? 'bg-white/10 text-white' : 'bg-gray-200 text-gray-900'} backdrop-blur-lg`}>
-    <div className="flex items-center gap-3 text-2xl font-bold">
-      <RocketLogo size={36} /> LaunchpadPoint
-    </div>
-    <div className="flex gap-3">
-      <button
-        onClick={() => setIsDyslexiaFont(!isDyslexiaFont)}
-        className={`px-4 py-2 rounded-lg border transition ${
-          isDyslexiaFont ? 'bg-teal-500/30 border-teal-400' : 'bg-white/20 border-white/30'
-        }`}
-      >
-        {isDyslexiaFont ? '✓ Dyslexia Font' : 'Dyslexia Font'}
-      </button>
-      <button 
-        onClick={toggleDarkMode}
-        className="px-4 py-2 rounded-lg bg-yellow-500/40 border border-white/30 hover:bg-yellow-600/50 transition"
-      >
-        {isDarkMode ? '☀ Light Mode' : '🌙 Dark Mode'}
-      </button>
-      <button 
-        onClick={() => window.location.href = '/dashboard'}
-        className="px-4 py-2 rounded-lg bg-blue-500/40 border border-white/30 hover:bg-blue-600/50 transition"
-      >
-        Get Started
-      </button>
-    </div>
-  </header>
-
-  {/* Hero */}
-  <main className="flex-1 flex flex-col items-center justify-center text-center px-4 bg-gradient-to-br from-indigo-500 to-purple-700">
-    <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
-      <RocketLogo size={120} />
-    </motion.div>
-    <motion.h1 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.3 }}
-      className="text-5xl font-bold mt-6"
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        background,
+        color: "white",
+        display: "flex",
+        flexDirection: "column",
+        fontFamily,
+        transition: "all 0.3s ease",
+      }}
     >
-      Transform Your Career with AI
-    </motion.h1>
-    <p className="mt-4 max-w-2xl opacity-90 text-lg">
-      LaunchpadPoint combines AI, deep career analysis, and accessibility-first design to accelerate your professional journey.
-    </p>
+      {/* Dyslexia Font CSS */}
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap');
+        `}
+      </style>
 
-    {/* CTA Buttons */}
-    <div className="flex flex-wrap justify-center gap-4 mt-8">
-      <motion.button whileHover={{ scale: 1.05 }} className="px-6 py-3 rounded-lg bg-blue-500 shadow-lg">
-        Create Professional Resume
-      </motion.button>
-      <motion.button whileHover={{ scale: 1.05 }} className="px-6 py-3 rounded-lg border border-white/40">
-        Start Free Trial
-      </motion.button>
-      <motion.button whileHover={{ scale: 1.05 }} className="px-6 py-3 rounded-lg border border-white">
-        Try AI Assistant
-      </motion.button>
+      {/* Header */}
+      <header
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "1rem 2rem",
+          background: "rgba(255, 255, 255, 0.1)",
+          backdropFilter: "blur(10px)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.75rem",
+            fontSize: "1.5rem",
+            fontWeight: "bold",
+          }}
+        >
+          <RocketLogo size={40} />
+          <span>LaunchpadPoint</span>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          {/* Dyslexia Font Toggle */}
+          <button
+            onClick={() => setIsDyslexiaFont(!isDyslexiaFont)}
+            style={{
+              background: isDyslexiaFont
+                ? "rgba(64, 224, 208, 0.3)"
+                : "rgba(255, 255, 255, 0.2)",
+              color: "white",
+              border: `2px solid ${
+                isDyslexiaFont ? "#40E0D0" : "rgba(255, 255, 255, 0.3)"
+              }`,
+              borderRadius: "8px",
+              padding: "0.5rem 1rem",
+              cursor: "pointer",
+              fontSize: "0.875rem",
+              fontWeight: "600",
+              transition: "all 0.3s ease",
+            }}
+            title="Toggle Dyslexia-Friendly Font"
+          >
+            {isDyslexiaFont ? "✓ Dyslexia Font" : "Dyslexia Font"}
+          </button>
+
+          {/* Dark/Light Toggle */}
+          <button
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            style={{
+              background: "rgba(255, 255, 255, 0.2)",
+              color: "white",
+              border: "2px solid rgba(255, 255, 255, 0.3)",
+              borderRadius: "8px",
+              padding: "0.5rem 1rem",
+              cursor: "pointer",
+              fontSize: "0.875rem",
+              fontWeight: "600",
+              transition: "all 0.3s ease",
+            }}
+            title="Toggle Dark/Light Mode"
+          >
+            {isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+          </button>
+
+          {/* Get Started */}
+          <button
+            onClick={() => (window.location.href = "/dashboard")}
+            style={{
+              background: "rgba(255, 255, 255, 0.15)",
+              color: "white",
+              padding: "0.75rem 1.5rem",
+              border: "2px solid rgba(255, 255, 255, 0.3)",
+              borderRadius: "8px",
+              fontSize: "1rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            Get Started
+          </button>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <main
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "2rem",
+          textAlign: "center",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "1rem",
+            marginBottom: "2rem",
+          }}
+        >
+          <RocketLogo size={120} />
+        </div>
+
+        <h1
+          style={{
+            fontSize: "clamp(2.5rem, 8vw, 4rem)",
+            fontWeight: "bold",
+            marginBottom: "1.5rem",
+            lineHeight: 1.2,
+          }}
+        >
+          Transform Your Career with AI
+        </h1>
+
+        <p
+          style={{
+            fontSize: "clamp(1.1rem, 3vw, 1.3rem)",
+            marginBottom: "3rem",
+            opacity: 0.9,
+            maxWidth: "700px",
+            lineHeight: 1.4,
+          }}
+        >
+          LaunchpadPoint combines artificial intelligence, comprehensive analysis,
+          and professional optimization to accelerate your career development
+          journey.
+        </p>
+      </main>
+
+      {/* Footer */}
+      <footer
+        style={{
+          padding: "2rem",
+          textAlign: "center",
+          background: "rgba(0, 0, 0, 0.2)",
+          marginTop: "2rem",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem",
+            marginBottom: "1rem",
+          }}
+        >
+          <RocketLogo size={28} />
+          <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>
+            LaunchpadPoint
+          </span>
+        </div>
+        <p style={{ opacity: 0.8, fontSize: "0.9rem" }}>
+          Empowering careers through intelligent, accessible technology
+        </p>
+      </footer>
     </div>
+  );
+};
 
-    {/* Features */}
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-5xl w-full">
-      <FeatureCard 
-        icon={<RocketLogo size={32} />} 
-        title="AI Resume Builder" 
-        description="Tailored resumes optimized with intelligent analysis."
-      />
-      <FeatureCard 
-        icon="🎯" 
-        title="Job Matching" 
-        description="Find jobs aligned with your skills and career path."
-      />
-      <FeatureCard 
-        icon="♿" 
-        title="Accessibility First" 
-        description="15+ accessibility features including dyslexia-friendly fonts."
-      />
+// Dashboard
+const Dashboard = () => (
+  <div
+    style={{ padding: "2rem", minHeight: "100vh", background: "#f7fafc" }}
+  >
+    <h1
+      style={{ fontSize: "2.5rem", marginBottom: "1rem", color: "#2d3748" }}
+    >
+      Dashboard
+    </h1>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+        gap: "1rem",
+        marginBottom: "2rem",
+      }}
+    >
+      <div
+        style={{
+          background: "white",
+          padding: "1.5rem",
+          borderRadius: "8px",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+        }}
+      >
+        <h3 style={{ color: "#4a5568", marginBottom: "0.5rem" }}>
+          Applications
+        </h3>
+        <p
+          style={{ fontSize: "2rem", fontWeight: "bold", color: "#3182ce" }}
+        >
+          0
+        </p>
+      </div>
+      <div
+        style={{
+          background: "white",
+          padding: "1.5rem",
+          borderRadius: "8px",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+        }}
+      >
+        <h3 style={{ color: "#4a5568", marginBottom: "0.5rem" }}>
+          Resume Score
+        </h3>
+        <p
+          style={{ fontSize: "2rem", fontWeight: "bold", color: "#38a169" }}
+        >
+          -
+        </p>
+      </div>
+      <div
+        style={{
+          background: "white",
+          padding: "1.5rem",
+          borderRadius: "8px",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+        }}
+      >
+        <h3 style={{ color: "#4a5568", marginBottom: "0.5rem" }}>
+          Job Matches
+        </h3>
+        <p
+          style={{ fontSize: "2rem", fontWeight: "bold", color: "#8b5cf6" }}
+        >
+          0
+        </p>
+      </div>
     </div>
-  </main>
-
-  {/* Footer */}
-  <footer className={`py-6 ${isDarkMode ? 'bg-black/30 text-white' : 'bg-gray-200 text-gray-900'} text-center`}>
-    <div className="flex justify-center items-center gap-2 mb-2">
-      <RocketLogo size={24} /> <span className="font-bold">LaunchpadPoint</span>
-    </div>
-    <p className="opacity-70 text-sm">Empowering careers through intelligent, accessible technology</p>
-  </footer>
-</div>
-
-); };
-
-// 🔹 Dashboard Page const Dashboard = ({ isDarkMode }) => (
-
-  <div className={`min-h-screen p-6 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
-    <h1 className="text-3xl font-bold mb-4">Dashboard</h1><motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid md:grid-cols-3 gap-4 mb-6">
-  <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-4 rounded-xl shadow`}>
-    <h3 className="text-gray-400">Applications</h3>
-    <p className="text-2xl font-bold text-blue-500">0</p>
   </div>
-  <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-4 rounded-xl shadow`}>
-    <h3 className="text-gray-400">Resume Score</h3>
-    <p className="text-2xl font-bold text-green-500">-</p>
-  </div>
-  <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-4 rounded-xl shadow`}>
-    <h3 className="text-gray-400">Job Matches</h3>
-    <p className="text-2xl font-bold text-purple-500">0</p>
-  </div>
-</motion.div>
+);
 
-<div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-6 rounded-xl shadow mb-6`}>
-  <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
-  <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
-    <button className="p-4 bg-blue-500 text-white rounded-lg">📄 Build Resume</button>
-    <button className="p-4 bg-purple-500 text-white rounded-lg">🤖 AI Assistant</button>
-    <button className="p-4 bg-green-500 text-white rounded-lg">🚀 Career Intelligence</button>
-    <button disabled className="p-4 bg-gray-200 text-gray-500 rounded-lg">🔍 Find Jobs (Soon)</button>
-  </div>
-</div>
+function App() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-<div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-6 rounded-xl shadow`}>
-  <h3 className="text-lg font-bold mb-2">Recent Activity</h3>
-  <ul className="list-disc pl-6 opacity-80">
-    <li>Welcome to LaunchpadPoint V2! Start by building your resume.</li>
-  </ul>
-</div>
+  useEffect(() => {
+    document.body.style.background = isDarkMode ? "#111827" : "#ffffff";
+  }, [isDarkMode]);
 
-  </div>
-);// 🔹 App Router with Theme Toggle function App() { const [isDarkMode, setIsDarkMode] = useState(true);
-
-const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
-
-return ( <Router> <Routes> <Route path="/" element={<LandingPage isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />} /> <Route path="/dashboard" element={<Dashboard isDarkMode={isDarkMode} />} /> <Route path="/resume-builder" element={<ResumeBuilder />} /> <Route path="/ai-assistant" element={<AdvancedAICareerAssistant />} /> <Route path="/career-intelligence" element={<NextGenCareerPlatform />} /> </Routes> </Router> ); }
+  return (
+    <Router>
+      <div
+        style={{
+          fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        }}
+      >
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <LandingPage isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+            }
+          />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/resume-builder" element={<ResumeBuilder />} />
+          <Route path="/ai-assistant" element={<AdvancedAICareerAssistant />} />
+          <Route path="/career-intelligence" element={<NextGenCareerPlatform />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+}
 
 export default App;
-
