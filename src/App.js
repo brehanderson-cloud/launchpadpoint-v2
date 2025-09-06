@@ -207,7 +207,7 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
           }}
         >
           <button
-            onClick={() => alert("Resume Builder - Coming Soon!")}
+            onClick={() => window.location.href = '/resume-builder.html'}
             style={{
               background: "linear-gradient(135deg, #00A8FF 0%, #0078FF 100%)",
               color: "white",
@@ -251,7 +251,7 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
             </button>
 
             <button
-              onClick={() => alert("AI Assistant - Coming Soon!")}
+              onClick={() => window.location.href = '/ai-assistant.html'}
               style={{
                 flex: 1,
                 background: "transparent",
