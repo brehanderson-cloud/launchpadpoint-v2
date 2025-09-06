@@ -1,52 +1,54 @@
 import React, { createContext, useContext, useState } from 'react';
 
-const UserContext = createContext();
+const ResumeContext = createContext();
 
-export const useUser = () => {
-  const context = useContext(UserContext);
+export const useResume = () => {
+  const context = useContext(ResumeContext);
   if (!context) {
-    throw new Error('useUser must be used within a UserProvider');
+    throw new Error('useResume must be used within a ResumeProvider');
   }
   return context;
 };
 
-export const UserProvider = ({ children }) => {
-  const [userData, setUserData] = useState({
-    name: 'John Doe',
-    title: 'Senior Software Engineer',
-    email: 'john.doe@example.com',
-    phone: '(555) 123-4567',
-    location: 'San Francisco, CA',
-    avatar: 'JD',
-    careerIntelligence: {
-      overall: 87,
-      skills: 92,
-      market: 89,
-      complete: 78,
-      weeklyChange: 5
+export const ResumeProvider = ({ children }) => {
+  const [resumeData, setResumeData] = useState({
+    personal: {
+      fullName: 'John Doe',
+      jobTitle: 'Senior Software Engineer',
+      email: 'john.doe@example.com',
+      phone: '(555) 123-4567',
+      location: 'San Francisco, CA',
+      summary: 'Experienced software engineer with 5+ years of expertise in developing scalable web applications and leading development teams. Strong problem-solving skills and passion for clean code architecture.'
     },
-    marketValue: 118000,
-    monthlyIncrease: 3000,
-    opportunities: 156,
-    newToday: 12,
-    experience: 6,
-    applications: 8,
-    interviews: 3,
-    offers: 1
+    experience: [{
+      company: 'Tech Innovations Inc.',
+      position: 'Senior Software Engineer',
+      startDate: '2020-01',
+      endDate: '2023-08',
+      description: '• Led a team of 5 developers in creating a new SaaS product\n• Improved system performance by 40% through optimization\n• Implemented CI/CD pipeline reducing deployment time by 60%'
+    }],
+    education: [{
+      institution: 'Stanford University',
+      degree: 'Master of Science in Computer Science',
+      graduationDate: '2018-05',
+      gpa: '3.9/4.0',
+      achievements: '• Graduated with honors\n• Published research on machine learning algorithms\n• President of Computer Science Club'
+    }],
+    skills: ['JavaScript', 'React', 'Node.js', 'Python', 'SQL', 'AWS', 'Docker', 'Kubernetes', 'Team Leadership', 'Agile Methodologies']
   });
 
-  const [notifications, setNotifications] = useState(3);
+  const [careerScore, setCareerScore] = useState(87);
 
   const value = {
-    userData,
-    setUserData,
-    notifications,
-    setNotifications
+    resumeData,
+    setResumeData,
+    careerScore,
+    setCareerScore
   };
 
   return (
-    <UserContext.Provider value={value}>
+    <ResumeContext.Provider value={value}>
       {children}
-    </UserContext.Provider>
+    </ResumeContext.Provider>
   );
 };
