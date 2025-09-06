@@ -823,7 +823,7 @@ class ResumeBatchProcessor {
   }
 }
 
-// Usage in ResumeBuilder component
+// Export functions for use in other parts of your application
 export function analyzeResumeWithAI(resumeData, jobDescription = '') {
   const analyzer = new ResumeAnalyzer(resumeData, jobDescription);
   return analyzer.analyze();
@@ -833,3 +833,6 @@ export function analyzeResumeBatch(resumes, jobDescription) {
   const processor = new ResumeBatchProcessor();
   return processor.analyzeBatch(resumes, jobDescription);
 }
+
+// Export the classes if needed elsewhere
+export { ResumeAnalyzer, JobDescriptionParser, NLPUtils };
