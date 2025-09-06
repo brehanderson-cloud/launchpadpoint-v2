@@ -125,6 +125,8 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
               transition: "all 0.3s ease",
               minWidth: "70px",
               textAlign: "center",
+              outline: "none",
+              touchAction: "manipulation",
             }}
           >
             Dyslexia Font
@@ -145,6 +147,8 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
               transition: "all 0.3s ease",
               minWidth: "70px",
               textAlign: "center",
+              outline: "none",
+              touchAction: "manipulation",
             }}
           >
             {isDarkMode ? "☀️ Light" : "🌙 Dark"}
@@ -216,11 +220,7 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
         >
           {/* Primary CTA */}
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              alert("Resume Builder - Coming Soon!");
-            }}
+            onClick={() => alert("Resume Builder - Coming Soon!")}
             style={{
               background: "linear-gradient(135deg, #00A8FF 0%, #0078FF 100%)",
               color: "white",
@@ -233,14 +233,9 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
               boxShadow: "0 4px 15px rgba(0, 168, 255, 0.4)",
               transition: "all 0.3s ease",
               width: "100%",
-              userSelect: "none",
-              WebkitTapHighlightColor: "transparent",
-            }}
-            onTouchStart={(e) => {
-              e.currentTarget.style.transform = "scale(0.98)";
-            }}
-            onTouchEnd={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
+              outline: "none",
+              touchAction: "manipulation",
+              WebkitTapHighlightColor: "rgba(0, 168, 255, 0.3)",
             }}
           >
             <div style={{ fontSize: "1.1rem", marginBottom: "0.25rem" }}>
@@ -254,11 +249,7 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
           {/* Secondary CTAs */}
           <div style={{ display: "flex", gap: "0.75rem" }}>
             <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                alert("Free Trial - Coming Soon!");
-              }}
+              onClick={() => alert("Free Trial - Coming Soon!")}
               style={{
                 flex: 1,
                 background: "rgba(255, 255, 255, 0.15)",
@@ -271,25 +262,16 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
                 cursor: "pointer",
                 backdropFilter: "blur(10px)",
                 transition: "all 0.3s ease",
-                userSelect: "none",
-                WebkitTapHighlightColor: "transparent",
-              }}
-              onTouchStart={(e) => {
-                e.currentTarget.style.transform = "scale(0.98)";
-              }}
-              onTouchEnd={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
+                outline: "none",
+                touchAction: "manipulation",
+                WebkitTapHighlightColor: "rgba(255, 255, 255, 0.2)",
               }}
             >
               Start Free Trial
             </button>
 
             <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                alert("AI Assistant - Coming Soon!");
-              }}
+              onClick={() => alert("AI Assistant - Coming Soon!")}
               style={{
                 flex: 1,
                 background: "transparent",
@@ -301,14 +283,9 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
                 fontWeight: "600",
                 cursor: "pointer",
                 transition: "all 0.3s ease",
-                userSelect: "none",
-                WebkitTapHighlightColor: "transparent",
-              }}
-              onTouchStart={(e) => {
-                e.currentTarget.style.transform = "scale(0.98)";
-              }}
-              onTouchEnd={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
+                outline: "none",
+                touchAction: "manipulation",
+                WebkitTapHighlightColor: "rgba(255, 255, 255, 0.2)",
               }}
             >
               Try AI Assistant
@@ -456,23 +433,6 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
           Empowering careers through intelligent, accessible technology
         </p>
       </footer>
-
-      {/* Mobile-specific styles */}
-      <style>
-        {`
-          @media (max-width: 768px) {
-            .mobile-button:active {
-              transform: scale(0.98);
-            }
-          }
-          
-          @media (max-width: 480px) {
-            h1 {
-              font-size: 2rem !important;
-            }
-          }
-        `}
-      </style>
     </div>
   );
 };
@@ -501,13 +461,6 @@ const DesktopLandingPage = ({ isDarkMode, setIsDarkMode }) => {
         transition: "all 0.3s ease",
       }}
     >
-      {/* Dyslexia Font CSS */}
-      <style>
-        {`
-          @import url('https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap');
-        `}
-      </style>
-
       {/* Header */}
       <header
         style={{
@@ -550,6 +503,8 @@ const DesktopLandingPage = ({ isDarkMode, setIsDarkMode }) => {
               fontSize: "0.875rem",
               fontWeight: "600",
               transition: "all 0.3s ease",
+              outline: "none",
+              touchAction: "manipulation",
             }}
             title="Toggle Dyslexia-Friendly Font"
           >
@@ -569,6 +524,8 @@ const DesktopLandingPage = ({ isDarkMode, setIsDarkMode }) => {
               fontSize: "0.875rem",
               fontWeight: "600",
               transition: "all 0.3s ease",
+              outline: "none",
+              touchAction: "manipulation",
             }}
             title="Toggle Dark/Light Mode"
           >
@@ -588,6 +545,8 @@ const DesktopLandingPage = ({ isDarkMode, setIsDarkMode }) => {
               fontWeight: "600",
               cursor: "pointer",
               backdropFilter: "blur(10px)",
+              outline: "none",
+              touchAction: "manipulation",
             }}
           >
             Get Started
@@ -668,6 +627,8 @@ const DesktopLandingPage = ({ isDarkMode, setIsDarkMode }) => {
               cursor: "pointer",
               boxShadow: "0 4px 15px rgba(0, 168, 255, 0.4)",
               transition: "all 0.3s ease",
+              outline: "none",
+              touchAction: "manipulation",
             }}
           >
             <div>Create Professional Resume</div>
@@ -689,6 +650,8 @@ const DesktopLandingPage = ({ isDarkMode, setIsDarkMode }) => {
               cursor: "pointer",
               backdropFilter: "blur(10px)",
               transition: "all 0.3s ease",
+              outline: "none",
+              touchAction: "manipulation",
             }}
           >
             Start Free Trial
@@ -706,6 +669,8 @@ const DesktopLandingPage = ({ isDarkMode, setIsDarkMode }) => {
               fontWeight: "600",
               cursor: "pointer",
               transition: "all 0.3s ease",
+              outline: "none",
+              touchAction: "manipulation",
             }}
           >
             Try AI Assistant
