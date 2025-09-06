@@ -130,42 +130,42 @@ const LaunchpadPoint = () => {
       name: 'ResumeAI',
       icon: FileText,
       description: 'Resume optimization and ATS scoring',
-      color: 'from-blue-500 to-cyan-500',
+      color: 'from-blue-400 via-blue-500 to-indigo-600',
       specialty: 'Resume & Cover Letters'
     },
     career: {
       name: 'CareerAI',
       icon: TrendingUp,
       description: 'Career progression and strategy',
-      color: 'from-purple-500 to-pink-500',
+      color: 'from-purple-400 via-purple-500 to-indigo-600',
       specialty: 'Career Development'
     },
     skills: {
       name: 'SkillsAI',
       icon: Brain,
       description: 'Skills gap analysis and learning paths',
-      color: 'from-green-500 to-emerald-500',
+      color: 'from-cyan-400 via-blue-500 to-purple-600',
       specialty: 'Skill Development'
     },
     interview: {
       name: 'InterviewAI',
       icon: MessageSquare,
       description: 'Interview preparation and practice',
-      color: 'from-orange-500 to-red-500',
+      color: 'from-indigo-400 via-purple-500 to-pink-500',
       specialty: 'Interview Coaching'
     },
     salary: {
       name: 'SalaryAI',
       icon: DollarSign,
       description: 'Salary negotiation and market rates',
-      color: 'from-yellow-500 to-orange-500',
+      color: 'from-blue-500 via-indigo-500 to-purple-600',
       specialty: 'Compensation Analysis'
     },
     network: {
       name: 'NetworkAI',
       icon: Users,
       description: 'Professional networking and connections',
-      color: 'from-indigo-500 to-purple-500',
+      color: 'from-purple-500 via-indigo-500 to-blue-600',
       specialty: 'Professional Networking'
     }
   };
@@ -297,10 +297,10 @@ ${edu.achievements}
                 onClick={() => setCurrentPage(key)}
                 className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center space-x-2 ${
                   currentPage === key
-                    ? 'bg-blue-500 text-white shadow-lg'
+                    ? 'bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 text-white shadow-lg'
                     : darkMode
-                    ? 'text-gray-300 hover:text-white hover:bg-gray-700'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    ? 'text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-600/20 hover:to-purple-600/20'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gradient-to-r hover:from-indigo-100 hover:to-purple-100'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -471,33 +471,42 @@ ${edu.achievements}
   const DashboardPage = () => (
     <div className="space-y-8">
       {/* Career Intelligence Score - Main Hero */}
-      <div className={`${darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900' : 'bg-gradient-to-br from-blue-500 to-purple-600'} rounded-2xl p-8 text-white shadow-2xl`}>
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-3xl font-bold mb-2">Career Intelligence Score</h2>
-            <p className="text-blue-100">Your comprehensive career performance metric</p>
-          </div>
-          <div className="text-right">
-            <div className="text-6xl font-bold">{userData.careerIntelligence.overall}</div>
-            <div className="text-lg text-green-300 flex items-center justify-end">
-              <ArrowUp className="w-5 h-5 mr-1" />
-              +{userData.careerIntelligence.weeklyChange} this week
+      <div className={`${darkMode ? 'bg-gradient-to-br from-slate-800 via-indigo-900 to-purple-900' : 'bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-600'} rounded-2xl p-8 text-white shadow-2xl relative overflow-hidden`}>
+        {/* Animated background elements */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400 to-transparent rounded-full opacity-20 animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-400 to-transparent rounded-full opacity-30 animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/3 w-2 h-2 bg-white rounded-full opacity-60 animate-pulse"></div>
+        <div className="absolute top-1/4 right-1/4 w-1 h-1 bg-blue-200 rounded-full opacity-80 animate-pulse delay-500"></div>
+        <div className="absolute bottom-1/3 right-1/3 w-1.5 h-1.5 bg-purple-200 rounded-full opacity-70 animate-pulse delay-700"></div>
+        
+        <div className="relative z-10">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-3xl font-bold mb-2">Career Intelligence Score</h2>
+              <p className="text-blue-100">Your comprehensive career performance metric</p>
+            </div>
+            <div className="text-right">
+              <div className="text-6xl font-bold">{userData.careerIntelligence.overall}</div>
+              <div className="text-lg text-green-300 flex items-center justify-end">
+                <ArrowUp className="w-5 h-5 mr-1" />
+                +{userData.careerIntelligence.weeklyChange} this week
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div className="grid grid-cols-3 gap-6">
-          <div className="text-center">
-            <div className="text-3xl font-bold mb-1">{userData.careerIntelligence.skills}%</div>
-            <div className="text-blue-200">Skills</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold mb-1">{userData.careerIntelligence.market}%</div>
-            <div className="text-blue-200">Market</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold mb-1">{userData.careerIntelligence.complete}%</div>
-            <div className="text-blue-200">Complete</div>
+          
+          <div className="grid grid-cols-3 gap-6">
+            <div className="text-center">
+              <div className="text-3xl font-bold mb-1">{userData.careerIntelligence.skills}%</div>
+              <div className="text-blue-200">Skills</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold mb-1">{userData.careerIntelligence.market}%</div>
+              <div className="text-blue-200">Market</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold mb-1">{userData.careerIntelligence.complete}%</div>
+              <div className="text-blue-200">Complete</div>
+            </div>
           </div>
         </div>
       </div>
@@ -505,26 +514,30 @@ ${edu.achievements}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Market Value & Opportunities */}
         <div className="grid grid-cols-2 gap-6">
-          <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-            <div className="flex items-center justify-between mb-4">
-              <DollarSign className="w-8 h-8 text-green-500" />
-              <span className="text-sm text-green-600 font-medium">+${userData.monthlyIncrease.toLocaleString()} this month</span>
+          <div className={`${darkMode ? 'bg-gradient-to-br from-slate-700 to-indigo-800' : 'bg-gradient-to-br from-emerald-50 to-green-100'} p-6 rounded-lg`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Market Value</p>
+                <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">
+                  ${userData.marketValue.toLocaleString()}K
+                </p>
+              </div>
+              <DollarSign className="w-8 h-8 text-emerald-500" />
             </div>
-            <div className="text-3xl font-bold text-green-600 mb-1">
-              ${userData.marketValue.toLocaleString()}K
-            </div>
-            <div className="text-gray-500">Market Value</div>
+            <span className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">+${userData.monthlyIncrease.toLocaleString()} this month</span>
           </div>
 
-          <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-            <div className="flex items-center justify-between mb-4">
+          <div className={`${darkMode ? 'bg-gradient-to-br from-indigo-700 to-purple-800' : 'bg-gradient-to-br from-blue-50 to-indigo-100'} p-6 rounded-lg`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Opportunities</p>
+                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+                  {userData.opportunities}
+                </p>
+              </div>
               <Briefcase className="w-8 h-8 text-blue-500" />
-              <span className="text-sm text-blue-600 font-medium">{userData.newToday} new today</span>
             </div>
-            <div className="text-3xl font-bold text-blue-600 mb-1">
-              {userData.opportunities}
-            </div>
-            <div className="text-gray-500">Opportunities</div>
+            <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">{userData.newToday} new today</span>
           </div>
         </div>
 
@@ -623,29 +636,32 @@ ${edu.achievements}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <button 
           onClick={() => setCurrentPage('builder')}
-          className={`${darkMode ? 'bg-red-600 hover:bg-red-700' : 'bg-red-500 hover:bg-red-600'} text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105`}
+          className={`${darkMode ? 'bg-gradient-to-br from-red-600 via-pink-600 to-purple-700 hover:from-red-500 hover:via-pink-500 hover:to-purple-600' : 'bg-gradient-to-br from-red-500 via-pink-500 to-purple-600 hover:from-red-400 hover:via-pink-400 hover:to-purple-500'} text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 relative overflow-hidden`}
         >
-          <FileText className="w-8 h-8 mb-3" />
-          <h3 className="text-lg font-semibold mb-2">Create Resume</h3>
-          <p className="text-sm opacity-90">Build your professional resume with AI guidance</p>
+          <div className="absolute top-0 right-0 w-16 h-16 bg-white opacity-10 rounded-full -translate-y-8 translate-x-8"></div>
+          <FileText className="w-8 h-8 mb-3 relative z-10" />
+          <h3 className="text-lg font-semibold mb-2 relative z-10">Create Resume</h3>
+          <p className="text-sm opacity-90 relative z-10">Build your professional resume with AI guidance</p>
         </button>
 
         <button 
           onClick={() => setAiChatOpen(true)}
-          className={`${darkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'} text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105`}
+          className={`${darkMode ? 'bg-gradient-to-br from-indigo-600 via-blue-600 to-purple-700 hover:from-indigo-500 hover:via-blue-500 hover:to-purple-600' : 'bg-gradient-to-br from-indigo-500 via-blue-500 to-purple-600 hover:from-indigo-400 hover:via-blue-400 hover:to-purple-500'} text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 relative overflow-hidden`}
         >
-          <MessageSquare className="w-8 h-8 mb-3" />
-          <h3 className="text-lg font-semibold mb-2">Ask AI Assistant</h3>
-          <p className="text-sm opacity-90">Get personalized career advice from experts</p>
+          <div className="absolute bottom-0 left-0 w-20 h-20 bg-white opacity-10 rounded-full translate-y-10 -translate-x-10"></div>
+          <MessageSquare className="w-8 h-8 mb-3 relative z-10" />
+          <h3 className="text-lg font-semibold mb-2 relative z-10">Ask AI Assistant</h3>
+          <p className="text-sm opacity-90 relative z-10">Get personalized career advice from experts</p>
         </button>
 
         <button 
           onClick={() => setCurrentPage('jobs')}
-          className={`${darkMode ? 'bg-green-600 hover:bg-green-700' : 'bg-green-500 hover:bg-green-600'} text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105`}
+          className={`${darkMode ? 'bg-gradient-to-br from-emerald-600 via-teal-600 to-blue-700 hover:from-emerald-500 hover:via-teal-500 hover:to-blue-600' : 'bg-gradient-to-br from-emerald-500 via-teal-500 to-blue-600 hover:from-emerald-400 hover:via-teal-400 hover:to-blue-500'} text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 relative overflow-hidden`}
         >
-          <Search className="w-8 h-8 mb-3" />
-          <h3 className="text-lg font-semibold mb-2">Search Jobs</h3>
-          <p className="text-sm opacity-90">Find opportunities that match your profile</p>
+          <div className="absolute top-1/2 right-0 w-12 h-12 bg-white opacity-10 rounded-full translate-x-6"></div>
+          <Search className="w-8 h-8 mb-3 relative z-10" />
+          <h3 className="text-lg font-semibold mb-2 relative z-10">Search Jobs</h3>
+          <p className="text-sm opacity-90 relative z-10">Find opportunities that match your profile</p>
         </button>
       </div>
     </div>
@@ -996,8 +1012,8 @@ ${edu.achievements}
   return (
     <div className={`min-h-screen transition-all duration-300 ${
       darkMode 
-        ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white' 
-        : 'bg-gradient-to-br from-blue-50 via-white to-purple-50 text-gray-900'
+        ? 'bg-gradient-to-br from-gray-900 via-slate-800 to-indigo-900 text-white' 
+        : 'bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-100 text-gray-900'
     } ${dyslexiaMode ? 'font-mono' : 'font-sans'}`}>
       <Navigation />
       
@@ -1014,9 +1030,12 @@ ${edu.achievements}
       {!aiChatOpen && (
         <button
           onClick={() => setAiChatOpen(true)}
-          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center z-50 hover:scale-110"
+          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center z-50 hover:scale-110 relative overflow-hidden"
         >
-          <Sparkles className="w-7 h-7" />
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-purple-400 to-indigo-500 opacity-0 hover:opacity-20 transition-opacity rounded-full"></div>
+          <Sparkles className="w-7 h-7 relative z-10" />
+          <div className="absolute top-1 right-1 w-2 h-2 bg-blue-200 rounded-full opacity-60 animate-pulse"></div>
+          <div className="absolute bottom-2 left-2 w-1 h-1 bg-purple-200 rounded-full opacity-80 animate-pulse delay-300"></div>
         </button>
       )}
     </div>
