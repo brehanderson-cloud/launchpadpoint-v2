@@ -25,6 +25,10 @@
             color: #f0f0f0;
         }
         
+        body.dyslexia-mode {
+            font-family: 'Comic Sans MS', cursive;
+        }
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -439,6 +443,40 @@
             color: #4cc9f0;
         }
         
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .dark-mode .modal-content {
+            background: #222;
+            color: white;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
         @media (max-width: 900px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -447,6 +485,11 @@
             .preview-section {
                 position: relative;
                 top: 0;
+            }
+            
+            .header-controls {
+                flex-direction: column;
+                gap: 8px;
             }
         }
     </style>
@@ -703,6 +746,36 @@
         </div>
     </div>
 
+    <!-- Free Trial Modal -->
+    <div class="modal" id="trial-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-rocket"></i> Start Your Free Trial</h2>
+            <p>Get 7 days of full access to all LaunchpadPoint features</p>
+            <div class="form-group">
+                <input type="email" placeholder="Enter your email" id="trial-email">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-outline" id="cancel-trial">Cancel</button>
+                <button class="btn btn-primary" id="start-trial">Start Free Trial</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Modal -->
+    <div class="modal" id="ai-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-robot"></i> AI Resume Assistant</h2>
+            <p>Our AI will analyze your resume and provide personalized suggestions</p>
+            <div class="form-group">
+                <textarea placeholder="Ask a question about your resume..." id="ai-question"></textarea>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-outline" id="cancel-ai">Cancel</button>
+                <button class="btn btn-primary" id="ask-ai">Ask AI</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Toggle dark mode
         const darkModeToggle = document.getElementById('dark-mode-toggle');
@@ -714,6 +787,22 @@
                 darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
             } else {
                 darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            }
+        });
+        
+        // Toggle dyslexia mode
+        const dyslexiaToggle = document.getElementById('dyslexia-toggle');
+        
+        dyslexiaToggle.addEventListener('click', () => {
+            body.classList.toggle('dyslexia-mode');
+            if (body.classList.contains('dyslexia-mode')) {
+                dyslexiaToggle.innerHTML = '<i class="fas fa-font"></i> Standard Font';
+                dyslexiaToggle.style.background = 'rgba(64, 224, 208, 0.3)';
+                dyslexiaToggle.style.borderColor = '#40E0D0';
+            } else {
+                dyslexiaToggle.innerHTML = '<i class="fas fa-font"></i> Dyslexia Font';
+                dyslexiaToggle.style.background = 'rgba(255, 255, 255, 0.2)';
+                dyslexiaToggle.style.borderColor = 'rgba(255, 255, 255, 0.3)';
             }
         });
         
@@ -815,7 +904,62 @@
         
         // Export button functionality
         document.getElementById('export-btn').addEventListener('click', function() {
+            // In a real app, this would generate a PDF
             alert('Resume exported successfully! In a real application, this would download a PDF or Word document.');
+        });
+        
+        // Free trial modal
+        document.getElementById('add-experience').addEventListener('click', function() {
+            document.getElementById('trial-modal').style.display = 'flex';
+        });
+        
+        document.getElementById('add-education').addEventListener('click', function() {
+            document.getElementById('trial-modal').style.display = 'flex';
+        });
+        
+        document.getElementById('add-skill-category').addEventListener('click', function() {
+            document.getElementById('trial-modal').style.display = 'flex';
+        });
+        
+        document.getElementById('cancel-trial').addEventListener('click', function() {
+            document.getElementById('trial-modal').style.display = 'none';
+        });
+        
+        document.getElementById('start-trial').addEventListener('click', function() {
+            const email = document.getElementById('trial-email').value;
+            if (email && email.includes('@')) {
+                alert(`Free trial started for ${email}! Check your email for confirmation.`);
+                document.getElementById('trial-modal').style.display = 'none';
+            } else {
+                alert('Please enter a valid email address.');
+            }
+        });
+        
+        // AI Assistant modal
+        document.getElementById('show-suggestions').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('ai-modal').style.display = 'flex';
+        });
+        
+        document.getElementById('cancel-ai').addEventListener('click', function() {
+            document.getElementById('ai-modal').style.display = 'none';
+        });
+        
+        document.getElementById('ask-ai').addEventListener('click', function() {
+            const question = document.getElementById('ai-question').value;
+            if (question) {
+                alert(`AI Assistant: Thanks for your question! In the full version, our AI would provide detailed feedback on: "${question}"`);
+                document.getElementById('ai-modal').style.display = 'none';
+            } else {
+                alert('Please ask a question about your resume.');
+            }
+        });
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
         });
         
         // Initialize
