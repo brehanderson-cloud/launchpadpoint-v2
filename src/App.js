@@ -893,12 +893,3 @@ function App() {
 }
 
 export default App;
-      <ResponsiveLandingPage 
-        isDarkMode={isDarkMode} 
-        setIsDarkMode={setIsDarkMode} 
-      />
-    </div>
-  );
-}
-
-export default App;
