@@ -1,8 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ResumeBuilder from "./pages/ResumeBuilder";
-import NextGenCareerPlatform from "./pages/NextGenCareerPlatform";
-import AdvancedAICareerAssistant from "./pages/AdvancedAICareerAssistant";
 
 // Rocket Logo Component
 const RocketLogo = ({ size = 32, className = "" }) => (
@@ -56,8 +52,397 @@ const RocketLogo = ({ size = 32, className = "" }) => (
   </div>
 );
 
-// Landing Page
-const LandingPage = ({ isDarkMode, setIsDarkMode }) => {
+// Mobile-Optimized Landing Page Component
+const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
+  const [isDyslexiaFont, setIsDyslexiaFont] = useState(false);
+
+  const fontFamily = isDyslexiaFont
+    ? "OpenDyslexic, Arial, sans-serif"
+    : "Inter, -apple-system, BlinkMacSystemFont, sans-serif";
+
+  const background = isDarkMode
+    ? "linear-gradient(135deg, #1f2937 0%, #111827 100%)"
+    : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        background,
+        color: "white",
+        display: "flex",
+        flexDirection: "column",
+        fontFamily,
+        transition: "all 0.3s ease",
+      }}
+    >
+      {/* Mobile Header */}
+      <header
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "1rem",
+          background: "rgba(255, 255, 255, 0.1)",
+          backdropFilter: "blur(10px)",
+          position: "sticky",
+          top: 0,
+          zIndex: 50,
+        }}
+      >
+        {/* Logo */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            fontSize: "1.2rem",
+            fontWeight: "bold",
+          }}
+        >
+          <RocketLogo size={32} />
+          <span>LaunchpadPoint</span>
+        </div>
+
+        {/* Controls Container */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          {/* Dyslexia Toggle */}
+          <button
+            onClick={() => setIsDyslexiaFont(!isDyslexiaFont)}
+            style={{
+              background: isDyslexiaFont
+                ? "rgba(64, 224, 208, 0.3)"
+                : "rgba(255, 255, 255, 0.2)",
+              color: "white",
+              border: `1px solid ${
+                isDyslexiaFont ? "#40E0D0" : "rgba(255, 255, 255, 0.3)"
+              }`,
+              borderRadius: "8px",
+              padding: "0.5rem",
+              cursor: "pointer",
+              fontSize: "0.7rem",
+              fontWeight: "600",
+              transition: "all 0.3s ease",
+              minWidth: "70px",
+              textAlign: "center",
+            }}
+          >
+            Dyslexia Font
+          </button>
+
+          {/* Dark/Light Toggle */}
+          <button
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            style={{
+              background: "rgba(255, 255, 255, 0.2)",
+              color: "white",
+              border: "1px solid rgba(255, 255, 255, 0.3)",
+              borderRadius: "8px",
+              padding: "0.5rem",
+              cursor: "pointer",
+              fontSize: "0.7rem",
+              fontWeight: "600",
+              transition: "all 0.3s ease",
+              minWidth: "70px",
+              textAlign: "center",
+            }}
+          >
+            {isDarkMode ? "☀️ Light" : "🌙 Dark"}
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Hero Section */}
+      <main
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "2rem 1rem",
+          textAlign: "center",
+        }}
+      >
+        {/* Logo Display */}
+        <div
+          style={{
+            marginBottom: "1.5rem",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <RocketLogo size={80} />
+        </div>
+
+        {/* Main Heading */}
+        <h1
+          style={{
+            fontSize: "2.5rem",
+            fontWeight: "bold",
+            marginBottom: "1rem",
+            lineHeight: 1.2,
+            maxWidth: "100%",
+          }}
+        >
+          Transform Your Career with AI
+        </h1>
+
+        {/* Subtitle */}
+        <p
+          style={{
+            fontSize: "1.1rem",
+            marginBottom: "2rem",
+            opacity: 0.9,
+            lineHeight: 1.5,
+            maxWidth: "90%",
+          }}
+        >
+          LaunchpadPoint combines artificial intelligence, comprehensive analysis,
+          and professional optimization to accelerate your career development
+          journey.
+        </p>
+
+        {/* Mobile Action Buttons */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem",
+            width: "100%",
+            maxWidth: "320px",
+            marginBottom: "2rem",
+          }}
+        >
+          {/* Primary CTA */}
+          <button
+            onClick={() => alert("Resume Builder - Coming Soon!")}
+            style={{
+              background: "linear-gradient(135deg, #00A8FF 0%, #0078FF 100%)",
+              color: "white",
+              padding: "1rem",
+              border: "none",
+              borderRadius: "12px",
+              fontSize: "1rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              boxShadow: "0 4px 15px rgba(0, 168, 255, 0.4)",
+              transition: "all 0.3s ease",
+              width: "100%",
+            }}
+          >
+            <div style={{ fontSize: "1.1rem", marginBottom: "0.25rem" }}>
+              Create Professional Resume
+            </div>
+            <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+              $29.99 • Instant Access
+            </div>
+          </button>
+
+          {/* Secondary CTAs */}
+          <div style={{ display: "flex", gap: "0.75rem" }}>
+            <button
+              onClick={() => alert("Free Trial - Coming Soon!")}
+              style={{
+                flex: 1,
+                background: "rgba(255, 255, 255, 0.15)",
+                color: "white",
+                padding: "0.75rem",
+                border: "2px solid rgba(255, 255, 255, 0.3)",
+                borderRadius: "10px",
+                fontSize: "0.9rem",
+                fontWeight: "600",
+                cursor: "pointer",
+                backdropFilter: "blur(10px)",
+                transition: "all 0.3s ease",
+              }}
+            >
+              Start Free Trial
+            </button>
+
+            <button
+              onClick={() => alert("AI Assistant - Coming Soon!")}
+              style={{
+                flex: 1,
+                background: "transparent",
+                color: "white",
+                padding: "0.75rem",
+                border: "2px solid white",
+                borderRadius: "10px",
+                fontSize: "0.9rem",
+                fontWeight: "600",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+              }}
+            >
+              Try AI Assistant
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Features Grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr",
+            gap: "1rem",
+            width: "100%",
+            maxWidth: "350px",
+          }}
+        >
+          {/* Feature 1 */}
+          <div
+            style={{
+              background: "rgba(255, 255, 255, 0.1)",
+              padding: "1.5rem",
+              borderRadius: "12px",
+              textAlign: "center",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            <div
+              style={{
+                width: "48px",
+                height: "48px",
+                background: "rgba(0, 168, 255, 0.2)",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 1rem",
+              }}
+            >
+              <RocketLogo size={24} />
+            </div>
+            <h3 style={{ fontSize: "1.1rem", marginBottom: "0.5rem", fontWeight: "bold" }}>
+              AI Resume Builder
+            </h3>
+            <p style={{ opacity: 0.9, lineHeight: 1.5, fontSize: "0.9rem" }}>
+              Create tailored, professional resumes that match job requirements with intelligent analysis.
+            </p>
+          </div>
+
+          {/* Feature 2 */}
+          <div
+            style={{
+              background: "rgba(255, 255, 255, 0.1)",
+              padding: "1.5rem",
+              borderRadius: "12px",
+              textAlign: "center",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            <div
+              style={{
+                width: "48px",
+                height: "48px",
+                background: "rgba(64, 224, 208, 0.2)",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 1rem",
+                fontSize: "1.5rem",
+              }}
+            >
+              🎯
+            </div>
+            <h3 style={{ fontSize: "1.1rem", marginBottom: "0.5rem", fontWeight: "bold" }}>
+              Smart Job Matching
+            </h3>
+            <p style={{ opacity: 0.9, lineHeight: 1.5, fontSize: "0.9rem" }}>
+              Find opportunities that align with your skills and get real-time compatibility scoring.
+            </p>
+          </div>
+
+          {/* Feature 3 */}
+          <div
+            style={{
+              background: "rgba(255, 255, 255, 0.1)",
+              padding: "1.5rem",
+              borderRadius: "12px",
+              textAlign: "center",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            <div
+              style={{
+                width: "48px",
+                height: "48px",
+                background: "rgba(123, 104, 238, 0.2)",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 1rem",
+                fontSize: "1.5rem",
+              }}
+            >
+              ♿
+            </div>
+            <h3 style={{ fontSize: "1.1rem", marginBottom: "0.5rem", fontWeight: "bold" }}>
+              Accessibility First
+            </h3>
+            <p style={{ opacity: 0.9, lineHeight: 1.5, fontSize: "0.9rem" }}>
+              WCAG 2.1 AA compliant with dyslexia-friendly fonts ensuring everyone can access opportunities.
+            </p>
+          </div>
+        </div>
+      </main>
+
+      {/* Mobile Footer */}
+      <footer
+        style={{
+          padding: "1.5rem 1rem",
+          textAlign: "center",
+          background: "rgba(0, 0, 0, 0.2)",
+          marginTop: "1rem",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem",
+            marginBottom: "0.75rem",
+          }}
+        >
+          <RocketLogo size={20} />
+          <span style={{ fontSize: "0.95rem", fontWeight: "bold" }}>
+            LaunchpadPoint
+          </span>
+        </div>
+        <p style={{ opacity: 0.8, fontSize: "0.8rem", lineHeight: 1.4 }}>
+          Empowering careers through intelligent, accessible technology
+        </p>
+      </footer>
+
+      {/* Mobile-specific styles */}
+      <style>
+        {`
+          @media (max-width: 768px) {
+            .mobile-button:active {
+              transform: scale(0.98);
+            }
+          }
+          
+          @media (max-width: 480px) {
+            h1 {
+              font-size: 2rem !important;
+            }
+          }
+        `}
+      </style>
+    </div>
+  );
+};
+
+// Desktop Landing Page
+const DesktopLandingPage = ({ isDarkMode, setIsDarkMode }) => {
   const [isDyslexiaFont, setIsDyslexiaFont] = useState(false);
 
   const fontFamily = isDyslexiaFont
@@ -156,7 +541,7 @@ const LandingPage = ({ isDarkMode, setIsDarkMode }) => {
 
           {/* Get Started */}
           <button
-            onClick={() => (window.location.href = "/dashboard")}
+            onClick={() => alert("Dashboard - Coming Soon!")}
             style={{
               background: "rgba(255, 255, 255, 0.15)",
               color: "white",
@@ -227,13 +612,15 @@ const LandingPage = ({ isDarkMode, setIsDarkMode }) => {
         <div
           style={{
             display: "flex",
-            flexDirection: window.innerWidth < 768 ? "column" : "row",
+            flexDirection: "row",
             gap: "1rem",
             marginBottom: "3rem",
+            flexWrap: "wrap",
+            justifyContent: "center",
           }}
         >
           <button
-            onClick={() => (window.location.href = "/resume-builder")}
+            onClick={() => alert("Resume Builder - Coming Soon!")}
             style={{
               background: "linear-gradient(135deg, #00A8FF 0%, #0078FF 100%)",
               color: "white",
@@ -254,7 +641,7 @@ const LandingPage = ({ isDarkMode, setIsDarkMode }) => {
           </button>
 
           <button
-            onClick={() => (window.location.href = "/dashboard")}
+            onClick={() => alert("Free Trial - Coming Soon!")}
             style={{
               background: "rgba(255, 255, 255, 0.15)",
               color: "white",
@@ -272,7 +659,7 @@ const LandingPage = ({ isDarkMode, setIsDarkMode }) => {
           </button>
 
           <button
-            onClick={() => (window.location.href = "/ai-assistant")}
+            onClick={() => alert("AI Assistant - Coming Soon!")}
             style={{
               background: "transparent",
               color: "white",
@@ -430,304 +817,42 @@ const LandingPage = ({ isDarkMode, setIsDarkMode }) => {
   );
 };
 
-// Enhanced Dashboard with Dark Mode Support
-const Dashboard = ({ isDarkMode }) => {
-  const bgColor = isDarkMode ? "#111827" : "#f7fafc";
-  const cardBg = isDarkMode ? "#1f2937" : "white";
-  const textColor = isDarkMode ? "#f9fafb" : "#2d3748";
-  const mutedColor = isDarkMode ? "#9ca3af" : "#4a5568";
+// Responsive Landing Page Component
+const ResponsiveLandingPage = ({ isDarkMode, setIsDarkMode }) => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return isMobile ? (
+    <MobileLandingPage isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+  ) : (
+    <DesktopLandingPage isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+  );
+};
+
+// Main App Component
+function App() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   return (
     <div
       style={{
-        padding: "2rem",
+        fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
         minHeight: "100vh",
-        background: bgColor,
-        transition: "all 0.3s ease",
       }}
     >
-      <h1 style={{ fontSize: "2.5rem", marginBottom: "1rem", color: textColor }}>
-        Dashboard
-      </h1>
-
-      {/* Stats Cards */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-          gap: "1rem",
-          marginBottom: "2rem",
-        }}
-      >
-        <div
-          style={{
-            background: cardBg,
-            padding: "1.5rem",
-            borderRadius: "8px",
-            boxShadow: isDarkMode
-              ? "0 2px 4px rgba(0,0,0,0.3)"
-              : "0 2px 4px rgba(0,0,0,0.1)",
-          }}
-        >
-          <h3 style={{ color: mutedColor, marginBottom: "0.5rem" }}>Applications</h3>
-          <p style={{ fontSize: "2rem", fontWeight: "bold", color: "#3182ce" }}>0</p>
-        </div>
-        <div
-          style={{
-            background: cardBg,
-            padding: "1.5rem",
-            borderRadius: "8px",
-            boxShadow: isDarkMode
-              ? "0 2px 4px rgba(0,0,0,0.3)"
-              : "0 2px 4px rgba(0,0,0,0.1)",
-          }}
-        >
-          <h3 style={{ color: mutedColor, marginBottom: "0.5rem" }}>Resume Score</h3>
-          <p style={{ fontSize: "2rem", fontWeight: "bold", color: "#38a169" }}>-</p>
-        </div>
-        <div
-          style={{
-            background: cardBg,
-            padding: "1.5rem",
-            borderRadius: "8px",
-            boxShadow: isDarkMode
-              ? "0 2px 4px rgba(0,0,0,0.3)"
-              : "0 2px 4px rgba(0,0,0,0.1)",
-          }}
-        >
-          <h3 style={{ color: mutedColor, marginBottom: "0.5rem" }}>Job Matches</h3>
-          <p style={{ fontSize: "2rem", fontWeight: "bold", color: "#8b5cf6" }}>0</p>
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div style={{ marginBottom: "2rem" }}>
-        <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem", color: textColor }}>
-          Quick Actions
-        </h2>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "1rem",
-          }}
-        >
-          <button
-            onClick={() => (window.location.href = "/resume-builder")}
-            style={{
-              background: "#3182ce",
-              color: "white",
-              padding: "1.5rem",
-              border: "none",
-              borderRadius: "8px",
-              fontSize: "1.1rem",
-              cursor: "pointer",
-              fontWeight: "600",
-              textAlign: "left",
-              transition: "transform 0.2s ease",
-            }}
-            onMouseEnter={(e) => (e.target.style.transform = "translateY(-2px)")}
-            onMouseLeave={(e) => (e.target.style.transform = "translateY(0)")}
-          >
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>📄</div>
-            <div>Build Resume</div>
-            <div style={{ fontSize: "0.9rem", opacity: "0.8", marginTop: "0.25rem" }}>
-              AI-powered optimization
-            </div>
-          </button>
-
-          <button
-            onClick={() => (window.location.href = "/ai-assistant")}
-            style={{
-              background: "#8b5cf6",
-              color: "white",
-              padding: "1.5rem",
-              border: "none",
-              borderRadius: "8px",
-              fontSize: "1.1rem",
-              cursor: "pointer",
-              fontWeight: "600",
-              textAlign: "left",
-              transition: "transform 0.2s ease",
-            }}
-            onMouseEnter={(e) => (e.target.style.transform = "translateY(-2px)")}
-            onMouseLeave={(e) => (e.target.style.transform = "translateY(0)")}
-          >
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>🤖</div>
-            <div>AI Assistant</div>
-            <div style={{ fontSize: "0.9rem", opacity: "0.8", marginTop: "0.25rem" }}>
-              Career guidance & strategy
-            </div>
-          </button>
-
-          <button
-            onClick={() => (window.location.href = "/career-intelligence")}
-            style={{
-              background: "#10b981",
-              color: "white",
-              padding: "1.5rem",
-              border: "none",
-              borderRadius: "8px",
-              fontSize: "1.1rem",
-              cursor: "pointer",
-              fontWeight: "600",
-              textAlign: "left",
-              transition: "transform 0.2s ease",
-            }}
-            onMouseEnter={(e) => (e.target.style.transform = "translateY(-2px)")}
-            onMouseLeave={(e) => (e.target.style.transform = "translateY(0)")}
-          >
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>🚀</div>
-            <div>Career Intelligence</div>
-            <div style={{ fontSize: "0.9rem", opacity: "0.8", marginTop: "0.25rem" }}>
-              Advanced analytics & insights
-            </div>
-          </button>
-
-          <button
-            style={{
-              background: isDarkMode ? "#374151" : "#e2e8f0",
-              color: mutedColor,
-              padding: "1.5rem",
-              border: "none",
-              borderRadius: "8px",
-              fontSize: "1.1rem",
-              cursor: "not-allowed",
-              fontWeight: "600",
-              textAlign: "left",
-              opacity: "0.6",
-            }}
-            disabled
-          >
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>🔍</div>
-            <div>Find Jobs</div>
-            <div style={{ fontSize: "0.9rem", opacity: "0.8", marginTop: "0.25rem" }}>
-              Coming Soon
-            </div>
-          </button>
-
-          <button
-            style={{
-              background: isDarkMode ? "#374151" : "#e2e8f0",
-              color: mutedColor,
-              padding: "1.5rem",
-              border: "none",
-              borderRadius: "8px",
-              fontSize: "1.1rem",
-              cursor: "not-allowed",
-              fontWeight: "600",
-              textAlign: "left",
-              opacity: "0.6",
-            }}
-            disabled
-          >
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>🤝</div>
-            <div>Network</div>
-            <div style={{ fontSize: "0.9rem", opacity: "0.8", marginTop: "0.25rem" }}>
-              Coming Soon
-            </div>
-          </button>
-
-          <button
-            style={{
-              background: isDarkMode ? "#374151" : "#e2e8f0",
-              color: mutedColor,
-              padding: "1.5rem",
-              border: "none",
-              borderRadius: "8px",
-              fontSize: "1.1rem",
-              cursor: "not-allowed",
-              fontWeight: "600",
-              textAlign: "left",
-              opacity: "0.6",
-            }}
-            disabled
-          >
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>📊</div>
-            <div>Analytics</div>
-            <div style={{ fontSize: "0.9rem", opacity: "0.8", marginTop: "0.25rem" }}>
-              Coming Soon
-            </div>
-          </button>
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div
-        style={{
-          background: cardBg,
-          padding: "1.5rem",
-          borderRadius: "8px",
-          boxShadow: isDarkMode
-            ? "0 2px 4px rgba(0,0,0,0.3)"
-            : "0 2px 4px rgba(0,0,0,0.1)",
-        }}
-      >
-        <h3 style={{ fontSize: "1.25rem", marginBottom: "1rem", color: textColor }}>
-          Recent Activity
-        </h3>
-        <div style={{ color: mutedColor, fontStyle: "italic" }}>
-          Welcome to LaunchpadPoint V2! Start by building your resume or trying our AI assistant to unlock more features.
-        </div>
-      </div>
-
-      {/* Settings Toggle */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: "2rem",
-          right: "2rem",
-          background: cardBg,
-          padding: "1rem",
-          borderRadius: "50%",
-          boxShadow: isDarkMode
-            ? "0 4px 12px rgba(0,0,0,0.4)"
-            : "0 4px 12px rgba(0,0,0,0.15)",
-          cursor: "pointer",
-          transition: "all 0.3s ease",
-        }}
-        onClick={() => (window.location.href = "/")}
-        title="Back to Home"
-      >
-        <div style={{ fontSize: "1.5rem" }}>🏠</div>
-      </div>
+      <ResponsiveLandingPage 
+        isDarkMode={isDarkMode} 
+        setIsDarkMode={setIsDarkMode} 
+      />
     </div>
-  );
-};
-
-function App() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    document.body.style.background = isDarkMode ? "#111827" : "#ffffff";
-    document.body.style.transition = "background 0.3s ease";
-  }, [isDarkMode]);
-
-  return (
-    <Router>
-      <div
-        style={{
-          fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
-          minHeight: "100vh",
-        }}
-      >
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <LandingPage isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
-            }
-          />
-          <Route
-            path="/dashboard"
-            element={<Dashboard isDarkMode={isDarkMode} />}
-          />
-          <Route path="/resume-builder" element={<ResumeBuilder />} />
-          <Route path="/ai-assistant" element={<AdvancedAICareerAssistant />} />
-          <Route path="/career-intelligence" element={<NextGenCareerPlatform />} />
-        </Routes>
-      </div>
-    </Router>
   );
 }
 
