@@ -1,10 +1,11 @@
 import React from 'react';
 import { 
-  Home, FileText, Briefcase, BarChart3, Users, Bell, Moon, Sun, Rocket 
+  Home, FileText, Briefcase, BarChart3, Users, Bell, Rocket 
 } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
+import ThemeToggle from './ThemeToggle';
 
-const Navigation = ({ currentPage, setCurrentPage, darkMode, setDarkMode }) => {
+const Navigation = ({ currentPage, setCurrentPage }) => {
   const { userData, notifications, setNotifications } = useUser();
 
   const navItems = [
@@ -16,7 +17,7 @@ const Navigation = ({ currentPage, setCurrentPage, darkMode, setDarkMode }) => {
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 ${darkMode ? 'bg-gray-900/95' : 'bg-white/95'} backdrop-blur-lg border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'} shadow-md`}>
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-b border-gray-200 dark:border-gray-700 shadow-md">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
@@ -41,9 +42,7 @@ const Navigation = ({ currentPage, setCurrentPage, darkMode, setDarkMode }) => {
                 className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center space-x-2 ${
                   currentPage === key
                     ? 'bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 text-white shadow-lg'
-                    : darkMode
-                    ? 'text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-600/20 hover:to-purple-600/20'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gradient-to-r hover:from-indigo-100 hover:to-purple-100'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gradient-to-r hover:from-indigo-600/20 hover:to-purple-600/20'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -55,9 +54,7 @@ const Navigation = ({ currentPage, setCurrentPage, darkMode, setDarkMode }) => {
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setNotifications(0)}
-              className={`relative p-2 rounded-lg transition-all ${
-                darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'
-              }`}
+              className="relative p-2 rounded-lg transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <Bell className="w-5 h-5" />
               {notifications > 0 && (
@@ -67,14 +64,7 @@ const Navigation = ({ currentPage, setCurrentPage, darkMode, setDarkMode }) => {
               )}
             </button>
             
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className={`p-2 rounded-lg transition-all ${
-                darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
+            <ThemeToggle />
 
             <div className="flex items-center space-x-3 pl-3 border-l border-gray-300 dark:border-gray-600">
               <div className="text-right">
