@@ -216,7 +216,11 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
         >
           {/* Primary CTA */}
           <button
-            onClick={() => alert("Resume Builder - Coming Soon!")}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              alert("Resume Builder - Coming Soon!");
+            }}
             style={{
               background: "linear-gradient(135deg, #00A8FF 0%, #0078FF 100%)",
               color: "white",
@@ -229,6 +233,14 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
               boxShadow: "0 4px 15px rgba(0, 168, 255, 0.4)",
               transition: "all 0.3s ease",
               width: "100%",
+              userSelect: "none",
+              WebkitTapHighlightColor: "transparent",
+            }}
+            onTouchStart={(e) => {
+              e.currentTarget.style.transform = "scale(0.98)";
+            }}
+            onTouchEnd={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
             }}
           >
             <div style={{ fontSize: "1.1rem", marginBottom: "0.25rem" }}>
@@ -242,7 +254,11 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
           {/* Secondary CTAs */}
           <div style={{ display: "flex", gap: "0.75rem" }}>
             <button
-              onClick={() => alert("Free Trial - Coming Soon!")}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                alert("Free Trial - Coming Soon!");
+              }}
               style={{
                 flex: 1,
                 background: "rgba(255, 255, 255, 0.15)",
@@ -255,13 +271,25 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
                 cursor: "pointer",
                 backdropFilter: "blur(10px)",
                 transition: "all 0.3s ease",
+                userSelect: "none",
+                WebkitTapHighlightColor: "transparent",
+              }}
+              onTouchStart={(e) => {
+                e.currentTarget.style.transform = "scale(0.98)";
+              }}
+              onTouchEnd={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
               }}
             >
               Start Free Trial
             </button>
 
             <button
-              onClick={() => alert("AI Assistant - Coming Soon!")}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                alert("AI Assistant - Coming Soon!");
+              }}
               style={{
                 flex: 1,
                 background: "transparent",
@@ -273,6 +301,14 @@ const MobileLandingPage = ({ isDarkMode, setIsDarkMode }) => {
                 fontWeight: "600",
                 cursor: "pointer",
                 transition: "all 0.3s ease",
+                userSelect: "none",
+                WebkitTapHighlightColor: "transparent",
+              }}
+              onTouchStart={(e) => {
+                e.currentTarget.style.transform = "scale(0.98)";
+              }}
+              onTouchEnd={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
               }}
             >
               Try AI Assistant
@@ -848,6 +884,15 @@ function App() {
         minHeight: "100vh",
       }}
     >
+      <ResponsiveLandingPage 
+        isDarkMode={isDarkMode} 
+        setIsDarkMode={setIsDarkMode} 
+      />
+    </div>
+  );
+}
+
+export default App;
       <ResponsiveLandingPage 
         isDarkMode={isDarkMode} 
         setIsDarkMode={setIsDarkMode} 
