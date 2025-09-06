@@ -1,11 +1,4 @@
 import React, { useState } from 'react';
-import { 
-  Users, Brain, FileText, Briefcase, Download, Moon, Sun, 
-  Sparkles, MessageSquare, BarChart3, Zap, TrendingUp, 
-  ArrowUp, DollarSign, MapPin, Clock, Bell, Bookmark, 
-  Filter, SortAsc, Edit3, Eye, RefreshCw, Activity, Home, 
-  Search, Rocket 
-} from 'lucide-react';
 import Navigation from './components/Navigation';
 import AIChatSidebar from './components/AIChatSidebar';
 import DashboardPage from './pages/DashboardPage';
@@ -13,12 +6,13 @@ import BuilderPage from './pages/BuilderPage';
 import JobsPage from './pages/JobsPage';
 import { UserProvider } from './contexts/UserContext';
 import { ResumeProvider } from './contexts/ResumeContext';
+import { useDarkMode } from './hooks/useLocalStorage';
 import './App.css';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
-  const [darkMode, setDarkMode] = useState(false);
   const [aiChatOpen, setAiChatOpen] = useState(false);
+  const [darkMode] = useDarkMode();
 
   return (
     <UserProvider>
@@ -31,8 +25,6 @@ function App() {
           <Navigation 
             currentPage={currentPage} 
             setCurrentPage={setCurrentPage}
-            darkMode={darkMode}
-            setDarkMode={setDarkMode}
           />
           
           <main className={`pt-20 pb-8 px-4 max-w-7xl mx-auto transition-all ${aiChatOpen ? 'mr-96' : ''}`}>
