@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Edit3, Eye, Download } from 'lucide-react';
 import { useResume } from '../contexts/ResumeContext';
 
 const BuilderPage = () => {
@@ -48,7 +47,7 @@ ${edu.achievements}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold flex items-center space-x-3">
-            <Edit3 className="w-6 h-6" />
+            <span className="text-2xl">✏️</span>
             <span>Build Your Resume</span>
           </h2>
         </div>
@@ -157,7 +156,7 @@ ${edu.achievements}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold flex items-center space-x-3">
-            <Eye className="w-6 h-6" />
+            <span className="text-2xl">👁️</span>
             <span>Live Preview</span>
           </h2>
           <div className="flex items-center space-x-2">
@@ -172,7 +171,7 @@ ${edu.achievements}
               onClick={exportResume}
               className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2"
             >
-              <Download className="w-4 h-4" />
+              <span className="text-lg">📥</span>
               <span>Export</span>
             </button>
           </div>

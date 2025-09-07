@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Brain, Video, TrendingUp, Users, Zap, Target, CheckCircle, Clock, Star } from 'lucide-react';
 
 const NextGenCareerPlatform = () => {
   const [activeModule, setActiveModule] = useState('dashboard');
@@ -136,12 +135,12 @@ const NextGenCareerPlatform = () => {
   };
 
   const modules = [
-    { id: 'dashboard', name: 'Dashboard', icon: Brain, color: '#667eea' },
-    { id: 'interview', name: 'Interview', icon: Video, color: '#f093fb' },
-    { id: 'market', name: 'Market', icon: TrendingUp, color: '#4facfe' },
-    { id: 'network', name: 'Network', icon: Users, color: '#43e97b' },
-    { id: 'skills', name: 'Skills', icon: Zap, color: '#fa709a' },
-    { id: 'copilot', name: 'Copilot', icon: Target, color: '#ffecd2' }
+    { id: 'dashboard', name: 'Dashboard', icon: '🧠', color: '#667eea' },
+    { id: 'interview', name: 'Interview', icon: '🎥', color: '#f093fb' },
+    { id: 'market', name: 'Market', icon: '📈', color: '#4facfe' },
+    { id: 'network', name: 'Network', icon: '👥', color: '#43e97b' },
+    { id: 'skills', name: 'Skills', icon: '⚡', color: '#fa709a' },
+    { id: 'copilot', name: 'Copilot', icon: '🎯', color: '#ffecd2' }
   ];
 
   const navigateBack = () => {
@@ -326,7 +325,7 @@ const NextGenCareerPlatform = () => {
                 alignItems: 'center', 
                 justifyContent: 'center' 
               }}>
-                <CheckCircle style={{ color: '#16a34a' }} size={20} />
+                <span style={{ color: '#16a34a', fontSize: '20px' }}>✅</span>
               </div>
               <div>
                 <h4 style={{ fontSize: '0.9rem', fontWeight: '600', margin: '0 0 0.25rem 0' }}>
@@ -348,7 +347,7 @@ const NextGenCareerPlatform = () => {
                 alignItems: 'center', 
                 justifyContent: 'center' 
               }}>
-                <Clock style={{ color: '#2563eb' }} size={20} />
+                <span style={{ color: '#2563eb', fontSize: '20px' }}>🕐</span>
               </div>
               <div>
                 <h4 style={{ fontSize: '0.9rem', fontWeight: '600', margin: '0 0 0.25rem 0' }}>
@@ -373,7 +372,7 @@ const NextGenCareerPlatform = () => {
                 alignItems: 'center', 
                 justifyContent: 'center' 
               }}>
-                <Star style={{ color: '#9333ea' }} size={20} />
+                <span style={{ color: '#9333ea', fontSize: '20px' }}>⭐</span>
               </div>
               <div>
                 <h4 style={{ fontSize: '0.9rem', fontWeight: '600', margin: '0 0 0.25rem 0' }}>
@@ -450,7 +449,7 @@ const NextGenCareerPlatform = () => {
               cursor: 'pointer'
             }}
           >
-            <ArrowLeft size={20} />
+            <span style={{ fontSize: '20px' }}>←</span>
             <span>Back</span>
           </button>
           
@@ -476,7 +475,6 @@ const NextGenCareerPlatform = () => {
       <div style={{ padding: '1rem', background: 'white', borderBottom: '1px solid #e5e7eb' }}>
         <div style={{ display: 'flex', overflowX: 'auto', gap: '0.5rem', paddingBottom: '0.5rem' }}>
           {modules.map((module) => {
-            const Icon = module.icon;
             return (
               <button
                 key={module.id}
@@ -497,7 +495,7 @@ const NextGenCareerPlatform = () => {
                   fontWeight: activeModule === module.id ? '600' : '400'
                 }}
               >
-                <Icon size={18} />
+                <span style={{ fontSize: '18px' }}>{module.icon}</span>
                 <span>{module.name}</span>
               </button>
             );

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Send, Brain, Video, TrendingUp, Target, FileText, CheckCircle, Copy, Star, Users, Zap, Play, ChevronRight, Clock } from 'lucide-react';
 
 const EnhancedAIAssistant = () => {
   const [activeCategory, setActiveCategory] = useState('ai-chat');
@@ -958,7 +957,7 @@ I provide detailed, actionable guidance tailored to your specific situation and 
               cursor: 'pointer'
             }}
           >
-            <ArrowLeft size={20} />
+            <span style={{ fontSize: '20px' }}>←</span>
             <span>Back</span>
           </button>
           
@@ -1058,7 +1057,7 @@ I provide detailed, actionable guidance tailored to your specific situation and 
             justifyContent: 'space-between'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Brain size={20} />
+              <span style={{ fontSize: '20px' }}>🧠</span>
               <span style={{ fontWeight: '600' }}>Enhanced AI Assistant</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -1103,7 +1102,7 @@ I provide detailed, actionable guidance tailored to your specific situation and 
                     <span>{message.timestamp}</span>
                     {message.type === 'assistant' && message.confidence && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                        <Brain size={12} />
+                        <span style={{ fontSize: '12px' }}>🧠</span>
                         <span>{message.confidence}%</span>
                         {message.marketData && (
                           <span style={{ 
@@ -1199,7 +1198,7 @@ I provide detailed, actionable guidance tailored to your specific situation and 
                   justifyContent: 'center'
                 }}
               >
-                <Send size={16} />
+                <span style={{ fontSize: '16px' }}>📤</span>
               </button>
             </div>
           </div>

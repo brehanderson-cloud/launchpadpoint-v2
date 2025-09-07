@@ -1,5 +1,4 @@
 import React from 'react';
-import { DollarSign, MapPin, Clock, Bookmark, Filter, SortAsc } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
 
 const JobsPage = () => {
@@ -20,11 +19,11 @@ const JobsPage = () => {
           <h2 className="text-2xl font-bold">Job Opportunities</h2>
           <div className="flex space-x-2">
             <button className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center space-x-2">
-              <Filter className="w-4 h-4" />
+              <span className="text-lg">🔧</span>
               <span>Filter</span>
             </button>
             <button className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center space-x-2">
-              <SortAsc className="w-4 h-4" />
+              <span className="text-lg">📊</span>
               <span>Sort</span>
             </button>
           </div>
@@ -54,22 +53,22 @@ const JobsPage = () => {
                     <p className="text-lg font-medium text-blue-600 mb-3">{job.company}</p>
                     <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
                       <span className="flex items-center space-x-1">
-                        <DollarSign className="w-4 h-4" />
+                        <span className="text-lg">💰</span>
                         <span>{job.salary}</span>
                       </span>
                       <span className="flex items-center space-x-1">
-                        <MapPin className="w-4 h-4" />
+                        <span className="text-lg">📍</span>
                         <span>{job.location}</span>
                       </span>
                       <span className="flex items-center space-x-1">
-                        <Clock className="w-4 h-4" />
+                        <span className="text-lg">🕐</span>
                         <span>{job.posted}</span>
                       </span>
                     </div>
                   </div>
                   <div className="flex space-x-2">
                     <button className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-                      <Bookmark className="w-4 h-4" />
+                      <span className="text-lg">🔖</span>
                     </button>
                     <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
                       Apply
