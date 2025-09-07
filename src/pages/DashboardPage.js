@@ -1,8 +1,4 @@
 import React from 'react';
-import { 
-  DollarSign, Briefcase, Activity, Bell, ArrowUp, 
-  MapPin, Clock, FileText, MessageSquare, Search
-} from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
 
 const DashboardPage = () => {
@@ -77,7 +73,7 @@ const DashboardPage = () => {
           <div className="text-right">
             <div className="text-6xl font-bold">{userData.careerIntelligence.overall}</div>
             <div className="text-lg text-green-300 flex items-center justify-end">
-              <ArrowUp className="w-5 h-5 mr-1" />
+              <span>↑</span>
               +{userData.careerIntelligence.weeklyChange} this week
             </div>
           </div>
@@ -110,7 +106,7 @@ const DashboardPage = () => {
                   ${userData.marketValue.toLocaleString()}K
                 </p>
               </div>
-              <DollarSign className="w-8 h-8 text-emerald-500" />
+              <span className="text-2xl">💰</span>
             </div>
             <span className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">+${userData.monthlyIncrease.toLocaleString()} this month</span>
           </div>
@@ -123,7 +119,7 @@ const DashboardPage = () => {
                   {userData.opportunities}
                 </p>
               </div>
-              <Briefcase className="w-8 h-8 text-blue-500" />
+              <span className="text-2xl">💼</span>
             </div>
             <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">{userData.newToday} new today</span>
           </div>
@@ -133,7 +129,7 @@ const DashboardPage = () => {
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
-              <Activity className="w-6 h-6 text-purple-500" />
+              <span className="text-2xl">📶</span>
               <h3 className="text-lg font-semibold">Live Career Insights</h3>
             </div>
             <div className="flex items-center space-x-2">
@@ -165,7 +161,7 @@ const DashboardPage = () => {
       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-semibold flex items-center space-x-3">
-            <Bell className="w-6 h-6 text-orange-500" />
+            <span>🔔</span>
             <span>High-Match Job Alerts</span>
           </h3>
           <button className="text-blue-500 hover:text-blue-600 font-medium">View All</button>
@@ -193,15 +189,15 @@ const DashboardPage = () => {
                   </div>
                   <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
                     <span className="flex items-center space-x-1">
-                      <DollarSign className="w-4 h-4" />
+                      <span>💰</span>
                       <span>{alert.salary}</span>
                     </span>
                     <span className="flex items-center space-x-1">
-                      <MapPin className="w-4 h-4" />
+                      <span>📍</span>
                       <span>{alert.location}</span>
                     </span>
                     <span className="flex items-center space-x-1">
-                      <Clock className="w-4 h-4" />
+                      <span>⏰</span>
                       <span>{alert.posted}</span>
                     </span>
                   </div>
@@ -223,19 +219,19 @@ const DashboardPage = () => {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <button className="bg-gradient-to-br from-red-500 via-pink-500 to-purple-600 hover:from-red-400 hover:via-pink-400 hover:to-purple-500 dark:from-red-600 dark:via-pink-600 dark:to-purple-700 dark:hover:from-red-500 dark:hover:via-pink-500 dark:hover:to-purple-600 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
-          <FileText className="w-8 h-8 mb-3 mx-auto" />
+          <span className="text-2xl mb-3 block">📄</span>
           <h3 className="text-lg font-semibold mb-2 text-center">Create Resume</h3>
           <p className="text-sm opacity-90 text-center">Build your professional resume with AI guidance</p>
         </button>
 
         <button className="bg-gradient-to-br from-indigo-500 via-blue-500 to-purple-600 hover:from-indigo-400 hover:via-blue-400 hover:to-purple-500 dark:from-indigo-600 dark:via-blue-600 dark:to-purple-700 dark:hover:from-indigo-500 dark:hover:via-blue-500 dark:hover:to-purple-600 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
-          <MessageSquare className="w-8 h-8 mb-3 mx-auto" />
+          <span className="text-2xl mb-3 block">💬</span>
           <h3 className="text-lg font-semibold mb-2 text-center">Ask AI Assistant</h3>
           <p className="text-sm opacity-90 text-center">Get personalized career advice from experts</p>
         </button>
 
         <button className="bg-gradient-to-br from-emerald-500 via-teal-500 to-blue-600 hover:from-emerald-400 hover:via-teal-400 hover:to-blue-500 dark:from-emerald-600 dark:via-teal-600 dark:to-blue-700 dark:hover:from-emerald-500 dark:hover:via-teal-500 dark:hover:to-blue-600 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
-          <Search className="w-8 h-8 mb-3 mx-auto" />
+          <span className="text-2xl mb-3 block">🔍</span>
           <h3 className="text-lg font-semibold mb-2 text-center">Search Jobs</h3>
           <p className="text-sm opacity-90 text-center">Find opportunities that match your profile</p>
         </button>
