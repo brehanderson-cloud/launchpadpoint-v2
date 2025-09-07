@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Edit3, Eye, Download, Sparkles, RefreshCw, Zap, Plus, Trash2 } from 'lucide-react';
+import { Edit3, Eye, Download } from 'lucide-react';
 import { useResume } from '../contexts/ResumeContext';
 
 const BuilderPage = () => {
-  const { resumeData, setResumeData, careerScore, setCareerScore } = useResume();
+  const { resumeData, setResumeData, careerScore } = useResume();
   const [activeTab, setActiveTab] = useState('personal');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const exportResume = () => {
     const resumeContent = `
@@ -44,38 +43,6 @@ ${edu.achievements}
     document.body.removeChild(element);
   };
 
-  const addExperience = () => {
-    setResumeData(prev => ({
-      ...prev,
-      experience: [
-        ...prev.experience,
-        {
-          company: '',
-          position: '',
-          startDate: '',
-          endDate: '',
-          description: ''
-        }
-      ]
-    }));
-  };
-
-  const removeExperience = (index) => {
-    setResumeData(prev => ({
-      ...prev,
-      experience: prev.experience.filter((_, i) => i !== index)
-    }));
-  };
-
-  const updateExperience = (index, field, value) => {
-    setResumeData(prev => ({
-      ...prev,
-      experience: prev.experience.map((exp, i) => 
-        i === index ? { ...exp, [field]: value } : exp
-      )
-    }));
-  };
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
@@ -84,10 +51,6 @@ ${edu.achievements}
             <Edit3 className="w-6 h-6" />
             <span>Build Your Resume</span>
           </h2>
-          <button className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:shadow-lg transition-all flex items-center space-x-2">
-            <Sparkles className="w-4 h-4" />
-            <span>AI Help</span>
-          </button>
         </div>
 
         <div className="flex space-x-1 mb-6 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
@@ -117,8 +80,7 @@ ${edu.achievements}
                   ...prev,
                   personal: { ...prev.personal, fullName: e.target.value }
                 }))}
-                className="input"
-                placeholder="John Doe"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -130,8 +92,7 @@ ${edu.achievements}
                   ...prev,
                   personal: { ...prev.personal, jobTitle: e.target.value }
                 }))}
-                className="input"
-                placeholder="Senior Software Engineer"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -144,8 +105,7 @@ ${edu.achievements}
                     ...prev,
                     personal: { ...prev.personal, email: e.target.value }
                   }))}
-                  className="input"
-                  placeholder="john.doe@example.com"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <div>
@@ -157,23 +117,9 @@ ${edu.achievements}
                     ...prev,
                     personal: { ...prev.personal, phone: e.target.value }
                   }))}
-                  className="input"
-                  placeholder="(555) 123-4567"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Location</label>
-              <input
-                type="text"
-                value={resumeData.personal.location}
-                onChange={(e) => setResumeData(prev => ({
-                  ...prev,
-                  personal: { ...prev.personal, location: e.target.value }
-                }))}
-                className="input"
-                placeholder="San Francisco, CA"
-              />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Professional Summary</label>
@@ -184,91 +130,9 @@ ${edu.achievements}
                   ...prev,
                   personal: { ...prev.personal, summary: e.target.value }
                 }))}
-                className="input"
-                placeholder="Experienced software engineer with 5+ years of expertise..."
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-          </div>
-        )}
-
-        {activeTab === 'experience' && (
-          <div className="space-y-6">
-            {resumeData.experience.map((exp, index) => (
-              <div key={index} className="p-4 border border-gray-200 dark:border-gray-600 rounded-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold">Experience #{index + 1}</h3>
-                  {resumeData.experience.length > 1 && (
-                    <button
-                      onClick={() => removeExperience(index)}
-                      className="p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Company</label>
-                    <input
-                      type="text"
-                      value={exp.company}
-                      onChange={(e) => updateExperience(index, 'company', e.target.value)}
-                      className="input"
-                      placeholder="Tech Innovations Inc."
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Position</label>
-                    <input
-                      type="text"
-                      value={exp.position}
-                      onChange={(e) => updateExperience(index, 'position', e.target.value)}
-                      className="input"
-                      placeholder="Senior Software Engineer"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Start Date</label>
-                      <input
-                        type="text"
-                        value={exp.startDate}
-                        onChange={(e) => updateExperience(index, 'startDate', e.target.value)}
-                        className="input"
-                        placeholder="2020-01"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">End Date</label>
-                      <input
-                        type="text"
-                        value={exp.endDate}
-                        onChange={(e) => updateExperience(index, 'endDate', e.target.value)}
-                        className="input"
-                        placeholder="2023-08"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Description</label>
-                    <textarea
-                      rows={3}
-                      value={exp.description}
-                      onChange={(e) => updateExperience(index, 'description', e.target.value)}
-                      className="input"
-                      placeholder="• Led a team of 5 developers...\n• Improved system performance by 40%..."
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-            <button
-              onClick={addExperience}
-              className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-colors flex items-center justify-center space-x-2"
-            >
-              <Plus className="w-5 h-5" />
-              <span>Add Experience</span>
-            </button>
           </div>
         )}
 
@@ -283,38 +147,14 @@ ${edu.achievements}
                   ...prev,
                   skills: e.target.value.split(',').map(s => s.trim()).filter(s => s)
                 }))}
-                className="input"
-                placeholder="JavaScript, React, Node.js, Python, SQL, AWS..."
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <button
-              onClick={() => {
-                setIsAnalyzing(true);
-                setTimeout(() => {
-                  setCareerScore(Math.min(95, careerScore + Math.floor(Math.random() * 5)));
-                  setIsAnalyzing(false);
-                }, 2000);
-              }}
-              disabled={isAnalyzing}
-              className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:shadow-lg transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
-            >
-              {isAnalyzing ? (
-                <>
-                  <RefreshCw className="w-5 h-5 animate-spin" />
-                  <span>Analyzing...</span>
-                </>
-              ) : (
-                <>
-                  <Zap className="w-5 h-5" />
-                  <span>Analyze with AI</span>
-                </>
-              )}
-            </button>
           </div>
         )}
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sticky top-24 max-h-screen overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold flex items-center space-x-3">
             <Eye className="w-6 h-6" />
@@ -354,37 +194,9 @@ ${edu.achievements}
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-3 pb-2 border-b border-gray-300">Experience</h3>
-              {resumeData.experience.map((exp, index) => (
-                <div key={index} className="mb-4">
-                  <div className="flex justify-between items-start mb-1">
-                    <h4 className="font-semibold">{exp.position}</h4>
-                    <span className="text-sm text-gray-600">{exp.startDate} - {exp.endDate}</span>
-                  </div>
-                  <p className="text-sm text-blue-600 mb-2">{exp.company}</p>
-                  <p className="text-sm text-gray-600 whitespace-pre-line">{exp.description}</p>
-                </div>
-              ))}
-            </div>
-
-            <div>
               <h3 className="text-lg font-semibold mb-3 pb-2 border-b border-gray-300">Skills</h3>
               <div className="flex flex-wrap gap-2">
                 {resumeData.skills.map((skill, index) => (
                   <span
                     key={index}
                     className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default BuilderPage;
