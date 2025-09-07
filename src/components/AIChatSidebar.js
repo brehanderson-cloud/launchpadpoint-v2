@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import { 
-  FileText, TrendingUp, Brain, MessageSquare, DollarSign, Users, Sparkles 
-} from 'lucide-react';
 import { useResume } from '../contexts/ResumeContext';
 
 const AIChatSidebar = ({ aiChatOpen, setAiChatOpen }) => {
@@ -13,42 +10,42 @@ const AIChatSidebar = ({ aiChatOpen, setAiChatOpen }) => {
   const aiSpecialists = {
     resume: {
       name: 'ResumeAI',
-      icon: FileText,
+      icon: '📄',
       description: 'Resume optimization and ATS scoring',
       color: 'from-blue-400 via-blue-500 to-indigo-600',
       specialty: 'Resume & Cover Letters'
     },
     career: {
-      name: 'CareerAI',
-      icon: TrendingUp,
+      name: 'CareerAI', 
+      icon: '📈',
       description: 'Career progression and strategy',
       color: 'from-purple-400 via-purple-500 to-indigo-600',
       specialty: 'Career Development'
     },
     skills: {
       name: 'SkillsAI',
-      icon: Brain,
+      icon: '🧠',
       description: 'Skills gap analysis and learning paths',
       color: 'from-cyan-400 via-blue-500 to-purple-600',
       specialty: 'Skill Development'
     },
     interview: {
       name: 'InterviewAI',
-      icon: MessageSquare,
+      icon: '💬',
       description: 'Interview preparation and practice',
       color: 'from-indigo-400 via-purple-500 to-pink-500',
       specialty: 'Interview Coaching'
     },
     salary: {
       name: 'SalaryAI',
-      icon: DollarSign,
+      icon: '💰',
       description: 'Salary negotiation and market rates',
       color: 'from-blue-500 via-indigo-500 to-purple-600',
       specialty: 'Compensation Analysis'
     },
     network: {
       name: 'NetworkAI',
-      icon: Users,
+      icon: '👥',
       description: 'Professional networking and connections',
       color: 'from-purple-500 via-indigo-500 to-blue-600',
       specialty: 'Professional Networking'
@@ -132,7 +129,6 @@ const AIChatSidebar = ({ aiChatOpen, setAiChatOpen }) => {
         
         <div className="grid grid-cols-2 gap-3">
           {Object.entries(aiSpecialists).map(([key, ai]) => {
-            const IconComponent = ai.icon;
             return (
               <button
                 key={key}
@@ -143,7 +139,7 @@ const AIChatSidebar = ({ aiChatOpen, setAiChatOpen }) => {
                     : 'bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
-                <IconComponent className="w-6 h-6 mb-2" />
+                <div className="text-2xl mb-2">{ai.icon}</div>
                 <div className="text-sm font-medium">{ai.name}</div>
                 <div className="text-xs opacity-75 mt-1">{ai.specialty}</div>
               </button>
@@ -156,7 +152,7 @@ const AIChatSidebar = ({ aiChatOpen, setAiChatOpen }) => {
         {chatMessages.length === 0 && (
           <div className="text-center py-8">
             <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${aiSpecialists[selectedAI].color} flex items-center justify-center`}>
-              {React.createElement(aiSpecialists[selectedAI].icon, { className: "w-8 h-8 text-white" })}
+              <span className="text-3xl">{aiSpecialists[selectedAI].icon}</span>
             </div>
             <h4 className="font-medium mb-2">Hi! I'm {aiSpecialists[selectedAI].name}</h4>
             <p className="text-sm text-gray-500">{aiSpecialists[selectedAI].description}</p>
@@ -215,7 +211,7 @@ const AIChatSidebar = ({ aiChatOpen, setAiChatOpen }) => {
             onClick={sendMessage}
             className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all"
           >
-            <MessageSquare className="w-5 h-5" />
+            <span className="text-lg">💬</span>
           </button>
         </div>
       </div>

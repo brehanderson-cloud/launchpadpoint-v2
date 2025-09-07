@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { Upload, FileText, Clipboard, Sparkles, CheckCircle, TrendingUp, User, Briefcase, GraduationCap, Award, Download, Eye, Edit3, Target, Lightbulb, ArrowLeft, Save, AlertTriangle, Info } from 'lucide-react';
 import { analyzeResumeWithAI } from '../utils/resumeAnalyzer';
 
 const ResumeBuilder = () => {
@@ -343,7 +342,7 @@ const ResumeBuilder = () => {
               fontSize: '1rem'
             }}
           >
-            <ArrowLeft size={20} />
+            <span style={{fontSize: "20px"}}>←</span>
             <span>Back to Dashboard</span>
           </button>
           
@@ -451,7 +450,7 @@ const ResumeBuilder = () => {
                     color: parseMethod === 'paste' ? brandColors.accent : 'inherit'
                   }}
                 >
-                  <Clipboard size={32} style={{ margin: '0 auto 0.5rem', display: 'block' }} />
+                  <span style={{fontSize: "32px", margin: "0 auto 0.5rem", display: "block"}}>📋</span>
                   <div style={{ fontWeight: '600', marginBottom: '0.25rem' }}>Paste Text</div>
                   <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Copy & Paste</div>
                 </button>
@@ -480,7 +479,7 @@ const ResumeBuilder = () => {
                       background: `${brandColors.primary}05`
                     }}
                   >
-                    <FileText size={48} style={{ margin: '0 auto 1rem', color: brandColors.primary, display: 'block' }} />
+                    <span style={{fontSize: "48px", margin: "0 auto 1rem", color: "#667eea", display: "block"}}>📄</span>
                     <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
                       {isProcessing ? 'Processing your resume...' : 'Drop your resume here or click to upload'}
                     </div>
@@ -553,7 +552,7 @@ const ResumeBuilder = () => {
                   }}></div>
                 </div>
                 <div style={{ fontSize: '0.875rem', color: '#6b7280', fontStyle: 'italic', marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Sparkles size={16} />
+                  <span style={{fontSize: "16px"}}>✨</span>
                   {currentStep}
                 </div>
               </div>
@@ -758,7 +757,7 @@ const ResumeBuilder = () => {
                     {section.type === 'personal' && (
                       <div style={{ borderBottom: '2px solid #f3f4f6', paddingBottom: '1.5rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem', gap: '0.75rem' }}>
-                          <User size={24} color={brandColors.accent} />
+                          <span style={{fontSize: "24px", color: "#667eea"}}>👤</span>
                           <h4 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>Contact Information</h4>
                         </div>
                         <h2 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '0.5rem' }}>{section.data.name}</h2>
@@ -773,7 +772,7 @@ const ResumeBuilder = () => {
                     {section.type === 'experience' && (
                       <div style={{ borderBottom: '2px solid #f3f4f6', paddingBottom: '1.5rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem', gap: '0.75rem' }}>
-                          <Briefcase size={24} color="#16a34a" />
+                          <span style={{fontSize: "24px", color: "#16a34a"}}>💼</span>
                           <h4 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>Professional Experience</h4>
                         </div>
                         {section.data.map((exp, i) => (
