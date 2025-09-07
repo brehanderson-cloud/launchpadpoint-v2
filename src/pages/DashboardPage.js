@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   DollarSign, Briefcase, Activity, Bell, ArrowUp, 
-  MapPin, Clock, FileText, MessageSquare, Search,
-  Users, Brain, Zap, TrendingUp, Sparkles
+  MapPin, Clock, FileText, MessageSquare, Search
 } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
 
 const DashboardPage = () => {
   const { userData } = useUser();
-  const [marketInsights] = useState([
+
+  const marketInsights = [
     {
       type: 'salary',
       title: 'Salary Increase Detected',
@@ -33,9 +33,9 @@ const DashboardPage = () => {
       trend: 'new',
       action: 'View Jobs'
     }
-  ]);
+  ];
 
-  const [jobAlerts] = useState([
+  const jobAlerts = [
     {
       id: 1,
       title: 'Senior React Developer at TechCorp',
@@ -63,44 +63,38 @@ const DashboardPage = () => {
       posted: '1 day ago',
       urgent: false
     }
-  ]);
+  ];
 
   return (
     <div className="space-y-8">
       {/* Career Intelligence Score - Main Hero */}
-      <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-600 dark:from-slate-800 dark:via-indigo-900 dark:to-purple-900 rounded-2xl p-8 text-white shadow-2xl relative overflow-hidden">
-        {/* Animated background elements */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400 to-transparent rounded-full opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-400 to-transparent rounded-full opacity-30 animate-pulse delay-1000"></div>
-        
-        <div className="relative z-10">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-3xl font-bold mb-2">Career Intelligence Score</h2>
-              <p className="text-blue-100">Your comprehensive career performance metric</p>
-            </div>
-            <div className="text-right">
-              <div className="text-6xl font-bold">{userData.careerIntelligence.overall}</div>
-              <div className="text-lg text-green-300 flex items-center justify-end">
-                <ArrowUp className="w-5 h-5 mr-1" />
-                +{userData.careerIntelligence.weeklyChange} this week
-              </div>
+      <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-600 dark:from-slate-800 dark:via-indigo-900 dark:to-purple-900 rounded-2xl p-8 text-white shadow-2xl">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-3xl font-bold mb-2">Career Intelligence Score</h2>
+            <p className="text-blue-100">Your comprehensive career performance metric</p>
+          </div>
+          <div className="text-right">
+            <div className="text-6xl font-bold">{userData.careerIntelligence.overall}</div>
+            <div className="text-lg text-green-300 flex items-center justify-end">
+              <ArrowUp className="w-5 h-5 mr-1" />
+              +{userData.careerIntelligence.weeklyChange} this week
             </div>
           </div>
-          
-          <div className="grid grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold mb-1">{userData.careerIntelligence.skills}%</div>
-              <div className="text-blue-200">Skills</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold mb-1">{userData.careerIntelligence.market}%</div>
-              <div className="text-blue-200">Market</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold mb-1">{userData.careerIntelligence.complete}%</div>
-              <div className="text-blue-200">Complete</div>
-            </div>
+        </div>
+        
+        <div className="grid grid-cols-3 gap-6">
+          <div className="text-center">
+            <div className="text-3xl font-bold mb-1">{userData.careerIntelligence.skills}%</div>
+            <div className="text-blue-200">Skills</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold mb-1">{userData.careerIntelligence.market}%</div>
+            <div className="text-blue-200">Market</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold mb-1">{userData.careerIntelligence.complete}%</div>
+            <div className="text-blue-200">Complete</div>
           </div>
         </div>
       </div>
@@ -161,11 +155,6 @@ const DashboardPage = () => {
                     {insight.action}
                   </button>
                 </div>
-                <div className={`mt-2 h-1 bg-gradient-to-r ${
-                  insight.trend === 'up' ? 'from-green-400 to-emerald-500' :
-                  insight.trend === 'hot' ? 'from-orange-400 to-red-500' :
-                  'from-blue-400 to-indigo-500'
-                } rounded-full`}></div>
               </div>
             ))}
           </div>
@@ -233,61 +222,23 @@ const DashboardPage = () => {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <button className="bg-gradient-to-br from-red-500 via-pink-500 to-purple-600 hover:from-red-400 hover:via-pink-400 hover:to-purple-500 dark:from-red-600 dark:via-pink-600 dark:to-purple-700 dark:hover:from-red-500 dark:hover:via-pink-500 dark:hover:to-purple-600 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-white opacity-10 rounded-full -translate-y-8 translate-x-8"></div>
-          <FileText className="w-8 h-8 mb-3 relative z-10" />
-          <h3 className="text-lg font-semibold mb-2 relative z-10">Create Resume</h3>
-          <p className="text-sm opacity-90 relative z-10">Build your professional resume with AI guidance</p>
+        <button className="bg-gradient-to-br from-red-500 via-pink-500 to-purple-600 hover:from-red-400 hover:via-pink-400 hover:to-purple-500 dark:from-red-600 dark:via-pink-600 dark:to-purple-700 dark:hover:from-red-500 dark:hover:via-pink-500 dark:hover:to-purple-600 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+          <FileText className="w-8 h-8 mb-3 mx-auto" />
+          <h3 className="text-lg font-semibold mb-2 text-center">Create Resume</h3>
+          <p className="text-sm opacity-90 text-center">Build your professional resume with AI guidance</p>
         </button>
 
-        <button className="bg-gradient-to-br from-indigo-500 via-blue-500 to-purple-600 hover:from-indigo-400 hover:via-blue-400 hover:to-purple-500 dark:from-indigo-600 dark:via-blue-600 dark:to-purple-700 dark:hover:from-indigo-500 dark:hover:via-blue-500 dark:hover:to-purple-600 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 relative overflow-hidden">
-          <div className="absolute bottom-0 left-0 w-20 h-20 bg-white opacity-10 rounded-full translate-y-10 -translate-x-10"></div>
-          <MessageSquare className="w-8 h-8 mb-3 relative z-10" />
-          <h3 className="text-lg font-semibold mb-2 relative z-10">Ask AI Assistant</h3>
-          <p className="text-sm opacity-90 relative z-10">Get personalized career advice from experts</p>
+        <button className="bg-gradient-to-br from-indigo-500 via-blue-500 to-purple-600 hover:from-indigo-400 hover:via-blue-400 hover:to-purple-500 dark:from-indigo-600 dark:via-blue-600 dark:to-purple-700 dark:hover:from-indigo-500 dark:hover:via-blue-500 dark:hover:to-purple-600 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+          <MessageSquare className="w-8 h-8 mb-3 mx-auto" />
+          <h3 className="text-lg font-semibold mb-2 text-center">Ask AI Assistant</h3>
+          <p className="text-sm opacity-90 text-center">Get personalized career advice from experts</p>
         </button>
 
-        <button className="bg-gradient-to-br from-emerald-500 via-teal-500 to-blue-600 hover:from-emerald-400 hover:via-teal-400 hover:to-blue-500 dark:from-emerald-600 dark:via-teal-600 dark:to-blue-700 dark:hover:from-emerald-500 dark:hover:via-teal-500 dark:hover:to-blue-600 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 relative overflow-hidden">
-          <div className="absolute top-1/2 right-0 w-12 h-12 bg-white opacity-10 rounded-full translate-x-6"></div>
-          <Search className="w-8 h-8 mb-3 relative z-10" />
-          <h3 className="text-lg font-semibold mb-2 relative z-10">Search Jobs</h3>
-          <p className="text-sm opacity-90 relative z-10">Find opportunities that match your profile</p>
+        <button className="bg-gradient-to-br from-emerald-500 via-teal-500 to-blue-600 hover:from-emerald-400 hover:via-teal-400 hover:to-blue-500 dark:from-emerald-600 dark:via-teal-600 dark:to-blue-700 dark:hover:from-emerald-500 dark:hover:via-teal-500 dark:hover:to-blue-600 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+          <Search className="w-8 h-8 mb-3 mx-auto" />
+          <h3 className="text-lg font-semibold mb-2 text-center">Search Jobs</h3>
+          <p className="text-sm opacity-90 text-center">Find opportunities that match your profile</p>
         </button>
-      </div>
-
-      {/* Stats Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center">
-          <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-3">
-            <Briefcase className="w-6 h-6 text-blue-600" />
-          </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">{userData.experience}+</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Years Experience</div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center">
-          <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-3">
-            <FileText className="w-6 h-6 text-green-600" />
-          </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">{userData.applications}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Applications</div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center">
-          <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-3">
-            <Users className="w-6 h-6 text-purple-600" />
-          </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">{userData.interviews}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Interviews</div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center">
-          <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-3">
-            <Zap className="w-6 h-6 text-emerald-600" />
-          </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">{userData.offers}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Offers</div>
-        </div>
       </div>
     </div>
   );
