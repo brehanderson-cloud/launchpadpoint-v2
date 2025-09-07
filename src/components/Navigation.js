@@ -1,11 +1,10 @@
 import React from 'react';
 import { 
-  Home, FileText, Briefcase, BarChart3, Users, Bell, Rocket 
+  Home, FileText, Briefcase, BarChart3, Users, Bell, Moon, Sun, Rocket 
 } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
-import ThemeToggle from './ThemeToggle';
 
-const Navigation = ({ currentPage, setCurrentPage }) => {
+const Navigation = ({ currentPage, setCurrentPage, darkMode, setDarkMode }) => {
   const { userData, notifications, setNotifications } = useUser();
 
   const navItems = [
@@ -42,7 +41,7 @@ const Navigation = ({ currentPage, setCurrentPage }) => {
                 className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center space-x-2 ${
                   currentPage === key
                     ? 'bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 text-white shadow-lg'
-                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gradient-to-r hover:from-indigo-600/20 hover:to-purple-600/20'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -64,7 +63,12 @@ const Navigation = ({ currentPage, setCurrentPage }) => {
               )}
             </button>
             
-            <ThemeToggle />
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2 rounded-lg transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
 
             <div className="flex items-center space-x-3 pl-3 border-l border-gray-300 dark:border-gray-600">
               <div className="text-right">
