@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState } from 'react';
-import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const UserContext = createContext();
 
@@ -12,7 +11,7 @@ export const useUser = () => {
 };
 
 export const UserProvider = ({ children }) => {
-  const [userData, setUserData] = useLocalStorage('userData', {
+  const [userData, setUserData] = useState({
     name: 'John Doe',
     title: 'Senior Software Engineer',
     email: 'john.doe@example.com',
@@ -38,22 +37,11 @@ export const UserProvider = ({ children }) => {
 
   const [notifications, setNotifications] = useState(3);
 
-  const updateCareerScore = (newScore) => {
-    setUserData(prev => ({
-      ...prev,
-      careerIntelligence: {
-        ...prev.careerIntelligence,
-        overall: newScore
-      }
-    }));
-  };
-
   const value = {
     userData,
     setUserData,
     notifications,
-    setNotifications,
-    updateCareerScore
+    setNotifications
   };
 
   return (
