@@ -1,18 +1,6 @@
-<<<<<<< HEAD
-import React, { useState } from 'react';
-import Navigation from './components/Navigation';
-import DashboardPage from './pages/DashboardPage';
-import BuilderPage from './pages/BuilderPage';
-import JobsPage from './pages/JobsPage';
-import { UserProvider } from './contexts/UserContext';
-import { ResumeProvider } from './contexts/ResumeContext';
-import logo from './logo.png';
-import './App.css';
-=======
 import React, { useState } from "react";
 import logo from "./logo.png";
 import "./App.css";
->>>>>>> d16f4e66cb7d89a64eafb7ab43a654ee7b6adfb9
 
 const TABS = [
   { key: "personal", icon: "fa-user", label: "Personal" },
@@ -150,32 +138,6 @@ export default function App() {
     (darkMode ? "dark-mode " : "") + (dyslexia ? "dyslexia-mode " : "");
 
   return (
-<<<<<<< HEAD
-    <UserProvider>
-      <ResumeProvider>
-        <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark' : ''}`}>
-          <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-100 dark:bg-gradient-to-br dark:from-gray-900 dark:via-slate-800 dark:to-indigo-900 text-gray-900 dark:text-white">
-            
-            {/* LOGO AT THE TOP */}
-            <div className="flex items-center justify-center py-6">
-              <img src={logo} alt="LaunchPadPoint Logo" className="h-16 w-auto" />
-            </div>
-
-            <Navigation 
-              currentPage={currentPage} 
-              setCurrentPage={setCurrentPage}
-              darkMode={darkMode}
-              setDarkMode={setDarkMode}
-            />
-            
-            <main className="pt-20 pb-8 px-4 max-w-7xl mx-auto">
-              {currentPage === 'dashboard' && <DashboardPage />}
-              {currentPage === 'builder' && <BuilderPage />}
-              {currentPage === 'jobs' && <JobsPage />}
-              {currentPage === 'analytics' && <div className="text-center py-20"><h2 className="text-2xl font-bold">Analytics Dashboard Coming Soon</h2></div>}
-              {currentPage === 'network' && <div className="text-center py-20"><h2 className="text-2xl font-bold">Professional Network Coming Soon</h2></div>}
-            </main>
-=======
     <div className={`App ${mainClass}`}>
       <div className="container">
         <header>
@@ -542,7 +504,6 @@ export default function App() {
                 <div id="preview-skills">{skillItems}</div>
               </div>
             </div>
->>>>>>> d16f4e66cb7d89a64eafb7ab43a654ee7b6adfb9
           </div>
         </div>
         <footer>
