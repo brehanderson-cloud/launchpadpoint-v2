@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import logo from "./logo.png";
 import "./App.css";
+import * as pdfjsLib from "pdfjs-dist/build/pdf";
+import "pdfjs-dist/build/pdf.worker.entry";
+import mammoth from "mammoth";
 
-// Add Import tab
 const TABS = [
   { key: "personal", icon: "fa-user", label: "Personal" },
   { key: "experience", icon: "fa-briefcase", label: "Experience" },
@@ -13,31 +15,25 @@ const TABS = [
 ];
 
 const initialForm = {
-  fullName: "John Doe",
-  jobTitle: "Senior Software Engineer",
-  email: "john.doe@example.com",
-  phone: "(555) 123-4567",
-  location: "San Francisco, CA",
-  summary:
-    "Experienced software engineer with 5+ years of expertise in developing scalable web applications and leading development teams. Strong problem-solving skills and passion for clean code architecture.",
-  company: "Tech Innovations Inc.",
-  position: "Senior Software Engineer",
-  startDate: "2020-01",
-  endDate: "2023-08",
-  description: `• Led a team of 5 developers in creating a new SaaS product
-• Improved system performance by 40% through optimization
-• Implemented CI/CD pipeline reducing deployment time by 60%`,
-  institution: "Stanford University",
-  degree: "Master of Science in Computer Science",
-  graduationDate: "2018-05",
-  gpa: "3.9/4.0",
-  achievements: `• Graduated with honors
-• Published research on machine learning algorithms
-• President of Computer Science Club`,
-  skills:
-    "JavaScript, React, Node.js, Python, SQL, AWS, Docker, Kubernetes, Team Leadership, Agile Methodologies",
-  proficiency: "advanced",
-  jobDescription: `We are looking for a Senior Software Engineer with 5+ years of experience in JavaScript, React, and Node.js. The ideal candidate will have experience leading teams and working with cloud technologies like AWS. Experience with DevOps practices and CI/CD pipelines is a plus.`,
+  fullName: "",
+  jobTitle: "",
+  email: "",
+  phone: "",
+  location: "",
+  summary: "",
+  company: "",
+  position: "",
+  startDate: "",
+  endDate: "",
+  description: "",
+  institution: "",
+  degree: "",
+  graduationDate: "",
+  gpa: "",
+  achievements: "",
+  skills: "",
+  proficiency: "beginner",
+  jobDescription: "",
 };
 
 export default function App() {
@@ -45,42 +41,17 @@ export default function App() {
   const [form, setForm] = useState(initialForm);
   const [darkMode, setDarkMode] = useState(false);
   const [dyslexia, setDyslexia] = useState(false);
-  
+
   // Import state
   const [importMode, setImportMode] = useState("paste"); // "paste" or "upload"
   const [resumePaste, setResumePaste] = useState("");
   const [uploadError, setUploadError] = useState("");
 
-  // AI Analysis
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiResult, setAiResult] = useState(null);
-  const [aiError, setAiError] = useState("");
+  // For progress and preview
+  const filledFields = Object.values(form).filter((v) => v && String(v).trim().length > 0).length;
+  const progress = Math.round((filledFields / Object.keys(form).length) * 100);
 
-  // Export resume as text (your original)
-  const handleExport = () => {
-    const text =
-      `${form.fullName}\n` +
-      `${form.jobTitle}\n` +
-      `${form.email} • ${form.phone} • ${form.location}\n\n` +
-      `SUMMARY\n${form.summary}\n\n` +
-      `EXPERIENCE\n${form.position} at ${form.company}\n${formatMonth(form.startDate)} - ${formatMonth(form.endDate)}\n${form.description}\n\n` +
-      `EDUCATION\n${form.degree}\n${form.institution}\nGraduated: ${formatMonth(form.graduationDate)}\nGPA: ${form.gpa}\n${form.achievements}\n\n` +
-      `SKILLS\n${form.skills}\n\n` +
-      `JOB MATCH (Paste job description)\n${form.jobDescription}`;
-    const blob = new Blob([text], { type: "text/plain" });
-    const a = document.createElement("a");
-    a.href = window.URL.createObjectURL(blob);
-    a.download = "resume.txt";
-    a.click();
-  };
-
-  function formatMonth(val) {
-    if (!val) return "";
-    const [y, m] = val.split("-");
-    const date = new Date(y, m - 1, 1);
-    return date.toLocaleString("default", { month: "long", year: "numeric" });
-  }
-
+  // Handlers for builder fields
   const handleInput = (e) => {
     const { id, value } = e.target;
     setForm((f) => ({ ...f, [id]: value }));
@@ -92,15 +63,40 @@ export default function App() {
     setForm((f) => ({ ...f, proficiency: e.target.value }));
   };
 
-  // Import logic
-  function parseResumeText() {
-    // Demo: set summary, you can parse all fields with AI or logic
-    setForm((f) => ({
-      ...f,
-      summary: resumePaste,
-    }));
-    alert("Resume pasted! (Replace with actual parsing logic)");
+  // --- File parsing helpers ---
+  // PDF parsing (frontend, uses pdfjs-dist)
+  async function handlePDF(file) {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let text = "";
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const content = await page.getTextContent();
+        text += content.items.map(item => item.str).join(" ") + "\n";
+      }
+      setResumePaste(text);
+      setForm(f => ({ ...f, summary: text }));
+      alert("PDF uploaded! (Extend parsing as needed)");
+    } catch (e) {
+      setUploadError("PDF parsing failed.");
+    }
   }
+
+  // DOCX parsing (browser: works with mammoth, but best on backend)
+  async function handleDOCX(file) {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const { value } = await mammoth.extractRawText({ arrayBuffer });
+      setResumePaste(value);
+      setForm(f => ({ ...f, summary: value }));
+      alert("DOCX uploaded! (Extend parsing as needed)");
+    } catch (e) {
+      setUploadError("DOCX parsing failed.");
+    }
+  }
+
+  // File upload handler
   const handleFileUpload = async (e) => {
     setUploadError("");
     const file = e.target.files[0];
@@ -108,24 +104,62 @@ export default function App() {
     if (file.type === "text/plain") {
       const text = await file.text();
       setResumePaste(text);
-      setForm((f) => ({
-        ...f,
-        summary: text,
-      }));
-      alert("Text resume uploaded! (Replace with actual parsing logic)");
+      setForm(f => ({ ...f, summary: text }));
+      alert("Text resume uploaded!");
+    } else if (
+      file.type === "application/pdf" ||
+      file.name.toLowerCase().endsWith(".pdf")
+    ) {
+      await handlePDF(file);
+    } else if (
+      file.type ===
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+      file.name.toLowerCase().endsWith(".docx")
+    ) {
+      await handleDOCX(file);
     } else {
-      setUploadError("Only .txt files are supported in this demo.");
+      setUploadError("Only .txt, .pdf, or .docx files are supported.");
     }
   };
 
-  const filledFields = Object.values(form).filter((v) => v && String(v).trim().length > 0).length;
-  const progress = Math.round((filledFields / Object.keys(form).length) * 100);
+  // Paste handler (demo: puts all text in summary, extend as needed)
+  function parseResumeText() {
+    setForm((f) => ({
+      ...f,
+      summary: resumePaste,
+    }));
+    alert("Resume pasted! (Replace with actual parsing logic for all fields)");
+  }
 
-  // ... your AI analysis and preview logic, unchanged
+  // Helper for formatting
+  function formatMonth(val) {
+    if (!val) return "";
+    const [y, m] = val.split("-");
+    const date = new Date(y, m - 1, 1);
+    return date.toLocaleString("default", { month: "long", year: "numeric" });
+  }
+
+  // Live preview items
+  const experienceItems = form.description
+    .split("\n")
+    .filter((x) => x.trim())
+    .map((line, i) => <li key={i}>{line.replace(/^•\s?/, "")}</li>);
+
+  const achievementItems = form.achievements
+    .split("\n")
+    .filter((x) => x.trim())
+    .map((line, i) => <li key={i}>{line.replace(/^•\s?/, "")}</li>);
+
+  const skillItems = form.skills.split(",").map((x, i) => (
+    <div className="skill-item" key={i}>
+      {x.trim()}
+    </div>
+  ));
 
   return (
     <div className={`App${darkMode ? " dark-mode" : ""}${dyslexia ? " dyslexia-mode" : ""}`}>
       <div className="container">
+        {/* Header */}
         <header>
           <div className="logo">
             <img src={logo} alt="LaunchpadPoint Logo" className="logo-img" />
@@ -147,11 +181,19 @@ export default function App() {
               <i className={`fas fa-${darkMode ? "sun" : "moon"}`}></i>{" "}
               {darkMode ? "Light Mode" : "Dark Mode"}
             </button>
-            <button className="btn btn-primary" onClick={handleExport}>
+            <button className="btn btn-primary" onClick={() => alert('Export logic here!')}>
               <i className="fas fa-download"></i> Export Resume
             </button>
           </div>
         </header>
+
+        {/* Progress Bar */}
+        <div className="progress-container">
+          <div className="progress-bar" style={{ width: `${progress}%` }} />
+          <span className="progress-label">{progress}% Complete</span>
+        </div>
+
+        {/* Tabs */}
         <div className="tabs">
           {TABS.map((t) => (
             <div
@@ -163,62 +205,366 @@ export default function App() {
             </div>
           ))}
         </div>
-        {/* Import Tab: Paste or Upload */}
-        {tab === "import" && (
-          <div className="tab-content active">
-            <h2>Import Your Resume</h2>
-            <div style={{ display: "flex", gap: "1em", marginBottom: "1em" }}>
-              <button
-                className={`btn ${importMode === "paste" ? "btn-primary" : "btn-outline"}`}
-                onClick={() => setImportMode("paste")}
-              >
-                <i className="fas fa-paste"></i> Paste Resume
-              </button>
-              <button
-                className={`btn ${importMode === "upload" ? "btn-primary" : "btn-outline"}`}
-                onClick={() => setImportMode("upload")}
-              >
-                <i className="fas fa-upload"></i> Upload Resume
-              </button>
-            </div>
-            {importMode === "paste" ? (
-              <>
+
+        {/* Tab Content */}
+        <div className="main-content">
+          {/* Personal Tab */}
+          {tab === "personal" && (
+            <div className="tab-content active">
+              <div className="form-section">
                 <div className="form-group">
-                  <label htmlFor="pasteResume">
-                    <i className="fas fa-paste"></i> Paste Your Resume Text
-                  </label>
-                  <textarea
-                    id="pasteResume"
-                    value={resumePaste}
-                    onChange={e => setResumePaste(e.target.value)}
-                    placeholder="Paste your resume text here..."
-                    rows={10}
-                  />
-                </div>
-                <button className="btn btn-primary" onClick={parseResumeText}>
-                  <i className="fas fa-magic"></i> Parse Resume
-                </button>
-              </>
-            ) : (
-              <>
-                <div className="form-group">
-                  <label htmlFor="uploadResume">
-                    <i className="fas fa-upload"></i> Upload Resume (.txt)
+                  <label htmlFor="fullName">
+                    <i className="fas fa-signature"></i> Full Name
                   </label>
                   <input
-                    type="file"
-                    id="uploadResume"
-                    accept=".txt"
-                    onChange={handleFileUpload}
+                    type="text"
+                    id="fullName"
+                    value={form.fullName}
+                    onChange={handleInput}
                   />
-                  {uploadError && <div style={{ color: "#f72585" }}>{uploadError}</div>}
                 </div>
-              </>
-            )}
+                <div className="form-group">
+                  <label htmlFor="jobTitle">
+                    <i className="fas fa-briefcase"></i> Professional Title
+                  </label>
+                  <input
+                    type="text"
+                    id="jobTitle"
+                    value={form.jobTitle}
+                    onChange={handleInput}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="email">
+                    <i className="fas fa-envelope"></i> Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={form.email}
+                    onChange={handleInput}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="phone">
+                    <i className="fas fa-phone"></i> Phone
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    value={form.phone}
+                    onChange={handleInput}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="location">
+                    <i className="fas fa-map-marker-alt"></i> Location
+                  </label>
+                  <input
+                    type="text"
+                    id="location"
+                    value={form.location}
+                    onChange={handleInput}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="summary">
+                    <i className="fas fa-file-alt"></i> Professional Summary
+                  </label>
+                  <textarea
+                    id="summary"
+                    value={form.summary}
+                    onChange={handleInput}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Experience Tab */}
+          {tab === "experience" && (
+            <div className="tab-content active">
+              <div className="form-section">
+                <div className="form-group">
+                  <label htmlFor="company">
+                    <i className="fas fa-building"></i> Company
+                  </label>
+                  <input
+                    type="text"
+                    id="company"
+                    value={form.company}
+                    onChange={handleInput}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="position">
+                    <i className="fas fa-user-tie"></i> Position
+                  </label>
+                  <input
+                    type="text"
+                    id="position"
+                    value={form.position}
+                    onChange={handleInput}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="startDate">
+                    <i className="fas fa-calendar-alt"></i> Start Date
+                  </label>
+                  <input
+                    type="month"
+                    id="startDate"
+                    value={form.startDate}
+                    onChange={handleInput}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="endDate">
+                    <i className="fas fa-calendar-alt"></i> End Date
+                  </label>
+                  <input
+                    type="month"
+                    id="endDate"
+                    value={form.endDate}
+                    onChange={handleInput}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="description">
+                    <i className="fas fa-tasks"></i> Description & Achievements
+                  </label>
+                  <textarea
+                    id="description"
+                    value={form.description}
+                    onChange={handleInput}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Education Tab */}
+          {tab === "education" && (
+            <div className="tab-content active">
+              <div className="form-section">
+                <div className="form-group">
+                  <label htmlFor="institution">
+                    <i className="fas fa-university"></i> Institution
+                  </label>
+                  <input
+                    type="text"
+                    id="institution"
+                    value={form.institution}
+                    onChange={handleInput}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="degree">
+                    <i className="fas fa-graduation-cap"></i> Degree
+                  </label>
+                  <input
+                    type="text"
+                    id="degree"
+                    value={form.degree}
+                    onChange={handleInput}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="graduationDate">
+                    <i className="fas fa-calendar-check"></i> Graduation Date
+                  </label>
+                  <input
+                    type="month"
+                    id="graduationDate"
+                    value={form.graduationDate}
+                    onChange={handleInput}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="gpa">
+                    <i className="fas fa-chart-line"></i> GPA (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    id="gpa"
+                    value={form.gpa}
+                    onChange={handleInput}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="achievements">
+                    <i className="fas fa-trophy"></i> Academic Achievements
+                  </label>
+                  <textarea
+                    id="achievements"
+                    value={form.achievements}
+                    onChange={handleInput}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Skills Tab */}
+          {tab === "skills" && (
+            <div className="tab-content active">
+              <div className="form-section">
+                <div className="form-group">
+                  <label htmlFor="skills">
+                    <i className="fas fa-tools"></i> Skills (comma separated)
+                  </label>
+                  <textarea
+                    id="skills"
+                    value={form.skills}
+                    onChange={handleSkillInput}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="proficiency">
+                    <i className="fas fa-signal"></i> Proficiency Level
+                  </label>
+                  <select
+                    id="proficiency"
+                    value={form.proficiency}
+                    onChange={handleProficiency}
+                  >
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                    <option value="expert">Expert</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Job Tab */}
+          {tab === "job" && (
+            <div className="tab-content active">
+              <div className="form-section">
+                <div className="form-group">
+                  <label htmlFor="jobDescription">
+                    <i className="fas fa-file-alt"></i> Paste Job Description
+                  </label>
+                  <textarea
+                    id="jobDescription"
+                    value={form.jobDescription}
+                    onChange={handleInput}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Import Tab */}
+          {tab === "import" && (
+            <div className="tab-content active">
+              <h2>Import Your Resume</h2>
+              <div style={{ display: "flex", gap: "1em", marginBottom: "1em" }}>
+                <button
+                  className={`btn ${importMode === "paste" ? "btn-primary" : "btn-outline"}`}
+                  onClick={() => setImportMode("paste")}
+                >
+                  <i className="fas fa-paste"></i> Paste Resume
+                </button>
+                <button
+                  className={`btn ${importMode === "upload" ? "btn-primary" : "btn-outline"}`}
+                  onClick={() => setImportMode("upload")}
+                >
+                  <i className="fas fa-upload"></i> Upload Resume
+                </button>
+              </div>
+              {importMode === "paste" ? (
+                <>
+                  <div className="form-group">
+                    <label htmlFor="pasteResume">
+                      <i className="fas fa-paste"></i> Paste Your Resume Text
+                    </label>
+                    <textarea
+                      id="pasteResume"
+                      value={resumePaste}
+                      onChange={e => setResumePaste(e.target.value)}
+                      placeholder="Paste your resume text here..."
+                      rows={10}
+                    />
+                  </div>
+                  <button className="btn btn-primary" onClick={parseResumeText}>
+                    <i className="fas fa-magic"></i> Parse Resume
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="form-group">
+                    <label htmlFor="uploadResume">
+                      <i className="fas fa-upload"></i> Upload Resume (.txt, .pdf, .docx)
+                    </label>
+                    <input
+                      type="file"
+                      id="uploadResume"
+                      accept=".txt,.pdf,.docx"
+                      onChange={handleFileUpload}
+                    />
+                    {uploadError && <div style={{ color: "#f72585" }}>{uploadError}</div>}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Live Preview - Always Visible */}
+          <div className="preview-section">
+            <h2 className="section-title">
+              <i className="fas fa-eye"></i> Live Preview
+            </h2>
+            <div className="resume-template" id="resume-preview">
+              <div className="resume-header">
+                <h2 id="preview-name">{form.fullName}</h2>
+                <p id="preview-title">{form.jobTitle}</p>
+                <p id="preview-contact">
+                  {form.email} • {form.phone} • {form.location}
+                </p>
+              </div>
+              <div className="resume-section">
+                <h3>Summary</h3>
+                <p id="preview-summary">{form.summary}</p>
+              </div>
+              <div className="resume-section">
+                <h3>Experience</h3>
+                <div className="experience-item">
+                  <h4>
+                    {form.position} <span className="company">at {form.company}</span>
+                  </h4>
+                  <p className="date">
+                    {formatMonth(form.startDate)} - {formatMonth(form.endDate)}
+                  </p>
+                  <ul id="preview-experience">{experienceItems}</ul>
+                </div>
+              </div>
+              <div className="resume-section">
+                <h3>Education</h3>
+                <div className="education-item">
+                  <h4>{form.degree}</h4>
+                  <p className="institution">{form.institution}</p>
+                  <p className="date">
+                    Graduated: {formatMonth(form.graduationDate)}
+                  </p>
+                  <p>GPA: {form.gpa}</p>
+                  <ul id="preview-education">{achievementItems}</ul>
+                </div>
+              </div>
+              <div className="resume-section">
+                <h3>Skills</h3>
+                <div id="preview-skills">{skillItems}</div>
+              </div>
+            </div>
           </div>
-        )}
-        {/* ...rest of your UI for tabs and preview (unchanged) ... */}
+        </div>
+
+        {/* Footer */}
+        <footer>
+          <p>© 2025 LaunchpadPoint. Empowering careers through intelligent, accessible technology.</p>
+        </footer>
       </div>
     </div>
   );
-                              }
+                      }
