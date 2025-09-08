@@ -1,611 +1,518 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from "react";
+import logo from "./logo.png";
+import "./App.css";
 
-function App() {
-  const [showModal, setShowModal] = useState(false);
-  const [showAdmin, setShowAdmin] = useState(false);
-  const [currentStep, setCurrentStep] = useState('email');
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [userEmail, setUserEmail] = useState('');
-  const [answers, setAnswers] = useState({
-    moment: '',
-    approach: '',
-    uniqueness: ''
-  });
-  const [dyslexiaFont, setDyslexiaFont] = useState(false);
-  const [selectedTier, setSelectedTier] = useState('basic');
-  const [users, setUsers] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+const TABS = [
+  { key: "personal", icon: "fa-user", label: "Personal" },
+  { key: "experience", icon: "fa-briefcase", label: "Experience" },
+  { key: "education", icon: "fa-graduation-cap", label: "Education" },
+  { key: "skills", icon: "fa-tools", label: "Skills" },
+  { key: "job", icon: "fa-search", label: "Job Match" },
+];
 
-  // Stripe Configuration
-  const STRIPE_PUBLISHABLE_KEY = 'pk_test_51Rv0gGJ5ERkOYcRilISpOnKSyFIJXqcyhSteERevdP7boZmxkG09y5dV0ZgfqfbMdjnQ4WuHZ2puV6m4AQd9ze5Z00XXsKW1lZ';
-  const PRICE_IDS = {
-    basic: 'price_1RzQ1wJ5ERkOYcRimAym5yrb',
-    best: 'price_1RzQ2YJ5ERkOYcRiYs0G8RDs',
-    immaculate: 'price_1RzQ35J5ERkOYcRiNysMIv4x'
+const initialForm = {
+  fullName: "John Doe",
+  jobTitle: "Senior Software Engineer",
+  email: "john.doe@example.com",
+  phone: "(555) 123-4567",
+  location: "San Francisco, CA",
+  summary:
+    "Experienced software engineer with 5+ years of expertise in developing scalable web applications and leading development teams. Strong problem-solving skills and passion for clean code architecture.",
+  company: "Tech Innovations Inc.",
+  position: "Senior Software Engineer",
+  startDate: "2020-01",
+  endDate: "2023-08",
+  description: `• Led a team of 5 developers in creating a new SaaS product
+• Improved system performance by 40% through optimization
+• Implemented CI/CD pipeline reducing deployment time by 60%`,
+  institution: "Stanford University",
+  degree: "Master of Science in Computer Science",
+  graduationDate: "2018-05",
+  gpa: "3.9/4.0",
+  achievements: `• Graduated with honors
+• Published research on machine learning algorithms
+• President of Computer Science Club`,
+  skills:
+    "JavaScript, React, Node.js, Python, SQL, AWS, Docker, Kubernetes, Team Leadership, Agile Methodologies",
+  proficiency: "advanced",
+  jobDescription: `We are looking for a Senior Software Engineer with 5+ years of experience in JavaScript, React, and Node.js. The ideal candidate will have experience leading teams and working with cloud technologies like AWS. Experience with DevOps practices and CI/CD pipelines is a plus.`,
+};
+
+export default function App() {
+  const [tab, setTab] = useState(TABS[0].key);
+  const [form, setForm] = useState(initialForm);
+  const [darkMode, setDarkMode] = useState(false);
+  const [dyslexia, setDyslexia] = useState(false);
+
+  // AI Analysis
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiResult, setAiResult] = useState(null);
+  const [aiError, setAiError] = useState("");
+
+  // Export resume as text
+  const handleExport = () => {
+    const text =
+      `${form.fullName}\n` +
+      `${form.jobTitle}\n` +
+      `${form.email} • ${form.phone} • ${form.location}\n\n` +
+      `SUMMARY\n${form.summary}\n\n` +
+      `EXPERIENCE\n${form.position} at ${form.company}\n${formatMonth(form.startDate)} - ${formatMonth(form.endDate)}\n${form.description}\n\n` +
+      `EDUCATION\n${form.degree}\n${form.institution}\nGraduated: ${formatMonth(form.graduationDate)}\nGPA: ${form.gpa}\n${form.achievements}\n\n` +
+      `SKILLS\n${form.skills}\n\n` +
+      `JOB MATCH (Paste job description)\n${form.jobDescription}`;
+    const blob = new Blob([text], { type: "text/plain" });
+    const a = document.createElement("a");
+    a.href = window.URL.createObjectURL(blob);
+    a.download = "resume.txt";
+    a.click();
   };
 
-  // Load Stripe
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://js.stripe.com/v3/';
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
+  function formatMonth(val) {
+    if (!val) return "";
+    const [y, m] = val.split("-");
+    const date = new Date(y, m - 1, 1);
+    return date.toLocaleString("default", { month: "long", year: "numeric" });
+  }
 
-  // Load saved data from localStorage
-  useEffect(() => {
-    const savedAnswers = localStorage.getItem('launchpadAnswers');
-    const savedUsers = localStorage.getItem('launchpadUsers');
-    const savedTransactions = localStorage.getItem('launchpadTransactions');
-    if (savedAnswers) setAnswers(JSON.parse(savedAnswers));
-    if (savedUsers) setUsers(JSON.parse(savedUsers));
-    if (savedTransactions) setTransactions(JSON.parse(savedTransactions));
-  }, []);
-
-  // Save data to localStorage
-  useEffect(() => {
-    localStorage.setItem('launchpadAnswers', JSON.stringify(answers));
-    localStorage.setItem('launchpadUsers', JSON.stringify(users));
-    localStorage.setItem('launchpadTransactions', JSON.stringify(transactions));
-  }, [answers, users, transactions]);
-
-  const questions = [
-    {
-      id: 'moment',
-      text: "Think of a moment when someone genuinely thanked you or told you that you made a difference in their life or work. What happened?",
-      placeholder: "Take your time... describe that moment when you felt truly valued..."
-    },
-    {
-      id: 'approach',
-      text: "What do you think it was about your approach that made such an impact?",
-      placeholder: "What was special about how you handled that situation?"
-    },
-    {
-      id: 'uniqueness',
-      text: "Why do you believe you were able to help in a way that others might not have been able to?",
-      placeholder: "What unique qualities or perspective did you bring?"
-    }
-  ];
-
-  const tiers = {
-    basic: { name: 'Basic', price: 19, color: '#059669' },
-    best: { name: 'Best', price: 39, color: '#2563eb' },
-    immaculate: { name: 'Immaculate', price: 49, color: '#7c3aed' }
+  const handleInput = (e) => {
+    const { id, value } = e.target;
+    setForm((f) => ({ ...f, [id]: value }));
+  };
+  const handleSkillInput = (e) => {
+    setForm((f) => ({ ...f, skills: e.target.value }));
+  };
+  const handleProficiency = (e) => {
+    setForm((f) => ({ ...f, proficiency: e.target.value }));
   };
 
-  // AI Resume Generation Functions
-  const detectIndustry = (answers) => {
-    const combinedText = Object.values(answers).join(' ').toLowerCase();
-    if (combinedText.includes('patient') || combinedText.includes('medical') || combinedText.includes('healthcare') || combinedText.includes('clinical')) {
-      return 'healthcare';
-    } else if (combinedText.includes('recruit') || combinedText.includes('hiring') || combinedText.includes('candidate') || combinedText.includes('hr')) {
-      return 'recruiting';
-    } else if (combinedText.includes('aviation') || combinedText.includes('airport') || combinedText.includes('aircraft') || combinedText.includes('flight')) {
-      return 'aviation';
-    } else if (combinedText.includes('teach') || combinedText.includes('student') || combinedText.includes('education') || combinedText.includes('classroom')) {
-      return 'education';
-    } else if (combinedText.includes('sales') || combinedText.includes('customer') || combinedText.includes('client') || combinedText.includes('revenue')) {
-      return 'sales';
-    } else if (combinedText.includes('software') || combinedText.includes('code') || combinedText.includes('developer') || combinedText.includes('technical')) {
-      return 'technology';
-    }
-    return 'general';
-  };
+  const filledFields = Object.values(form).filter((v) => v && String(v).trim().length > 0).length;
+  const progress = Math.round((filledFields / Object.keys(form).length) * 100);
 
-  const generateProfessionalSummary = (answers, industry, tier) => {
-    const { moment, approach, uniqueness } = answers;
-    const industryKeywords = {
-      healthcare: 'patient care excellence, clinical outcomes, healthcare delivery',
-      recruiting: 'talent acquisition, candidate experience, organizational growth',
-      aviation: 'operational safety, regulatory compliance, industry standards',
-      education: 'student success, learning outcomes, educational excellence',
-      sales: 'revenue generation, client relationships, market expansion',
-      technology: 'innovative solutions, technical excellence, user experience',
-      general: 'operational excellence, stakeholder satisfaction, process improvement'
-    };
-    const keywords = industryKeywords[industry] || industryKeywords.general;
-    if (tier === 'basic' || tier === 'preview') {
-      return `Professional with demonstrated ability to deliver meaningful results. Known for ${approach && approach.length > 10 ? approach.toLowerCase() : 'strong problem-solving skills'} and commitment to ${keywords.split(',')[0]}.`;
-    } else if (tier === 'best') {
-      return `Results-driven professional with proven track record of making significant impact through ${approach && approach.length > 10 ? approach.toLowerCase() : 'innovative approaches'}. Recognized for ability to ${moment && moment.length > 20 ? 'deliver exceptional outcomes that exceed expectations' : 'create positive change in challenging environments'}. Specializes in ${keywords} with focus on ${uniqueness && uniqueness.length > 10 ? uniqueness.toLowerCase() : 'collaborative problem-solving and continuous improvement'}.`;
-    } else {
-      return `Highly accomplished professional with extensive experience driving ${keywords}. Distinguished by ${uniqueness && uniqueness.length > 15 ? uniqueness.toLowerCase() : 'unique perspective and innovative problem-solving approach'}. Proven ability to ${moment && moment.length > 25 ? 'consistently deliver transformative results that create lasting positive impact' : 'exceed performance expectations while building strong stakeholder relationships'}.`;
-    }
-  };
+  const experienceItems = form.description
+    .split("\n")
+    .filter((x) => x.trim())
+    .map((line, i) => <li key={i}>{line.replace(/^•\s?/, "")}</li>);
 
-  const generateFullResume = (tier) => {
-    const industry = detectIndustry(answers);
-    const summary = generateProfessionalSummary(answers, industry, tier);
-    const name = userEmail ? userEmail.split('@')[0].replace(/[^a-zA-Z]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : "Your Name";
-    const contact = `${name} | ${userEmail || 'your.email@example.com'} | (555) 123-4567`;
+  const achievementItems = form.achievements
+    .split("\n")
+    .filter((x) => x.trim())
+    .map((line, i) => <li key={i}>{line.replace(/^•\s?/, "")}</li>);
 
-    if (tier === 'basic' || tier === 'preview') {
-      return `${name}
-${contact}
+  const skillItems = form.skills.split(",").map((x, i) => (
+    <div className="skill-item" key={i}>
+      {x.trim()}
+    </div>
+  ));
 
-PROFESSIONAL SUMMARY
-${summary}
-
-CORE SKILLS
-• Problem Solving & Analysis
-• Team Collaboration  
-• Communication Excellence
-• Attention to Detail
-• Process Improvement
-
-EXPERIENCE
-Recent Position | Company Name
-• Successfully contributed to team objectives and organizational goals
-• Recognized for professional excellence and positive impact
-• Applied unique skills to support project success
-
-EDUCATION
-[Your Degree] | [University Name]
-[Graduation Year]`;
-    } else if (tier === 'best') {
-      return `${name}
-${contact}
-
-PROFESSIONAL SUMMARY
-${summary}
-
-CORE COMPETENCIES
-• Strategic Problem Solving  • Team Leadership  • Process Optimization
-• Communication Excellence  • Data Analysis  • Project Management
-
-PROFESSIONAL EXPERIENCE
-Recent Position | Company Name | [Start Date] - Present
-• Successfully delivered exceptional results through innovative problem-solving
-• Gained recognition for outstanding contribution to organizational success
-• Leveraged distinctive skills to optimize operations and support development
-• Maintained focus on continuous improvement and professional relationships
-
-Previous Position | Previous Company | [Start Date] - [End Date]
-• [Additional experience details would be added based on your background]
-
-EDUCATION & CERTIFICATIONS
-[Your Degree] | [University Name] | [Graduation Year]
-• [Relevant coursework, honors, or achievements]`;
-    } else {
-      return `${name}
-${contact}
-LinkedIn: [Your LinkedIn Profile] | Portfolio: [Your Website]
-
-PROFESSIONAL SUMMARY
-${summary}
-
-CORE COMPETENCIES
-Technical Excellence        Process Optimization        Strategic Leadership
-Problem Solving            Team Collaboration          Innovation Management
-
-PROFESSIONAL EXPERIENCE
-Senior Position | Company Name | [Start Date] - Present
-• Spearheaded initiatives resulting in measurable improvements through strategic leadership
-• Earned widespread recognition for transformative contributions exceeding performance targets
-• Applied unique expertise to drive strategic initiatives and develop organizational capabilities
-
-Previous Position | Previous Company | [Start Date] - [End Date]
-• Consistently achieved performance targets while maintaining focus on professional development
-• Collaborated with leadership to implement best practices and drive sustainable improvements
-
-KEY PROJECTS & ACHIEVEMENTS
-• Led cross-functional initiative resulting in 25% efficiency improvement
-• Developed innovative solution that enhanced stakeholder satisfaction by 40%
-• Mentored team of 8 professionals, achieving 95% retention rate
-
-EDUCATION & CERTIFICATIONS
-[Your Degree] | [University Name] | [Graduation Year]
-• [Relevant coursework, magna cum laude, etc.]`;
-    }
-  };
-
-  const handleEmailSubmit = () => {
-    if (userEmail && userEmail.includes('@')) {
-      const newUser = {
-        email: userEmail,
-        timestamp: new Date().toISOString(),
-        industry: 'unknown',
-        completed: false,
-        tier: selectedTier
-      };
-      setUsers(prev => [...prev, newUser]);
-      setCurrentStep('questions');
-    }
-  };
-
-  const handleAnswerChange = (questionId, value) => {
-    setAnswers(prev => ({
-      ...prev,
-      [questionId]: value
-    }));
-  };
-
-  const nextQuestion = () => {
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      setCurrentStep('preview');
-      setUsers(prev => prev.map(user =>
-        user.email === userEmail
-          ? { ...user, completed: true, industry: detectIndustry(answers) }
-          : user
-      ));
-    }
-  };
-
-  const prevQuestion = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
-    }
-  };
-
-  const handleStripePayment = async (tierKey) => {
-    if (!window.Stripe) {
-      alert('Stripe is loading, please try again in a moment');
-      return;
-    }
-    setIsProcessingPayment(true);
+  // Real AI Resume Analysis
+  async function analyzeResume() {
+    setAiLoading(true);
+    setAiResult(null);
+    setAiError("");
     try {
-      const stripe = window.Stripe(STRIPE_PUBLISHABLE_KEY);
-      // Create checkout session
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          priceId: PRICE_IDS[tierKey],
-          customerEmail: userEmail,
-          successUrl: window.location.origin + '/success',
-          cancelUrl: window.location.origin + '/cancel'
-        })
-      });
-      if (!response.ok) {
-        // Fallback to direct Stripe checkout for demo
-        const { error } = await stripe.redirectToCheckout({
-          lineItems: [{
-            price: PRICE_IDS[tierKey],
-            quantity: 1,
-          }],
-          mode: 'subscription',
-          successUrl: window.location.origin + '/success',
-          cancelUrl: window.location.origin + '/cancel',
-          customerEmail: userEmail,
-        });
-        if (error) {
-          console.error('Stripe error:', error);
-          alert('Payment failed: ' + error.message);
-        }
-        return;
-      }
-      const session = await response.json();
-      // Redirect to Stripe Checkout
-      const { error } = await stripe.redirectToCheckout({
-        sessionId: session.id
-      });
-      if (error) {
-        alert('Payment failed: ' + error.message);
-      }
-    } catch (error) {
-      console.error('Payment error:', error);
-      // Record transaction locally for demo purposes
-      const transaction = {
-        id: `txn_${Date.now()}`,
-        email: userEmail,
-        tier: tierKey,
-        amount: tiers[tierKey].price,
-        status: 'completed',
-        timestamp: new Date().toISOString(),
-        industry: detectIndustry(answers)
+      const payload = {
+        resume: {
+          summary: form.summary,
+          experience: form.description,
+          skills: form.skills,
+          education: form.achievements,
+        },
+        jobDescription: form.jobDescription,
       };
-      setTransactions(prev => [...prev, transaction]);
-      alert(`Demo payment successful! $${tiers[tierKey].price} for ${tiers[tierKey].name} tier. In production, this would charge a real credit card and download the resume.`);
-      setShowModal(false);
-      resetForm();
+      const res = await fetch("/api/analyze-resume", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("API error");
+      const data = await res.json();
+      setAiResult(data);
+    } catch (e) {
+      setAiError("AI analysis failed. Please try again.");
     } finally {
-      setIsProcessingPayment(false);
+      setAiLoading(false);
     }
-  };
+  }
 
-  const resetForm = () => {
-    setCurrentStep('email');
-    setCurrentQuestion(0);
-    setUserEmail('');
-    setAnswers({ moment: '', approach: '', uniqueness: '' });
-  };
-
-  const startWithTier = (tier) => {
-    setSelectedTier(tier);
-    setShowModal(true);
-    setCurrentStep('email');
-  };
-
-  // Admin Dashboard Data
-  const totalRevenue = transactions.reduce((sum, txn) => sum + txn.amount, 0);
-  const completionRate = users.length > 0 ? (users.filter(u => u.completed).length / users.length * 100).toFixed(1) : 0;
+  const mainClass =
+    (darkMode ? "dark-mode " : "") + (dyslexia ? "dyslexia-mode " : "");
 
   return (
-    <div
-      style={{
-        fontFamily: dyslexiaFont ? 'OpenDyslexic3, Arial, sans-serif' : 'Arial, sans-serif',
-        background: '#f6f8fb',
-        minHeight: '100vh',
-        width: '100%',
-        boxSizing: 'border-box'
-      }}
-    >
-      {/* Header */}
-      <div style={{
-        background: 'linear-gradient(90deg,#059669 0%,#2563eb 100%)',
-        borderRadius: '0 0 32px 32px',
-        padding: '32px 10px 24px 10px',
-        boxShadow: '0 8px 32px rgba(37,99,235,0.09)',
-        textAlign: 'center'
-      }}>
-        <span style={{ fontSize: '2.6rem', display: 'block', marginBottom: '0.2em' }}>🚀</span>
-        <span style={{ fontWeight: 'bold', fontSize: '2.2rem', color: '#fff', letterSpacing: '2px', textShadow: '0 2px 8px #2563eb88' }}>LaunchpadPoint</span>
-        <div style={{ color: '#e5e7eb', fontSize: '1.18rem', marginTop: '8px', fontStyle: 'italic' }}>Career Intelligence Platform</div>
-      </div>
-
-      {/* Tiers (use buttons for each, styled) */}
-      <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '1rem',
-        justifyContent: 'center',
-        margin: '36px 0 16px 0'
-      }}>
-        {Object.entries(tiers).map(([tierKey, tier]) => (
-          <button
-            key={tierKey}
-            onClick={() => startWithTier(tierKey)}
-            style={{
-              background: tierKey === 'best'
-                ? 'linear-gradient(90deg,#2563eb,#059669)'
-                : tier.color,
-              color: '#fff',
-              fontWeight: 'bold',
-              border: 'none',
-              borderRadius: '14px',
-              padding: '1rem 2.2rem',
-              fontSize: '1.14rem',
-              boxShadow: tierKey === 'best'
-                ? '0 6px 20px #2563eb44'
-                : '0 2px 6px #05966933',
-              cursor: 'pointer',
-              outline: tierKey === selectedTier ? '3px solid #7c3aed' : 'none',
-              transition: 'all 0.18s cubic-bezier(.4,2,.6,1)'
-            }}
-          >
-            {tier.name} <span style={{fontWeight:"normal",fontSize:"0.92rem"}}>${tier.price}/mo</span>
-            {tierKey === 'best' && (
-              <span style={{
-                display:'inline-block', marginLeft:'10px', fontSize:'0.8em',
-                background:'#fff2', color:'#fff', borderRadius:'10px', padding:'2px 12px'
-              }}>Popular</span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* DyslexiaFont toggle */}
-      <div style={{textAlign:"center",margin:"16px 0 24px 0"}}>
-        <label style={{fontSize:"1.05rem",color:"#2563eb",fontWeight:"bold"}}>
-          <input
-            type="checkbox"
-            checked={dyslexiaFont}
-            onChange={(e) => setDyslexiaFont(e.target.checked)}
-            style={{marginRight:"8px",transform:"scale(1.2)"}}
-          />
-          Dyslexia-Friendly Font
-        </label>
-      </div>
-
-      {/* CTA */}
-      <div style={{textAlign:"center",marginBottom:"36px"}}>
-        <button
-          onClick={() => startWithTier('best')}
-          style={{
-            background:'linear-gradient(90deg,#2563eb,#059669 70%)',
-            color:'#fff',fontWeight:'bold',border:'none',borderRadius:'12px',
-            fontSize:'1.2rem',padding:'1.1rem 2.8rem',boxShadow:'0 8px 32px #2563eb44',cursor:'pointer'
-          }}
-        >
-          Build My Resume Now
-        </button>
-      </div>
-
-      {/* Modal for resume flow */}
-      {showModal && (
-        <div style={{
-          position: 'fixed', top:0, left:0, right:0, bottom:0,
-          background:'rgba(0,0,0,0.6)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center'
-        }}>
-          <div style={{
-            background:'#fff',borderRadius:'20px',padding:'2.4rem 2rem',maxWidth:'480px',width:'100%',boxShadow:'0 8px 40px #0002',position:'relative'
-          }}>
-            <button
-              onClick={() => setShowModal(false)}
-              style={{
-                position:'absolute',top:'16px',right:'16px',background:'#eee',border:'none',borderRadius:'50%',width:'34px',height:'34px',fontSize:'1.4rem',cursor:'pointer'
-              }}
-            >×</button>
-
-            {/* Email step */}
-            {currentStep === 'email' && (
-              <>
-                <h2 style={{fontSize:'1.3rem',color:'#2563eb'}}>Enter your email to begin</h2>
-                <input
-                  type="email"
-                  value={userEmail}
-                  onChange={e => setUserEmail(e.target.value)}
-                  placeholder="you@email.com"
-                  style={{
-                    width:'100%',padding:'0.9rem',fontSize:'1.07rem',border:'2px solid #2563eb33',
-                    borderRadius:'8px',margin:'18px 0'
-                  }}
-                />
-                <button
-                  onClick={handleEmailSubmit}
-                  disabled={!userEmail.includes('@')}
-                  style={{
-                    width:'100%',padding:'1rem',background: userEmail.includes('@') ? '#2563eb' : '#eee',
-                    color: userEmail.includes('@') ? '#fff' : '#2563eb55',fontWeight:'bold',border:'none',borderRadius:'8px',fontSize:'1.09rem',cursor: userEmail.includes('@') ? 'pointer':'not-allowed'
-                  }}
-                >
-                  Continue
-                </button>
-              </>
-            )}
-
-            {/* Q&A step */}
-            {currentStep === 'questions' && (
-              <>
-                <div style={{marginBottom:'10px',color:'#059669',fontWeight:'bold'}}>Question {currentQuestion+1} of {questions.length}</div>
-                <h3 style={{fontSize:'1.12rem',marginBottom:'1.2em'}}>{questions[currentQuestion].text}</h3>
-                <textarea
-                  value={answers[questions[currentQuestion].id]}
-                  onChange={e => handleAnswerChange(questions[currentQuestion].id, e.target.value)}
-                  placeholder={questions[currentQuestion].placeholder}
-                  style={{
-                    width:'100%',minHeight:'90px',padding:'0.8em',fontSize:'1.02rem',
-                    border:'2px solid #05966933',borderRadius:'8px',marginBottom:'16px',
-                    fontFamily: dyslexiaFont ? 'OpenDyslexic3, Arial, sans-serif' : 'Arial, sans-serif'
-                  }}
-                />
-                <div style={{display:'flex',justifyContent:'space-between',marginTop:'14px'}}>
-                  <button
-                    onClick={prevQuestion}
-                    disabled={currentQuestion === 0}
-                    style={{
-                      padding:'10px 18px',borderRadius:'8px',border:'none',background:currentQuestion===0?'#eee':'#2563eb',color:currentQuestion===0?'#bbb':'#fff',fontWeight:'bold',fontSize:'1rem',cursor:currentQuestion===0?'not-allowed':'pointer'
-                    }}
-                  >Previous</button>
-                  <button
-                    onClick={nextQuestion}
-                    disabled={!answers[questions[currentQuestion].id].trim()}
-                    style={{
-                      padding:'10px 18px',borderRadius:'8px',border:'none',background:answers[questions[currentQuestion].id].trim()?'#059669':'#eee',color:answers[questions[currentQuestion].id].trim()?'#fff':'#bbb',fontWeight:'bold',fontSize:'1rem',cursor:answers[questions[currentQuestion].id].trim()?'pointer':'not-allowed'
-                    }}
-                  >{currentQuestion===questions.length-1 ? 'Preview Resume' : 'Next'}</button>
-                </div>
-              </>
-            )}
-
-            {/* Preview step */}
-            {currentStep === 'preview' && (
-              <>
-                <h2 style={{fontSize:'1.25rem',color:'#059669',marginBottom:'1em'}}>Preview your AI-Generated Resume</h2>
-                <div style={{marginBottom:'18px'}}>
-                  <div style={{
-                    background:'#f6f8fb',padding:'16px',borderRadius:'10px',fontFamily:'OpenDyslexic3, Arial, sans-serif',
-                    fontSize:'0.98rem',lineHeight:'1.7',marginBottom:'10px',whiteSpace:'pre-line',color:'#222'
-                  }}>
-                    {generateFullResume('preview')}
-                  </div>
-                  <div style={{
-                    background:'#fff',padding:'16px',borderRadius:'10px',fontFamily:'Times, serif',
-                    fontSize:'0.95rem',lineHeight:'1.45',whiteSpace:'pre-line'
-                  }}>
-                    {generateFullResume(selectedTier)}
-                  </div>
-                </div>
-                <div style={{textAlign:'center'}}>
-                  {Object.entries(tiers).map(([tierKey, tier]) => (
-                    <button
-                      key={tierKey}
-                      style={{
-                        background: tier.color,
-                        color:'#fff',
-                        border:'none',
-                        borderRadius:'10px',
-                        padding:'0.8em 1.8em',
-                        margin:'0 0.3em',
-                        fontWeight:'bold',
-                        fontSize:'1.05rem',
-                        cursor:'pointer'
-                      }}
-                      onClick={() => handleStripePayment(tierKey)}
-                      disabled={isProcessingPayment}
-                    >
-                      {isProcessingPayment ? 'Processing...' : `Pay $${tier.price} & Download`}
-                    </button>
-                  ))}
-                  <button
-                    onClick={resetForm}
-                    style={{
-                      marginLeft:'1em',background:'#eee',color:'#059669',fontWeight:'bold',border:'none',borderRadius:'8px',padding:'0.8em 1.6em',fontSize:'1rem',cursor:'pointer'
-                    }}
-                  >
-                    Start Over
-                  </button>
-                </div>
-              </>
-            )}
+    <div className={`App ${mainClass}`}>
+      <div className="container">
+        <header>
+          <div className="logo">
+            <img src={logo} alt="LaunchpadPoint Logo" className="logo-img" />
+            <span>LaunchpadPoint</span>
           </div>
-        </div>
-      )}
-
-      {/* Admin dashboard button */}
-      <button
-        onClick={() => setShowAdmin(true)}
-        style={{
-          position:'fixed',bottom:'24px',right:'24px',background:'#2563eb',color:'#fff',border:'none',borderRadius:'50%',width:'48px',height:'48px',fontSize:'1.3rem',fontWeight:'bold',boxShadow:'0 2px 12px #2563eb22',cursor:'pointer',zIndex:1100
-        }}
-      >📊</button>
-
-      {/* Admin dashboard modal */}
-      {showAdmin && (
-        <div style={{
-          position: 'fixed', top:0, left:0, right:0, bottom:0,background:'rgba(0,0,0,0.7)',zIndex:1200,display:'flex',alignItems:'center',justifyContent:'center'
-        }}>
-          <div style={{
-            background:'#fff',borderRadius:'18px',padding:'2.2rem',width:'95vw',maxWidth:'680px',boxShadow:'0 8px 40px #2563eb44',position:'relative'
-          }}>
+          <div className="header-controls">
             <button
-              onClick={() => setShowAdmin(false)}
-              style={{
-                position:'absolute',top:'18px',right:'18px',background:'#eee',border:'none',borderRadius:'50%',width:'34px',height:'34px',fontSize:'1.3rem',cursor:'pointer'
-              }}
-            >×</button>
-            <h2 style={{color:'#2563eb',marginBottom:'24px'}}>Admin Dashboard</h2>
-            <div style={{display:'flex',gap:'2em',flexWrap:'wrap',marginBottom:'16px'}}>
-              <div style={{flex:'1 1 120px',background:'#f6f8fb',borderRadius:'8px',padding:'1em'}}>
-                <div style={{color:'#059669',fontWeight:'bold'}}>Users</div>
-                <div style={{fontSize:'2em',fontWeight:'bold'}}>{users.length}</div>
-              </div>
-              <div style={{flex:'1 1 120px',background:'#f6f8fb',borderRadius:'8px',padding:'1em'}}>
-                <div style={{color:'#2563eb',fontWeight:'bold'}}>Completion</div>
-                <div style={{fontSize:'2em',fontWeight:'bold'}}>{completionRate}%</div>
-              </div>
-              <div style={{flex:'1 1 120px',background:'#f6f8fb',borderRadius:'8px',padding:'1em'}}>
-                <div style={{color:'#7c3aed',fontWeight:'bold'}}>Revenue</div>
-                <div style={{fontSize:'2em',fontWeight:'bold'}}>${totalRevenue}</div>
-              </div>
-            </div>
-            <div style={{marginTop:'1em',fontSize:'1.02em'}}>
-              <div style={{marginBottom:'8px',fontWeight:'bold'}}>Recent Users:</div>
-              {(users.slice(-5).reverse()).map((u,i) => (
-                <div key={i} style={{padding:'4px 0',borderBottom:'1px solid #eee',fontSize:'0.95em'}}>
-                  {u.email} • {u.industry} • {u.completed ? '✅' : '❌'}
+              className="btn btn-outline"
+              onClick={() => setDyslexia((v) => !v)}
+              aria-pressed={dyslexia}
+            >
+              <i className="fas fa-font"></i> Dyslexia Font
+            </button>
+            <button
+              className="btn btn-outline"
+              onClick={() => setDarkMode((v) => !v)}
+              aria-pressed={darkMode}
+            >
+              <i className={`fas fa-${darkMode ? "sun" : "moon"}`}></i>{" "}
+              {darkMode ? "Light Mode" : "Dark Mode"}
+            </button>
+            <button className="btn btn-primary" onClick={handleExport}>
+              <i className="fas fa-download"></i> Export Resume
+            </button>
+          </div>
+        </header>
+        <div className="progress-container">
+          <div className="progress-bar" style={{ width: `${progress}%` }} />
+        </div>
+        <div className="main-content">
+          <div className="form-section">
+            <h2 className="section-title">
+              <i className="fas fa-user-edit"></i> Build Your Resume
+            </h2>
+            <div className="tabs">
+              {TABS.map((t) => (
+                <div
+                  className={`tab${tab === t.key ? " active" : ""}`}
+                  key={t.key}
+                  onClick={() => setTab(t.key)}
+                >
+                  <i className={`fas ${t.icon}`}></i> {t.label}
                 </div>
               ))}
-              {users.length === 0 && <div style={{color:'#bbb'}}>No users yet</div>}
+            </div>
+            {/* Personal Tab */}
+            <div className={`tab-content${tab === "personal" ? " active" : ""}`}>
+              <div className="form-group">
+                <label htmlFor="fullName">
+                  <i className="fas fa-signature"></i> Full Name
+                </label>
+                <input
+                  type="text"
+                  id="fullName"
+                  value={form.fullName}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="jobTitle">
+                  <i className="fas fa-briefcase"></i> Professional Title
+                </label>
+                <input
+                  type="text"
+                  id="jobTitle"
+                  value={form.jobTitle}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="email">
+                  <i className="fas fa-envelope"></i> Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={form.email}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="phone">
+                  <i className="fas fa-phone"></i> Phone
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  value={form.phone}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="location">
+                  <i className="fas fa-map-marker-alt"></i> Location
+                </label>
+                <input
+                  type="text"
+                  id="location"
+                  value={form.location}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="summary">
+                  <i className="fas fa-file-alt"></i> Professional Summary
+                </label>
+                <textarea
+                  id="summary"
+                  value={form.summary}
+                  onChange={handleInput}
+                />
+              </div>
+            </div>
+            {/* Experience Tab */}
+            <div
+              className={`tab-content${tab === "experience" ? " active" : ""}`}
+            >
+              <div className="form-group">
+                <label htmlFor="company">
+                  <i className="fas fa-building"></i> Company
+                </label>
+                <input
+                  type="text"
+                  id="company"
+                  value={form.company}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="position">
+                  <i className="fas fa-user-tie"></i> Position
+                </label>
+                <input
+                  type="text"
+                  id="position"
+                  value={form.position}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="startDate">
+                  <i className="fas fa-calendar-alt"></i> Start Date
+                </label>
+                <input
+                  type="month"
+                  id="startDate"
+                  value={form.startDate}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="endDate">
+                  <i className="fas fa-calendar-alt"></i> End Date
+                </label>
+                <input
+                  type="month"
+                  id="endDate"
+                  value={form.endDate}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="description">
+                  <i className="fas fa-tasks"></i> Description & Achievements
+                </label>
+                <textarea
+                  id="description"
+                  value={form.description}
+                  onChange={handleInput}
+                />
+              </div>
+            </div>
+            {/* Education Tab */}
+            <div
+              className={`tab-content${tab === "education" ? " active" : ""}`}
+            >
+              <div className="form-group">
+                <label htmlFor="institution">
+                  <i className="fas fa-university"></i> Institution
+                </label>
+                <input
+                  type="text"
+                  id="institution"
+                  value={form.institution}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="degree">
+                  <i className="fas fa-graduation-cap"></i> Degree
+                </label>
+                <input
+                  type="text"
+                  id="degree"
+                  value={form.degree}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="graduationDate">
+                  <i className="fas fa-calendar-check"></i> Graduation Date
+                </label>
+                <input
+                  type="month"
+                  id="graduationDate"
+                  value={form.graduationDate}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="gpa">
+                  <i className="fas fa-chart-line"></i> GPA (Optional)
+                </label>
+                <input
+                  type="text"
+                  id="gpa"
+                  value={form.gpa}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="achievements">
+                  <i className="fas fa-trophy"></i> Academic Achievements
+                </label>
+                <textarea
+                  id="achievements"
+                  value={form.achievements}
+                  onChange={handleInput}
+                />
+              </div>
+            </div>
+            {/* Skills Tab */}
+            <div className={`tab-content${tab === "skills" ? " active" : ""}`}>
+              <div className="form-group">
+                <label htmlFor="skills">
+                  <i className="fas fa-tools"></i> Skills (comma separated)
+                </label>
+                <textarea
+                  id="skills"
+                  value={form.skills}
+                  onChange={handleSkillInput}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="proficiency">
+                  <i className="fas fa-signal"></i> Proficiency Level
+                </label>
+                <select
+                  id="proficiency"
+                  value={form.proficiency}
+                  onChange={handleProficiency}
+                >
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+            </div>
+            {/* Job Tab */}
+            <div className={`tab-content${tab === "job" ? " active" : ""}`}>
+              <div className="form-group">
+                <label htmlFor="jobDescription">
+                  <i className="fas fa-file-alt"></i> Paste Job Description
+                </label>
+                <textarea
+                  id="jobDescription"
+                  value={form.jobDescription}
+                  onChange={handleInput}
+                />
+              </div>
+              {/* AI analysis */}
+              <button
+                className="btn btn-primary"
+                id="analyze-btn"
+                style={{ width: "100%", marginBottom: "20px" }}
+                onClick={analyzeResume}
+                disabled={aiLoading}
+              >
+                <i className="fas fa-magic"></i>{" "}
+                {aiLoading ? "Analyzing..." : "Analyze with AI"}
+              </button>
+              {aiLoading && (
+                <div style={{ color: "#4895ef", marginBottom: "16px" }}>
+                  <i className="fas fa-spinner fa-spin"></i> AI is analyzing...
+                </div>
+              )}
+              {aiError && (
+                <div style={{ color: "#f72585", marginBottom: "16px" }}>
+                  <i className="fas fa-exclamation-triangle"></i> {aiError}
+                </div>
+              )}
+              {aiResult && (
+                <div className="ai-analysis">
+                  <h3>
+                    <i className="fas fa-lightbulb"></i> AI Analysis Results
+                  </h3>
+                  <div className="ai-score">
+                    <div className="score-circle">{aiResult.score}%</div>
+                    <div className="score-text">
+                      <h4>AI Resume Score</h4>
+                      <p>{aiResult.summary}</p>
+                    </div>
+                  </div>
+                  <div id="suggestions-box">
+                    {aiResult.suggestions &&
+                      aiResult.suggestions.map((s, i) => (
+                        <div className="suggestion-item" key={i}>
+                          <h4>
+                            <i className="fas fa-lightbulb"></i> {s.title}
+                          </h4>
+                          <p>{s.body}</p>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="preview-section">
+            <h2 className="section-title">
+              <i className="fas fa-eye"></i> Live Preview
+            </h2>
+            <div className="resume-template" id="resume-preview">
+              <div className="resume-header">
+                <h2 id="preview-name">{form.fullName}</h2>
+                <p id="preview-title">{form.jobTitle}</p>
+                <p id="preview-contact">
+                  {form.email} • {form.phone} • {form.location}
+                </p>
+              </div>
+              <div className="resume-section">
+                <h3>Summary</h3>
+                <p id="preview-summary">{form.summary}</p>
+              </div>
+              <div className="resume-section">
+                <h3>Experience</h3>
+                <div className="experience-item">
+                  <h4>
+                    {form.position} <span className="company">at {form.company}</span>
+                  </h4>
+                  <p className="date">
+                    {formatMonth(form.startDate)} - {formatMonth(form.endDate)}
+                  </p>
+                  <ul id="preview-experience">{experienceItems}</ul>
+                </div>
+              </div>
+              <div className="resume-section">
+                <h3>Education</h3>
+                <div className="education-item">
+                  <h4>{form.degree}</h4>
+                  <p className="institution">{form.institution}</p>
+                  <p className="date">
+                    Graduated: {formatMonth(form.graduationDate)}
+                  </p>
+                  <p>GPA: {form.gpa}</p>
+                  <ul id="preview-education">{achievementItems}</ul>
+                </div>
+              </div>
+              <div className="resume-section">
+                <h3>Skills</h3>
+                <div id="preview-skills">{skillItems}</div>
+              </div>
             </div>
           </div>
         </div>
-      )}
-
-      {/* Load DyslexiaFont via CDN */}
-      <link
-        href="https://cdn.jsdelivr.net/gh/antijingoist/open-dyslexic/web/OpenDyslexic3-Regular.css"
-        rel="stylesheet"
-        type="text/css"
-      />
+        <footer>
+          <p>
+            © 2025 LaunchpadPoint. Empowering careers through intelligent,
+            accessible technology.
+          </p>
+        </footer>
+      </div>
     </div>
   );
-}
-
-export default App;
+                    }
