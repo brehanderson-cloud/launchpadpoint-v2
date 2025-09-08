@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import logo from "./logo.png";
 import "./App.css";
+// PDF & DOCX parsing
 import * as pdfjsLib from "pdfjs-dist/build/pdf";
 import "pdfjs-dist/build/pdf.worker.entry";
 import mammoth from "mammoth";
 
+// Tab setup
 const TABS = [
   { key: "personal", icon: "fa-user", label: "Personal" },
   { key: "experience", icon: "fa-briefcase", label: "Experience" },
@@ -43,15 +45,15 @@ export default function App() {
   const [dyslexia, setDyslexia] = useState(false);
 
   // Import state
-  const [importMode, setImportMode] = useState("paste"); // "paste" or "upload"
+  const [importMode, setImportMode] = useState("paste");
   const [resumePaste, setResumePaste] = useState("");
   const [uploadError, setUploadError] = useState("");
 
-  // For progress and preview
+  // Progress
   const filledFields = Object.values(form).filter((v) => v && String(v).trim().length > 0).length;
   const progress = Math.round((filledFields / Object.keys(form).length) * 100);
 
-  // Handlers for builder fields
+  // Handlers
   const handleInput = (e) => {
     const { id, value } = e.target;
     setForm((f) => ({ ...f, [id]: value }));
@@ -64,7 +66,6 @@ export default function App() {
   };
 
   // --- File parsing helpers ---
-  // PDF parsing (frontend, uses pdfjs-dist)
   async function handlePDF(file) {
     try {
       const arrayBuffer = await file.arrayBuffer();
@@ -83,7 +84,6 @@ export default function App() {
     }
   }
 
-  // DOCX parsing (browser: works with mammoth, but best on backend)
   async function handleDOCX(file) {
     try {
       const arrayBuffer = await file.arrayBuffer();
@@ -96,7 +96,6 @@ export default function App() {
     }
   }
 
-  // File upload handler
   const handleFileUpload = async (e) => {
     setUploadError("");
     const file = e.target.files[0];
@@ -122,7 +121,6 @@ export default function App() {
     }
   };
 
-  // Paste handler (demo: puts all text in summary, extend as needed)
   function parseResumeText() {
     setForm((f) => ({
       ...f,
@@ -131,7 +129,6 @@ export default function App() {
     alert("Resume pasted! (Replace with actual parsing logic for all fields)");
   }
 
-  // Helper for formatting
   function formatMonth(val) {
     if (!val) return "";
     const [y, m] = val.split("-");
@@ -139,7 +136,6 @@ export default function App() {
     return date.toLocaleString("default", { month: "long", year: "numeric" });
   }
 
-  // Live preview items
   const experienceItems = form.description
     .split("\n")
     .filter((x) => x.trim())
@@ -511,7 +507,7 @@ export default function App() {
             </div>
           )}
 
-          {/* Live Preview - Always Visible */}
+          {/* Live Preview */}
           <div className="preview-section">
             <h2 className="section-title">
               <i className="fas fa-eye"></i> Live Preview
