@@ -227,11 +227,11 @@ export default function App() {
           ))}
         </div>
 
-        {/* Tab Content */}
+        {/* Tab Content + Preview Side-by-Side */}
         <div className="main-content">
-          {/* Personal Tab */}
-          {tab === "personal" && (
-            <div className="tab-content active">
+          <div className="tab-content active">
+            {/* Personal Tab */}
+            {tab === "personal" && (
               <div className="form-section">
                 <div className="form-group">
                   <label htmlFor="fullName">
@@ -299,12 +299,10 @@ export default function App() {
                   />
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Experience Tab */}
-          {tab === "experience" && (
-            <div className="tab-content active">
+            {/* Experience Tab */}
+            {tab === "experience" && (
               <div className="form-section">
                 <div className="form-group">
                   <label htmlFor="company">
@@ -361,12 +359,10 @@ export default function App() {
                   />
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Education Tab */}
-          {tab === "education" && (
-            <div className="tab-content active">
+            {/* Education Tab */}
+            {tab === "education" && (
               <div className="form-section">
                 <div className="form-group">
                   <label htmlFor="institution">
@@ -423,12 +419,10 @@ export default function App() {
                   />
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Skills Tab */}
-          {tab === "skills" && (
-            <div className="tab-content active">
+            {/* Skills Tab */}
+            {tab === "skills" && (
               <div className="form-section">
                 <div className="form-group">
                   <label htmlFor="skills">
@@ -456,12 +450,10 @@ export default function App() {
                   </select>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Job Tab */}
-          {tab === "job" && (
-            <div className="tab-content active">
+            {/* Job Tab */}
+            {tab === "job" && (
               <div className="form-section">
                 <div className="form-group">
                   <label htmlFor="jobDescription">
@@ -474,64 +466,63 @@ export default function App() {
                   />
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Import Tab */}
-          {tab === "import" && (
-            <div className="tab-content active">
-              <h2>Import Your Resume</h2>
-              <div style={{ display: "flex", gap: "1em", marginBottom: "1em" }}>
-                <button
-                  className={`btn ${importMode === "paste" ? "btn-primary" : "btn-outline"}`}
-                  onClick={() => setImportMode("paste")}
-                >
-                  <i className="fas fa-paste"></i> Paste Resume
-                </button>
-                <button
-                  className={`btn ${importMode === "upload" ? "btn-primary" : "btn-outline"}`}
-                  onClick={() => setImportMode("upload")}
-                >
-                  <i className="fas fa-upload"></i> Upload Resume
-                </button>
-              </div>
-              {importMode === "paste" ? (
-                <>
-                  <div className="form-group">
-                    <label htmlFor="pasteResume">
-                      <i className="fas fa-paste"></i> Paste Your Resume Text
-                    </label>
-                    <textarea
-                      id="pasteResume"
-                      value={resumePaste}
-                      onChange={e => setResumePaste(e.target.value)}
-                      placeholder="Paste your resume text here..."
-                      rows={10}
-                    />
-                  </div>
-                  <button className="btn btn-primary" onClick={parseResumeText}>
-                    <i className="fas fa-magic"></i> Parse Resume
+            {/* Import Tab */}
+            {tab === "import" && (
+              <div>
+                <h2>Import Your Resume</h2>
+                <div style={{ display: "flex", gap: "1em", marginBottom: "1em" }}>
+                  <button
+                    className={`btn ${importMode === "paste" ? "btn-primary" : "btn-outline"}`}
+                    onClick={() => setImportMode("paste")}
+                  >
+                    <i className="fas fa-paste"></i> Paste Resume
                   </button>
-                </>
-              ) : (
-                <>
-                  <div className="form-group">
-                    <label htmlFor="uploadResume">
-                      <i className="fas fa-upload"></i> Upload Resume (.txt, .pdf, .docx)
-                    </label>
-                    <input
-                      type="file"
-                      id="uploadResume"
-                      accept=".txt,.pdf,.docx"
-                      onChange={handleFileUpload}
-                    />
-                    {uploadError && <div style={{ color: "#f72585" }}>{uploadError}</div>}
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-
+                  <button
+                    className={`btn ${importMode === "upload" ? "btn-primary" : "btn-outline"}`}
+                    onClick={() => setImportMode("upload")}
+                  >
+                    <i className="fas fa-upload"></i> Upload Resume
+                  </button>
+                </div>
+                {importMode === "paste" ? (
+                  <>
+                    <div className="form-group">
+                      <label htmlFor="pasteResume">
+                        <i className="fas fa-paste"></i> Paste Your Resume Text
+                      </label>
+                      <textarea
+                        id="pasteResume"
+                        value={resumePaste}
+                        onChange={e => setResumePaste(e.target.value)}
+                        placeholder="Paste your resume text here..."
+                        rows={10}
+                      />
+                    </div>
+                    <button className="btn btn-primary" onClick={parseResumeText}>
+                      <i className="fas fa-magic"></i> Parse Resume
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <div className="form-group">
+                      <label htmlFor="uploadResume">
+                        <i className="fas fa-upload"></i> Upload Resume (.txt, .pdf, .docx)
+                      </label>
+                      <input
+                        type="file"
+                        id="uploadResume"
+                        accept=".txt,.pdf,.docx"
+                        onChange={handleFileUpload}
+                      />
+                      {uploadError && <div style={{ color: "#f72585" }}>{uploadError}</div>}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
           {/* Live Preview */}
           <div className="preview-section">
             <h2 className="section-title">
@@ -580,7 +571,6 @@ export default function App() {
             </div>
           </div>
         </div>
-
         {/* Footer */}
         <footer>
           <p>© 2025 LaunchpadPoint. Empowering careers through intelligent, accessible technology.</p>
