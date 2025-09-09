@@ -3,7 +3,7 @@ import logo from "./logo.png";
 import "./App.css";
 
 // PDF & DOCX parsing
-import { pdfjs } from "pdfjs-dist";
+import * as pdfjs from "pdfjs-dist/legacy/build/pdf";
 import mammoth from "mammoth";
 
 // Set the workerSrc property for pdfjs v4+
