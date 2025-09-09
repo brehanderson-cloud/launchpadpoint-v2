@@ -25,7 +25,7 @@ body,
   color: var(--text);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   transition: all 0.4s ease;
-  padding: 20px;
+  padding: 20px 0;
 }
 
 .dark-mode {
@@ -37,9 +37,12 @@ body,
   font-family: 'Comic Sans MS', 'OpenDyslexic3', cursive, sans-serif;
 }
 
+/* Wider container with side padding for background reveal */
 .container {
-  max-width: 1600px;
+  max-width: 1920px;
   margin: 0 auto;
+  padding-left: 48px;
+  padding-right: 48px;
 }
 
 header {
@@ -340,10 +343,11 @@ textarea { min-height: 120px; resize: vertical; }
     position: relative;
     top: 0;
     max-height: none;
+    margin-top: 30px;
   }
   .container {
     max-width: 99vw;
-    padding: 0;
+    padding: 0 8px;
   }
 }
 
