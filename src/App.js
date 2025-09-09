@@ -3,9 +3,12 @@ import logo from "./logo.png";
 import "./App.css";
 
 // PDF & DOCX parsing
-import * as pdfjsLib from "pdfjs-dist/build/pdf";
-import "pdfjs-dist/build/pdf.worker.entry";
+import { pdfjs } from "pdfjs-dist";
+import pdfjsWorker from "pdfjs-dist/build/pdf.worker.js";
 import mammoth from "mammoth";
+
+// Set the workerSrc property for pdfjs
+pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 // Tab configuration
 const TABS = [
@@ -96,7 +99,7 @@ export default function App() {
   async function handlePDF(file) {
     try {
       const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
       let text = "";
       for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
         const page = await pdf.getPage(pageNum);
