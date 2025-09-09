@@ -4,11 +4,10 @@ import "./App.css";
 
 // PDF & DOCX parsing
 import { pdfjs } from "pdfjs-dist";
-import pdfjsWorker from "pdfjs-dist/build/pdf.worker.js";
 import mammoth from "mammoth";
 
-// Set the workerSrc property for pdfjs
-pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+// Set the workerSrc property for pdfjs v4+
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 // Tab configuration
 const TABS = [
