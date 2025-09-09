@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import logo from "./logo.png";
 import "./App.css";
+
 // PDF & DOCX parsing
 import * as pdfjsLib from "pdfjs-dist/build/pdf";
 import "pdfjs-dist/build/pdf.worker.entry";
 import mammoth from "mammoth";
 
-// Tab setup
+// Tab configuration
 const TABS = [
   { key: "personal", icon: "fa-user", label: "Personal" },
   { key: "experience", icon: "fa-briefcase", label: "Experience" },
@@ -16,6 +17,7 @@ const TABS = [
   { key: "import", icon: "fa-upload", label: "Import" }
 ];
 
+// Initial form state
 const initialForm = {
   fullName: "",
   jobTitle: "",
@@ -52,6 +54,31 @@ export default function App() {
   // Progress
   const filledFields = Object.values(form).filter((v) => v && String(v).trim().length > 0).length;
   const progress = Math.round((filledFields / Object.keys(form).length) * 100);
+
+  // Export resume as text
+  const handleExport = () => {
+    const text =
+      `${form.fullName}\n` +
+      `${form.jobTitle}\n` +
+      `${form.email} • ${form.phone} • ${form.location}\n\n` +
+      `SUMMARY\n${form.summary}\n\n` +
+      `EXPERIENCE\n${form.position} at ${form.company}\n${formatMonth(form.startDate)} - ${formatMonth(form.endDate)}\n${form.description}\n\n` +
+      `EDUCATION\n${form.degree}\n${form.institution}\nGraduated: ${formatMonth(form.graduationDate)}\nGPA: ${form.gpa}\n${form.achievements}\n\n` +
+      `SKILLS\n${form.skills}\n\n` +
+      `JOB MATCH (Paste job description)\n${form.jobDescription}`;
+    const blob = new Blob([text], { type: "text/plain" });
+    const a = document.createElement("a");
+    a.href = window.URL.createObjectURL(blob);
+    a.download = "resume.txt";
+    a.click();
+  };
+
+  function formatMonth(val) {
+    if (!val) return "";
+    const [y, m] = val.split("-");
+    const date = new Date(y, m - 1, 1);
+    return date.toLocaleString("default", { month: "long", year: "numeric" });
+  }
 
   // Handlers
   const handleInput = (e) => {
@@ -129,13 +156,6 @@ export default function App() {
     alert("Resume pasted! (Replace with actual parsing logic for all fields)");
   }
 
-  function formatMonth(val) {
-    if (!val) return "";
-    const [y, m] = val.split("-");
-    const date = new Date(y, m - 1, 1);
-    return date.toLocaleString("default", { month: "long", year: "numeric" });
-  }
-
   const experienceItems = form.description
     .split("\n")
     .filter((x) => x.trim())
@@ -152,8 +172,11 @@ export default function App() {
     </div>
   ));
 
+  const mainClass =
+    (darkMode ? "dark-mode " : "") + (dyslexia ? "dyslexia-mode " : "");
+
   return (
-    <div className={`App${darkMode ? " dark-mode" : ""}${dyslexia ? " dyslexia-mode" : ""}`}>
+    <div className={`App ${mainClass}`}>
       <div className="container">
         {/* Header */}
         <header>
@@ -177,7 +200,7 @@ export default function App() {
               <i className={`fas fa-${darkMode ? "sun" : "moon"}`}></i>{" "}
               {darkMode ? "Light Mode" : "Dark Mode"}
             </button>
-            <button className="btn btn-primary" onClick={() => alert('Export logic here!')}>
+            <button className="btn btn-primary" onClick={handleExport}>
               <i className="fas fa-download"></i> Export Resume
             </button>
           </div>
@@ -563,4 +586,4 @@ export default function App() {
       </div>
     </div>
   );
-                      }
+}
