@@ -12,8 +12,8 @@
   --light: #f8f9fa;
   --gray: #6c757d;
   --light-gray: #e9ecef;
-  --card-bg: rgba(255, 255, 255, 0.97);
-  --card-bg-dark: rgba(30, 30, 40, 0.97);
+  --card-bg: rgba(255,255,255,0.97);
+  --card-bg-dark: rgba(30,30,40,0.97);
   --text: #252e44;
   --text-dark: #f0f0f0;
 }
@@ -23,9 +23,9 @@ body,
   min-height: 100vh;
   background: linear-gradient(135deg, #3a0ca3 0%, #4895ef 60%, #4cc9f0 100%);
   color: var(--text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   transition: all 0.4s ease;
   padding: 20px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .dark-mode {
@@ -38,7 +38,7 @@ body,
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
 }
 
@@ -47,15 +47,13 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 1.2rem 1.5rem;
-  background: rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(12px);
+  background: rgba(255,255,255,0.07);
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.07);
   position: sticky;
   top: 20px;
   z-index: 100;
-  border-radius: 16px;
-  margin-bottom: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .logo {
@@ -109,13 +107,12 @@ header {
 }
 .btn:hover {
   transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
 }
 .btn:active {
   transform: translateY(1px) scale(0.99);
 }
 
-/* Progress bar */
 .progress-container {
   height: 8px;
   background: var(--light-gray);
@@ -127,7 +124,6 @@ header {
   height: 100%;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
   border-radius: 4px;
-  width: 65%;
   transition: width 0.5s ease;
 }
 .progress-label {
@@ -138,11 +134,10 @@ header {
   text-align: right;
 }
 
-/* Layout */
 .main-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 40px;
   margin-bottom: 40px;
 }
 
@@ -151,13 +146,13 @@ header {
   background: var(--card-bg);
   padding: 30px;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
   transition: all 0.3s ease;
 }
 .dark-mode .form-section,
 .dark-mode .preview-section {
   background: var(--card-bg-dark);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.24);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.24);
 }
 .preview-section {
   position: sticky;
@@ -180,7 +175,6 @@ header {
   border-bottom: 2px solid #444;
 }
 
-/* Tabs */
 .tabs {
   display: flex;
   gap: 12px;
@@ -205,27 +199,17 @@ header {
 .tab.active {
   background: var(--primary);
   color: white;
-  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+  box-shadow: 0 4px 12px rgba(67,97,238,0.3);
 }
 .tab-content {
-  display: none;
+  display: block;
   animation: fadeIn 0.5s ease;
 }
-.tab-content.active {
-  display: block;
-}
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px);}
+  to { opacity: 1; transform: translateY(0);}
 }
 
-/* Form fields */
 .form-group {
   margin-bottom: 24px;
   position: relative;
@@ -240,9 +224,7 @@ label {
 .dark-mode label {
   color: var(--text-dark);
 }
-input,
-textarea,
-select {
+input, textarea, select {
   width: 100%;
   padding: 14px 18px;
   border: 1px solid #ddd;
@@ -251,35 +233,27 @@ select {
   transition: all 0.3s;
   background: white;
   color: var(--text);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
-.dark-mode input,
-.dark-mode textarea,
-.dark-mode select {
+.dark-mode input, .dark-mode textarea, .dark-mode select {
   background: #333;
   color: var(--text-dark);
   border: 1px solid #555;
 }
-input:focus,
-textarea:focus,
-select:focus {
+input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+  box-shadow: 0 0 0 3px rgba(67,97,238,0.2);
 }
-textarea {
-  min-height: 120px;
-  resize: vertical;
-}
+textarea { min-height: 120px; resize: vertical; }
 
-/* Resume Preview */
 .resume-template {
   background: white;
   border: 1px solid var(--light-gray);
   padding: 35px;
   min-height: 500px;
   color: var(--text);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
   transition: all 0.3s ease;
 }
 .dark-mode .resume-template {
@@ -299,19 +273,13 @@ textarea {
   margin-bottom: 8px;
   font-weight: 700;
 }
-.dark-mode .resume-header h2 {
-  color: var(--success);
-}
+.dark-mode .resume-header h2 { color: var(--success);}
 .resume-header p {
   color: var(--gray);
   font-size: 1.1rem;
 }
-.dark-mode .resume-header p {
-  color: #aaa;
-}
-.resume-section {
-  margin-bottom: 30px;
-}
+.dark-mode .resume-header p { color: #aaa;}
+.resume-section { margin-bottom: 30px;}
 .resume-section h3 {
   color: var(--secondary);
   padding-bottom: 8px;
@@ -324,42 +292,29 @@ textarea {
   color: var(--accent);
   border-bottom: 2px solid #444;
 }
-.experience-item,
-.education-item {
+.experience-item, .education-item {
   margin-bottom: 25px;
   padding-left: 15px;
   border-left: 3px solid var(--primary-light);
   padding-bottom: 10px;
 }
-.experience-item h4,
-.education-item h4 {
+.experience-item h4, .education-item h4 {
   color: var(--text);
   font-size: 1.15rem;
   margin-bottom: 5px;
 }
-.dark-mode .experience-item h4,
-.dark-mode .education-item h4 {
-  color: var(--text-dark);
-}
-.experience-item .company,
-.education-item .institution {
+.dark-mode .experience-item h4, .dark-mode .education-item h4 { color: var(--text-dark);}
+.experience-item .company, .education-item .institution {
   color: var(--primary);
   font-weight: 600;
 }
-.dark-mode .experience-item .company,
-.dark-mode .education-item .institution {
-  color: var(--success);
-}
-.experience-item .date,
-.education-item .date {
+.dark-mode .experience-item .company, .dark-mode .education-item .institution { color: var(--success);}
+.experience-item .date, .education-item .date {
   color: var(--gray);
   font-style: italic;
   font-size: 0.95rem;
 }
-.dark-mode .experience-item .date,
-.dark-mode .education-item .date {
-  color: #aaa;
-}
+.dark-mode .experience-item .date, .dark-mode .education-item .date { color: #aaa;}
 .skill-item {
   display: inline-block;
   background: var(--light-gray);
@@ -370,36 +325,28 @@ textarea {
   font-size: 0.95rem;
   transition: all 0.3s ease;
 }
-.dark-mode .skill-item {
-  background: #333;
-  color: var(--text-dark);
-}
+.dark-mode .skill-item { background: #333; color: var(--text-dark);}
 .skill-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* Responsive Design */
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .main-content {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
   .preview-section {
     position: relative;
     top: 0;
+    max-height: none;
   }
-  .header-controls {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  header {
-    flex-direction: column;
-    gap: 15px;
-    text-align: center;
+  .container {
+    max-width: 99vw;
+    padding: 0;
   }
 }
 
-/* Footer */
 footer {
   text-align: center;
   padding: 25px;
