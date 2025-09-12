@@ -130,3 +130,43 @@ const isSummaryRelevant = (keyword) => {
   const relevantTerms = ['development', 'engineering', 'architecture', 'design', 'management'];
   return relevantTerms.some(term => keyword.toLowerCase().includes(term));
 };
+
+// Combined AI-powered resume analysis function
+export const analyzeResumeWithAI = (resumeData, jobDescription = '') => {
+  const atsScore = calculateATSScore(resumeData);
+  const suggestions = generateSuggestions(resumeData);
+  const keywordMatches = findKeywordMatches(resumeData);
+  
+  // Calculate additional scores
+  const contentScore = Math.min(100, atsScore + (suggestions.length > 0 ? 10 : 0));
+  const jobMatchScore = jobDescription ? calculateJobMatchScore(resumeData, jobDescription) : 0;
+  const overallScore = Math.round((atsScore + contentScore + jobMatchScore) / 3);
+  
+  return {
+    suggestions: enhanceSuggestionsWithDetails(suggestions),
+    scores: {
+      ats: atsScore,
+      jobMatch: jobMatchScore,
+      overall: overallScore,
+      content: contentScore
+    }
+  };
+};
+
+const calculateJobMatchScore = (resumeData, jobDescription) => {
+  const jobKeywords = extractKeywords(jobDescription);
+  const resumeText = JSON.stringify(resumeData).toLowerCase();
+  const matches = jobKeywords.filter(keyword => resumeText.includes(keyword.toLowerCase()));
+  return Math.min(100, Math.round((matches.length / jobKeywords.length) * 100));
+};
+
+const enhanceSuggestionsWithDetails = (suggestions) => {
+  return suggestions.map((suggestion, index) => ({
+    id: `suggestion-${index}`,
+    type: index % 4 === 0 ? 'critical' : index % 3 === 0 ? 'job-match' : index % 2 === 0 ? 'enhancement' : 'structure',
+    title: suggestion,
+    message: `${suggestion} - Click for more details on how to improve this aspect of your resume.`,
+    category: 'improvement',
+    action: 'View Details'
+  }));
+};
