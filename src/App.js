@@ -108,7 +108,7 @@ export default function App() {
     if (contact) {
       const parts = contact.split("|").map(x => x.trim());
       f.email = parts.find(x => x.includes("@")) || "";
-      f.phone = parts.find(x => x.match(/\d{3}[\s\-]?\d{3}/)) || "";
+      f.phone = parts.find(x => x.match(/\d{3}[\s-]?\d{3}/)) || "";
       f.location = parts.find(x => x.match(/[A-Za-z]+,?\s*[A-Z]{2}/)) || "";
     }
     // Fill summary
