@@ -108,7 +108,7 @@ export default function App() {
     if (contact) {
       const parts = contact.split("|").map(x => x.trim());
       f.email = parts.find(x => x.includes("@")) || "";
-      f.phone = parts.find(x => x.match(/\d{3}[\s\-]?\d{3}/)) || "";
+      f.phone = parts.find(x => x.match(/\d{3}[\s-]?\d{3}/)) || "";
       f.location = parts.find(x => x.match(/[A-Za-z]+,?\s*[A-Z]{2}/)) || "";
     }
     // Fill summary
@@ -369,7 +369,7 @@ export default function App() {
               </div>
             )}
             {tab === "import" && (
-              <div>
+              <div className="form-section">
                 <h2>Import Your Resume</h2>
                 <div style={{display: "flex", gap: "1em", marginBottom: "1em"}}>
                   <button className={`btn ${importMode === "paste" ? "btn-primary" : "btn-outline"}`} onClick={() => setImportMode("paste")}>
