@@ -130,3 +130,45 @@ const isSummaryRelevant = (keyword) => {
   const relevantTerms = ['development', 'engineering', 'architecture', 'design', 'management'];
   return relevantTerms.some(term => keyword.toLowerCase().includes(term));
 };
+
+// Main AI analysis function for ResumeBuilder component
+export const analyzeResumeWithAI = (resumeData, jobDescription = '') => {
+  const atsScore = calculateATSScore(resumeData);
+  const suggestions = generateSuggestions(resumeData);
+  const keywordMatches = findKeywordMatches(resumeData);
+  const skillGaps = identifySkillGaps(resumeData);
+  
+  // Calculate job match score if job description provided
+  let jobMatchScore = 0;
+  if (jobDescription) {
+    const jobKeywords = extractKeywords(jobDescription);
+    const resumeText = JSON.stringify(resumeData).toLowerCase();
+    const matchedKeywords = jobKeywords.filter(keyword => resumeText.includes(keyword));
+    jobMatchScore = Math.round((matchedKeywords.length / jobKeywords.length) * 100);
+  }
+
+  // Calculate overall and content scores
+  const overallScore = Math.round((atsScore + jobMatchScore) / 2);
+  const contentScore = Math.round(atsScore * 0.8 + (suggestions.length > 0 ? 60 : 90));
+
+  return {
+    scores: {
+      ats: atsScore,
+      jobMatch: jobMatchScore,
+      overall: overallScore,
+      content: contentScore
+    },
+    suggestions: suggestions.map((suggestion, index) => ({
+      id: index + 1,
+      type: suggestion.includes('critical') ? 'critical' : 
+            suggestion.includes('job') ? 'job-match' :
+            suggestion.includes('enhance') ? 'enhancement' : 'structure',
+      title: suggestion.split(':')[0] || 'Improvement Suggestion',
+      message: suggestion,
+      category: 'Resume Optimization',
+      action: 'View Details'
+    })),
+    keywordMatches,
+    skillGaps
+  };
+};

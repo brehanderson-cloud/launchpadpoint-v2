@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaunchpadPoint - AI Resume Builder (Full Width Demo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            width: 100vw;
+            max-width: 100vw;
+        }
+        
+        .container {
+            width: 100vw;
+            max-width: 100vw;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        
+        .header button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        /* Title */
+        .title-section {
+            text-align: center;
+            padding: 0 1rem 2rem 1rem;
+            box-sizing: border-box;
+        }
+        
+        .title-section h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            margin: 1rem 0;
+        }
+        
+        .title-section p {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Main Content Grid - FULL WIDTH */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Perfect equal width columns */
+            gap: 2rem;
+            width: 100vw;
+            max-width: 100vw;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .upload-area {
+            padding: 3rem;
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            text-align: center;
+            background: rgba(102, 126, 234, 0.02);
+            cursor: pointer;
+        }
+        
+        .upload-area h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .upload-area p {
+            color: #6b7280;
+        }
+        
+        /* Preview section */
+        .preview-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-radius: 16px 16px 0 0;
+            margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+        }
+        
+        .preview-header h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .demo-content {
+            color: #374151;
+            line-height: 1.6;
+        }
+        
+        .demo-content h4 {
+            color: #1f2937;
+            margin: 1rem 0 0.5rem 0;
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .title-section h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <button onclick="window.location.href='/'">← Back to Dashboard</button>
+            <button>💾 Save Resume</button>
+        </div>
+        
+        <!-- Title Section -->
+        <div class="title-section">
+            <h1>🚀 LaunchpadPoint AI Resume Builder</h1>
+            <p>Create professional resumes with AI-powered optimization and real-time job matching</p>
+        </div>
+        
+        <!-- Main Content Grid - FULL WIDTH -->
+        <div class="main-content">
+            <!-- Left Column - Import -->
+            <div>
+                <div class="card">
+                    <h2>📄 Target Job Description</h2>
+                    <textarea placeholder="Paste the job description here to get tailored suggestions and match scoring..." 
+                             style="width: 100%; height: 120px; padding: 1rem; border: 2px solid #667eea; border-radius: 12px; resize: vertical; font-size: 1rem; box-sizing: border-box; outline: none;"></textarea>
+                </div>
+                
+                <div class="card">
+                    <h2>📁 Resume Import</h2>
+                    <div class="upload-area" onclick="document.getElementById('file-input').click()">
+                        <h3>Drop your resume here or click to upload</h3>
+                        <p>Supports PDF, DOC, DOCX, and TXT files up to 5MB</p>
+                    </div>
+                    <input type="file" id="file-input" style="display: none;" accept=".pdf,.doc,.docx,.txt">
+                </div>
+                
+                <div class="card">
+                    <h2>🎯 AI Analysis Results</h2>
+                    <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 12px; padding: 1rem;">
+                        <div style="font-weight: bold; color: #374151; margin-bottom: 0.5rem;">💡 Improvement Suggestion</div>
+                        <div style="font-size: 0.875rem; color: #374151; margin-bottom: 0.75rem;">
+                            Add more specific metrics and achievements to your experience section to improve ATS compatibility.
+                        </div>
+                        <button style="padding: 0.5rem 1rem; border-radius: 8px; border: none; font-weight: 600; font-size: 0.875rem; cursor: pointer; background: #16a34a; color: white;">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Preview -->
+            <div>
+                <div class="card" style="overflow: hidden; padding: 0;">
+                    <div class="preview-header">
+                        <span style="font-size: 32px;">🚀</span>
+                        <div>
+                            <h3>Live Resume Preview</h3>
+                            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Optimized for target position</p>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 2rem;">
+                        <div class="demo-content">
+                            <h2 style="font-size: 2rem; font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">John Smith</h2>
+                            <div style="color: #6b7280; line-height: 1.6; margin-bottom: 1.5rem; border-bottom: 2px solid #f3f4f6; padding-bottom: 1.5rem;">
+                                <p style="margin: 0.25rem 0;">john.smith@email.com • (555) 123-4567</p>
+                                <p style="margin: 0.25rem 0;">San Francisco, CA</p>
+                            </div>
+                            
+                            <h4>📋 Professional Summary</h4>
+                            <p>Experienced software developer with 5+ years in full-stack development, specializing in React and Node.js applications.</p>
+                            
+                            <h4>💼 Professional Experience</h4>
+                            <div style="margin: 1rem 0;">
+                                <h5 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin: 0 0 0.25rem 0;">Senior Developer</h5>
+                                <p style="font-size: 1.125rem; font-weight: 600; color: #16a34a; margin: 0 0 0.75rem 0;">Tech Corp • 2022 - Present</p>
+                                <ul style="list-style: none; padding: 0; margin: 0;">
+                                    <li style="color: #374151; margin-bottom: 0.25rem; padding-left: 1rem; position: relative;">
+                                        <span style="position: absolute; left: 0; color: #667eea; font-weight: bold;">•</span>
+                                        Led development of React applications serving 100k+ users
+                                    </li>
+                                    <li style="color: #374151; margin-bottom: 0.25rem; padding-left: 1rem; position: relative;">
+                                        <span style="position: absolute; left: 0; color: #667eea; font-weight: bold;">•</span>
+                                        Improved application performance by 40% through optimization
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <h4>🎓 Education</h4>
+                            <div>
+                                <h5 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin: 0 0 0.25rem 0;">Computer Science Degree</h5>
+                                <p style="font-size: 1.125rem; font-weight: 600; color: #8b5cf6; margin: 0 0 0.25rem 0;">University of Technology • 2018</p>
+                            </div>
+                            
+                            <h4>🛠️ Skills</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem;">
+                                <span style="display: inline-block; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600; background: #667eea; color: white;">JavaScript</span>
+                                <span style="display: inline-block; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600; background: #22c55e; color: white; box-shadow: 0 0 0 2px #bbf7d0;">React ✓</span>
+                                <span style="display: inline-block; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600; background: #667eea; color: white;">Node.js</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div style="border-top: 1px solid #f3f4f6; background-color: #f9fafb; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-size: 0.875rem; color: #6b7280;">
+                            Analyzed: 2:30 PM • 3 suggestions
+                        </div>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <button style="display: flex; align-items: center; gap: 0.5rem; background: #dc2626; color: white; padding: 0.5rem 1rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">
+                                📄 Print/PDF
+                            </button>
+                            <button style="display: flex; align-items: center; gap: 0.5rem; background: #667eea; color: white; padding: 0.5rem 1rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">
+                                📝 DOCX
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Analytics Dashboard -->
+                <div class="card">
+                    <h2>📊 Resume Analytics Dashboard</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="text-align: center; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #667eea;">87%</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">Overall Score</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: rgba(118, 75, 162, 0.1); border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #16a34a;">92%</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">Content Quality</div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h4 style="font-size: 1.125rem; font-weight: 600; color: #374151;">ATS Compatibility</h4>
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #16a34a;">85%</div>
+                        </div>
+                        <div style="width: 100%; height: 8px; background-color: #e5e7eb; border-radius: 4px; overflow: hidden;">
+                            <div style="height: 100%; background: linear-gradient(90deg, #16a34a, #22c55e); width: 85%; transition: width 1s ease;"></div>
+                        </div>
+                        <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">Excellent for ATS systems</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('LaunchpadPoint AI Resume Builder - Full Width Demo');
+        console.log('Grid columns: 1fr 1fr (perfect equal width)');
+        console.log('Container: 100vw width, no side gutters');
+        
+        // Demo file upload
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                alert('Demo: File "' + e.target.files[0].name + '" would be uploaded and processed by AI');
+            }
+        });
+    </script>
+</body>
+</html>

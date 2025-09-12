@@ -3,6 +3,7 @@ import logo from "./logo.png";
 import "./App.css";
 import * as pdfjs from "pdfjs-dist/legacy/build/pdf";
 import mammoth from "mammoth";
+import ResumeBuilder from "./pages/ResumeBuilder";
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 const TABS = [
@@ -53,6 +54,11 @@ export default function App() {
   const [uploadError, setUploadError] = useState("");
   const [home, setHome] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [useAdvancedBuilder, setUseAdvancedBuilder] = useState(false);
+
+  // Check URL params for advanced mode
+  const urlParams = new URLSearchParams(window.location.search);
+  const isAdvancedMode = urlParams.get('mode') === 'advanced' || useAdvancedBuilder;
 
   const filledFields = Object.values(form).filter((v) => v && String(v).trim().length > 0).length;
   const progress = Math.round((filledFields / Object.keys(form).length) * 100);
@@ -86,15 +92,27 @@ export default function App() {
             </p>
             <button
               className="btn btn-primary"
-              style={{fontSize: 22, padding: "20px 44px"}}
+              style={{fontSize: 22, padding: "20px 44px", marginRight: "20px"}}
               onClick={() => setHome(false)}
             >
               Create Professional Resume
+            </button>
+            <button
+              className="btn btn-primary"
+              style={{fontSize: 22, padding: "20px 44px"}}
+              onClick={() => window.location.href = '/?mode=advanced'}
+            >
+              AI Resume Builder
             </button>
           </div>
         </div>
       </div>
     );
+  }
+
+  // Advanced Resume Builder
+  if (isAdvancedMode) {
+    return <ResumeBuilder />;
   }
 
   // --- Resume + Prefill Logic ---
