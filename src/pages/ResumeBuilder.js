@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { Upload, FileText, Clipboard, Sparkles, CheckCircle, TrendingUp, User, Briefcase, GraduationCap, Award, Download, Eye, Edit3, Target, Lightbulb, ArrowLeft, Save, AlertTriangle, Info } from 'lucide-react';
-import { analyzeResumeWithAI } from '../utils/resumeAnalyzer';
+import { analyzeResume } from '../utils/resumeAnalyzer';
 import '../App.css';
 
 const ResumeBuilder = () => {
@@ -182,13 +182,13 @@ const ResumeBuilder = () => {
       
       if (step.progress === 85) {
         // Run the intelligent analysis
-        const analysisResults = analyzeResumeWithAI(parsedData, jobDescription);
+        const analysisResults = analyzeResume(parsedData);
         
-        setSuggestions(analysisResults.suggestions);
-        setAtsScore(analysisResults.scores.ats);
-        setMatchScore(analysisResults.scores.jobMatch);
-        setOverallScore(analysisResults.scores.overall);
-        setContentScore(analysisResults.scores.content);
+        setSuggestions(analysisResults.suggestions || []);
+        setAtsScore(analysisResults.score || 0);
+        setMatchScore(0); // Not available in current analyzer
+        setOverallScore(analysisResults.score || 0);
+        setContentScore(analysisResults.score || 0);
       }
     }
 
