@@ -312,7 +312,9 @@ const ResumeBuilder = () => {
   const containerStyle = {
     minHeight: '100vh',
     background: `linear-gradient(135deg, ${brandColors.primary} 0%, ${brandColors.secondary} 100%)`,
-    padding: '1rem'
+    padding: '0',
+    width: '100vw',
+    maxWidth: '100vw'
   };
 
   const cardStyle = {
@@ -325,9 +327,16 @@ const ResumeBuilder = () => {
 
   return (
     <div style={containerStyle}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ width: '100vw', maxWidth: '100vw', margin: '0', padding: '0' }}>
         {/* Header with Logo */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: '2rem',
+          padding: '1rem',
+          boxSizing: 'border-box'
+        }}>
           <button 
             onClick={navigateBack} 
             style={{
@@ -370,7 +379,12 @@ const ResumeBuilder = () => {
         </div>
 
         {/* Title with Logo */}
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <div style={{ 
+          textAlign: 'center', 
+          marginBottom: '2rem',
+          padding: '0 1rem',
+          boxSizing: 'border-box'
+        }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
             <RocketLogo size={48} color="white" />
             <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: 'white', margin: 0 }}>
@@ -383,7 +397,15 @@ const ResumeBuilder = () => {
         </div>
 
         {/* Main Content Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth >= 1024 ? '1fr 1fr' : '1fr', gap: '2rem' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: window.innerWidth >= 1024 ? '1fr 1fr' : '1fr', 
+          gap: '2rem',
+          width: '100vw',
+          maxWidth: '100vw',
+          padding: '1rem',
+          boxSizing: 'border-box'
+        }}>
           {/* Left Column */}
           <div>
             {/* Job Description Input */}
