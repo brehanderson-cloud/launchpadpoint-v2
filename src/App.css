@@ -139,7 +139,7 @@ header {
 
 .main-content {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 40px;
   margin-bottom: 40px;
 }
@@ -151,6 +151,8 @@ header {
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.08);
   transition: all 0.3s ease;
+  width: 100%;
+  min-width: 0;
 }
 .dark-mode .form-section,
 .dark-mode .preview-section {
