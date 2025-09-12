@@ -139,13 +139,17 @@ header {
 
 .main-content {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 40px;
   margin-bottom: 40px;
 }
 
 .form-section,
 .preview-section {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  box-sizing: border-box;
   background: var(--card-bg);
   padding: 30px;
   border-radius: 20px;
@@ -229,6 +233,7 @@ label {
 }
 input, textarea, select {
   width: 100%;
+  box-sizing: border-box;
   padding: 14px 18px;
   border: 1px solid #ddd;
   border-radius: 12px;
