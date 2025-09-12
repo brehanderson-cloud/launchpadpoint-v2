@@ -3,6 +3,7 @@ import logo from "./logo.png";
 import "./App.css";
 import * as pdfjs from "pdfjs-dist/legacy/build/pdf";
 import mammoth from "mammoth";
+import ResumeBuilder from "./pages/ResumeBuilder";
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 const TABS = [
@@ -47,6 +48,7 @@ export default function App() {
   const [form, setForm] = useState(initialForm);
   const [darkMode, setDarkMode] = useState(false);
   const [dyslexia, setDyslexia] = useState(false);
+  const [showNewResumeBuilder, setShowNewResumeBuilder] = useState(false);
 
   const [importMode, setImportMode] = useState("paste");
   const [resumePaste, setResumePaste] = useState("");
@@ -86,15 +88,27 @@ export default function App() {
             </p>
             <button
               className="btn btn-primary"
-              style={{fontSize: 22, padding: "20px 44px"}}
+              style={{fontSize: 22, padding: "20px 44px", marginRight: "20px"}}
               onClick={() => setHome(false)}
             >
               Create Professional Resume
+            </button>
+            <button
+              className="btn btn-primary"
+              style={{fontSize: 22, padding: "20px 44px"}}
+              onClick={() => setShowNewResumeBuilder(true)}
+            >
+              New Resume Builder (Test)
             </button>
           </div>
         </div>
       </div>
     );
+  }
+
+  // New Resume Builder Component
+  if (showNewResumeBuilder) {
+    return <ResumeBuilder />;
   }
 
   // --- Resume + Prefill Logic ---
@@ -108,7 +122,7 @@ export default function App() {
     if (contact) {
       const parts = contact.split("|").map(x => x.trim());
       f.email = parts.find(x => x.includes("@")) || "";
-      f.phone = parts.find(x => x.match(/\d{3}[\s\-]?\d{3}/)) || "";
+      f.phone = parts.find(x => x.match(/\d{3}[\s-]?\d{3}/)) || "";
       f.location = parts.find(x => x.match(/[A-Za-z]+,?\s*[A-Z]{2}/)) || "";
     }
     // Fill summary
