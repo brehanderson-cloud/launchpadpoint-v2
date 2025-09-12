@@ -265,7 +265,7 @@ export default function App() {
         </div>
 
         {/* Main Content */}
-        <div className="main-content" style={{gridTemplateColumns: "1.3fr 1fr"}}>
+        <div className="main-content" style={{gridTemplateColumns: "1fr 1fr"}}>
           <div className="tab-content active">
             {tab === "personal" && (
               <div className="form-section">
