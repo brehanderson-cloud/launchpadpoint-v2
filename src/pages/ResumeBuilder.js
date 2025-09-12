@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { Upload, FileText, Clipboard, Sparkles, CheckCircle, TrendingUp, User, Briefcase, GraduationCap, Award, Download, Eye, Edit3, Target, Lightbulb, ArrowLeft, Save, AlertTriangle, Info } from 'lucide-react';
 import { analyzeResumeWithAI } from '../utils/resumeAnalyzer';
+import '../App.css';
 
 const ResumeBuilder = () => {
   const [parseMethod, setParseMethod] = useState('upload');
@@ -383,7 +384,7 @@ const ResumeBuilder = () => {
         </div>
 
         {/* Main Content Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth >= 1024 ? '1fr 1fr' : '1fr', gap: '2rem' }}>
+        <div className="main-content">
           {/* Left Column */}
           <div>
             {/* Job Description Input */}
