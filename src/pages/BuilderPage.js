@@ -53,13 +53,13 @@ ${edu.achievements}
           </h2>
         </div>
 
-        <div className="flex space-x-1 mb-6 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-          {['personal', 'experience', 'education', 'skills'].map(tab => (
+        <div className="flex flex-row flex-wrap gap-3 mb-6 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+          {['personal', 'experience', 'education', 'skills', 'Job Match', 'Import'].map(tab => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-2 px-4 rounded-md transition-all capitalize ${
-                activeTab === tab
+              onClick={() => setActiveTab(tab.toLowerCase().replace(/ /g, ''))}
+              className={`py-2 px-4 rounded-md transition-all capitalize font-medium ${
+                activeTab === tab.toLowerCase().replace(/ /g, '')
                   ? 'bg-white dark:bg-gray-600 shadow-sm'
                   : 'hover:bg-white/50 dark:hover:bg-gray-600/50'
               }`}

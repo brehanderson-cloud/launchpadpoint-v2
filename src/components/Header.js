@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../logo.png";
+import logo from "../assets/launchpadpoint-logo.png";
 
 // Updated color palette to match ResumeBuilder
 const brandColors = {
