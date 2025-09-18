@@ -5,6 +5,7 @@ import { ArrowLeft, Send, Brain, Video, TrendingUp, Target, FileText } from 'luc
 const LaunchpadLogo = ({ size = 32, showText = true }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
     <svg width={size} height={size} viewBox="0 0 100 100" style={{ display: 'block' }}>
+      {/* SVG Paths here */}
       <path
         d="M50 10 C58 10 65 17 65 25 L65 75 C65 80 60 85 55 85 L45 85 C40 85 35 80 35 75 L35 25 C35 17 42 10 50 10 Z"
         fill="url(#mainRocketGradient)"
@@ -218,18 +219,20 @@ const EnhancedAIAssistant = () => {
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: '0.25rem',
-                  padding: '0.75rem',
-                  borderRadius: '0.75rem',
+                  padding: '0.85rem 1.5rem',
+                  borderRadius: '1.1rem', // Rounded corners
                   border: 'none',
-                  background: activeCategory === category.id ? `${category.color}15` : '#f9fafb',
-                  color: activeCategory === category.id ? category.color : '#6b7280',
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', // Blue-purple gradient
+                  color: '#fff', // White text
+                  boxShadow: '0 2px 8px rgba(102,126,234,0.09), 0 1.5px 4px rgba(118,75,162,0.07)',
                   cursor: 'pointer',
-                  minWidth: '80px',
-                  fontSize: '0.75rem',
-                  fontWeight: activeCategory === category.id ? '600' : '400'
+                  minWidth: '90px',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  transition: 'all 0.18s cubic-bezier(.4,2,.6,1)'
                 }}
               >
-                <Icon size={18} />
+                <Icon size={20} />
                 <span style={{ textAlign: 'center', lineHeight: '1.2' }}>{category.shortName}</span>
               </button>
             );

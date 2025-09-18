@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import { 
-  FileText, TrendingUp, Brain, MessageSquare, DollarSign, Users, Sparkles 
+  FileText, TrendingUp, Brain, MessageSquare, DollarSign, Users
 } from 'lucide-react';
-import { useResume } from '../contexts/ResumeContext';
 
-const AIChatSidebar = ({ aiChatOpen, setAiChatOpen }) => {
-  const [selectedAI, setSelectedAI] = useState('resume');
+const AIChatSidebar = ({ aiChatOpen, setAiChatOpen, selectedAIOverride, setSelectedAIOverride }) => {
+  const [selectedAI, setSelectedAI] = useState(selectedAIOverride || 'resume');
+  // Keep selectedAI in sync with override from parent
+  React.useEffect(() => {
+    if (selectedAIOverride && selectedAIOverride !== selectedAI) {
+      setSelectedAI(selectedAIOverride);
+    }
+  }, [selectedAIOverride, selectedAI]);
   const [chatMessages, setChatMessages] = useState([]);
   const [currentMessage, setCurrentMessage] = useState('');
-  const { resumeData } = useResume();
+  // const { resumeData } = useResume();
 
   const aiSpecialists = {
     resume: {
@@ -136,7 +141,10 @@ const AIChatSidebar = ({ aiChatOpen, setAiChatOpen }) => {
             return (
               <button
                 key={key}
-                onClick={() => setSelectedAI(key)}
+                onClick={() => {
+                  setSelectedAI(key);
+                  if (setSelectedAIOverride) setSelectedAIOverride(key);
+                }}
                 className={`p-4 rounded-xl text-left transition-all ${
                   selectedAI === key
                     ? `bg-gradient-to-r ${ai.color} text-white shadow-lg transform scale-105`
