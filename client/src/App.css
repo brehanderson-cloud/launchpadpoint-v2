@@ -1,69 +1,7 @@
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(59, 130, 246, 0.3);
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(59, 130, 246, 0.5);
-}
-
-/* Loading animations */
-.animate-fade-in {
-  animation: fadeIn 0.8s ease-out forwards;
-}
-
-.animate-slide-up {
-  animation: slideUp 0.6s ease-out forwards;
-}
-
-/* Selection styling */
-::selection {
-  background: rgba(59, 130, 246, 0.3);
-  color: white;
-}
-
-/* Focus styles for accessibility */
-.focus-ring:focus {
-  outline: none;
-  ring-width: 2px;
-  ring-color: rgb(59, 130, 246);
-  ring-opacity: 0.5;
-}
-
-/* Floating animation for decorative elements */
-.float {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Responsive text sizes */
-@media (max-width: 640px) {
-  .responsive-container {
-    @apply px-2 py-4;
-  }
-  
-  .header-title {
-    @apply text-3xl;
-  }
-  
-  .section-title {
-    @apply text-xl;
-  }
-}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Only custom CSS for specific needs */
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -76,15 +14,43 @@
 
 @layer components {
   .glass-card {
-    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg;
+    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg p-6;
   }
   
   .btn-primary {
-    @apply bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-xl shadow hover:scale-105 transition-all duration-200;
+    @apply bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 text-white font-semibold py-3 px-6 rounded-xl shadow hover:scale-105 transition-all duration-200;
   }
   
   .btn-secondary {
-    @apply bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold py-3 px-6 rounded-xl shadow hover:scale-105 transition-all duration-200;
+    @apply bg-gradient-to-r from-red-500 via-pink-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-xl shadow hover:scale-105 transition-all duration-200;
+  }
+}
+
+@layer utilities {
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.3);
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.5);
+  }
+
+  /* Selection styling */
+  ::selection {
+    background: rgba(59, 130, 246, 0.3);
+    color: white;
   }
 }
 
