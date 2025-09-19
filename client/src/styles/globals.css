@@ -1,48 +1,70 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  }
+/* Global base styles */
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-@layer components {
-  .btn-primary {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    background-color: #2563eb;
-    color: #fff;
-    border-radius: 0.375rem;
-    transition-property: background-color;
-  }
-  
-  .btn-secondary {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    background-color: #e5e7eb;
-    color: #1f2937;
-    border-radius: 0.375rem;
-    transition-property: background-color;
-  }
-  
-  .input-field {
-    width: 100%;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-    transition-property: border-color;
-  }
-  
-  /* .card utility classes removed for Tailwind v4 compatibility. Use className="bg-white rounded-lg shadow-md p-6" in JSX instead. */
-  
-  /* .match-score-high, .match-score-medium, .match-score-low utility classes removed for Tailwind v4 compatibility. Use className="text-green-600 font-semibold" etc. in JSX instead. */
+/* Component styles */
+.btn-primary {
+  padding: 8px 16px;
+  background-color: #2563eb;
+  color: #fff;
+  border-radius: 6px;
+  transition: background-color 0.15s ease-in-out;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-secondary {
+  padding: 8px 16px;
+  background-color: #e5e7eb;
+  color: #1f2937;
+  border-radius: 6px;
+  transition: background-color 0.15s ease-in-out;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background-color: #d1d5db;
+}
+
+.input-field {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* Card styles */
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+/* Match score styles */
+.match-score-high {
+  color: #059669;
+  font-weight: 600;
+}
+
+.match-score-medium {
+  color: #d97706;
+  font-weight: 600;
+}
+
+.match-score-low {
+  color: #dc2626;
+  font-weight: 600;
 }

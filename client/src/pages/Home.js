@@ -5,56 +5,50 @@ const Home = () => {
   return (
     <div className="responsive-container">
       {/* Hero Section */}
-      <div className="text-center mb-16">
+      <div className="text-center mb-12">
         <h1 className="header-title animate-fade-in">
           Transform Your Career with AI
         </h1>
         <p className="subtitle animate-slide-up">
-          LaunchpadPoint combines artificial intelligence, comprehensive accessibility, 
+          LaunchpadPoint combines artificial intelligence, comprehensive accessibility,
           and professional networking to accelerate your career development journey.
         </p>
-        
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8 animate-slide-up">
-          <Link to="/resume-builder" className="gradient-btn text-lg px-8 py-4">
-            🚀 Create Professional Resume
-            <div className="text-sm opacity-90 mt-1">$29.99 • Instant Access</div>
+
+        {/* CTA Buttons - styled to match landing page */}
+        <div className="flex flex-col sm:flex-row gap-6 justify-center mt-8 animate-slide-up">
+          <Link to="/resume-builder" className="btn-primary flex flex-col items-center justify-center text-lg px-10 py-6 rounded-2xl shadow-lg">
+            <span className="font-bold text-xl mb-1">🚀 Create Professional Resume</span>
+            <span className="text-sm opacity-90 mt-1">$29.99 • Instant Access</span>
           </Link>
-          <Link to="/dashboard" className="gradient-btn-outline text-lg px-8 py-4">
-            📊 Start Free Trial
+          <Link to="/dashboard" className="btn-secondary flex flex-col items-center justify-center text-lg px-10 py-6 rounded-2xl shadow-lg">
+            <span className="font-bold text-xl mb-1">📊 Start Free Trial</span>
           </Link>
         </div>
       </div>
-      
+
       {/* Feature Cards */}
-      <div className="grid md:grid-cols-3 gap-8 mb-16">
-        <div className="feature-card">
-          <div className="feature-card-icon">🤖</div>
-          <h3 className="section-title text-xl">AI-Powered Analysis</h3>
-          <p className="text-gray-300">
-            Advanced algorithms analyze your resume and suggest improvements for better job matches.
-          </p>
+      <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 mb-12">
+        <div className="glass-card flex flex-col items-center p-10">
+          <div className="card-icon">📄</div>
+          <div className="card-title">Upload Resume</div>
+          <div className="card-desc">PDF, DOC, or DOCX</div>
         </div>
-        
-        <div className="feature-card">
-          <div className="feature-card-icon">✅</div>
-          <h3 className="section-title text-xl">ATS Optimization</h3>
-          <p className="text-gray-300">
-            Ensure your resume passes Applicant Tracking Systems with our optimization tools.
-          </p>
-        </div>
-        
-        <div className="feature-card">
-          <div className="feature-card-icon">💼</div>
-          <h3 className="section-title text-xl">Job Matching</h3>
-          <p className="text-gray-300">
-            Find opportunities that perfectly match your skills and career goals.
-          </p>
+        <div className="glass-card flex flex-col items-center p-10">
+          <div className="card-icon">🎯</div>
+          <div className="card-title">Job Description</div>
+          <div className="card-desc">Copy and paste job posting</div>
         </div>
       </div>
-      
+
+      {/* Analyze Button */}
+      <div className="flex justify-center mb-12">
+        <Link to="/qualification-matcher" className="analyze-btn">
+          Analyze Qualification Match
+        </Link>
+      </div>
+
       {/* Stats Section */}
-      <div className="glass-card mb-16">
+      <div className="glass-card mb-12">
         <h2 className="section-title text-center mb-8">Why Choose LaunchpadPoint?</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <div className="stat-card">
@@ -75,12 +69,12 @@ const Home = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Final CTA */}
       <div className="glass-card text-center">
         <h2 className="section-title">Ready to Launch Your Career?</h2>
         <p className="subtitle">Join thousands of professionals who've transformed their careers with LaunchpadPoint.</p>
-        <Link to="/ai-assistant" className="gradient-btn-secondary text-lg px-8 py-4">
+        <Link to="/ai-assistant" className="btn-secondary text-lg px-10 py-6 rounded-2xl shadow-lg">
           🎯 Try AI Assistant
         </Link>
       </div>
