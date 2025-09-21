@@ -243,19 +243,26 @@ What You'll Bring:
     const userId = localStorage.getItem("userId") || `user_${Date.now()}`
     localStorage.setItem("userId", userId)
 
-    const storedCredits = localStorage.getItem(`credits_${userId}`)
-    if (storedCredits && Number.parseInt(storedCredits) > 0) {
-      setHasCredits(true)
-      setCreditsRemaining(Number.parseInt(storedCredits))
-    } else if (!storedCredits) {
-      // New user - give 3 free credits
-      const freeCredits = 3
-      localStorage.setItem(`credits_${userId}`, freeCredits.toString())
-      setHasCredits(true)
-      setCreditsRemaining(freeCredits)
-      console.log("[v0] New user detected - granted 3 free credits")
-    } else {
-      // Existing user with 0 credits
+    try {
+      const storedCredits = localStorage.getItem(`credits_${userId}`)
+      if (storedCredits && Number.parseInt(storedCredits) > 0) {
+        setHasCredits(true)
+        setCreditsRemaining(Number.parseInt(storedCredits))
+      } else if (!storedCredits) {
+        // New user - give 3 free credits
+        const freeCredits = 3
+        localStorage.setItem(`credits_${userId}`, freeCredits.toString())
+        setHasCredits(true)
+        setCreditsRemaining(freeCredits)
+        console.log("[v0] New user detected - granted 3 free credits")
+      } else {
+        // Existing user with 0 credits
+        setHasCredits(false)
+        setCreditsRemaining(0)
+      }
+    } catch (error) {
+      console.error("[v0] Error accessing localStorage:", error)
+      // Fallback to no credits if localStorage fails
       setHasCredits(false)
       setCreditsRemaining(0)
     }

@@ -91,7 +91,8 @@ export class ResumeParser {
     const summaryIndex = lines.findIndex((line) => /summary|objective|profile/i.test(line) && line.length < 30)
     if (summaryIndex !== -1 && summaryIndex + 1 < lines.length) {
       const summaryLines = []
-      for (let i = summaryIndex + 1; i < lines.length; i++) {
+      const maxLines = Math.min(lines.length, summaryIndex + 10) // Limit to 10 lines max
+      for (let i = summaryIndex + 1; i < maxLines; i++) {
         const line = lines[i]
         if (/experience|education|skills|work/i.test(line) && line.length < 30) break
         summaryLines.push(line)
@@ -111,7 +112,8 @@ export class ResumeParser {
     if (experienceStart === -1) return experience
 
     let currentJob = null
-    for (let i = experienceStart + 1; i < lines.length; i++) {
+    const maxLines = Math.min(lines.length, experienceStart + 50) // Limit search scope
+    for (let i = experienceStart + 1; i < maxLines; i++) {
       const line = lines[i]
 
       // Stop if we hit another section
@@ -152,7 +154,8 @@ export class ResumeParser {
 
     if (skillsStart === -1) return skills
 
-    for (let i = skillsStart + 1; i < lines.length; i++) {
+    const maxLines = Math.min(lines.length, skillsStart + 20) // Limit search scope
+    for (let i = skillsStart + 1; i < maxLines; i++) {
       const line = lines[i]
 
       // Stop if we hit another section
@@ -185,7 +188,8 @@ export class ResumeParser {
 
     if (educationStart === -1) return education
 
-    for (let i = educationStart + 1; i < lines.length; i++) {
+    const maxLines = Math.min(lines.length, educationStart + 15) // Limit search scope
+    for (let i = educationStart + 1; i < maxLines; i++) {
       const line = lines[i]
 
       // Stop if we hit another section
@@ -210,7 +214,8 @@ export class ResumeParser {
 
     if (certStart === -1) return certifications
 
-    for (let i = certStart + 1; i < lines.length; i++) {
+    const maxLines = Math.min(lines.length, certStart + 10) // Limit search scope
+    for (let i = certStart + 1; i < maxLines; i++) {
       const line = lines[i]
 
       // Stop if we hit another section
