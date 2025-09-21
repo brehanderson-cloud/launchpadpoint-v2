@@ -6,14 +6,14 @@ import "./globals.css"
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-geist",
   display: "swap",
   preload: true,
 })
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-mono",
+  variable: "--font-geist-mono",
   display: "swap",
   preload: true,
 })
