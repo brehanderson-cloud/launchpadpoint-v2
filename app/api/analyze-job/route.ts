@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createGroq } from "@ai-sdk/groq"
 import { generateText } from "ai"
 
-export const maxDuration = 60 // 1 minute max
+export const maxDuration = 120 // 2 minutes max
 
 const groq = createGroq({
   apiKey: process.env.GROQ_API_KEY,
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
   console.log("[v0] Job analysis API called")
 
   const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), 55000) // 55 seconds
+  const timeoutId = setTimeout(() => controller.abort(), 115000) // 115 seconds
 
   try {
     const { jobDescription } = await request.json()

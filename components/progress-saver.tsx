@@ -42,22 +42,10 @@ export default function ProgressSaver({
       setLastSaved(new Date().toISOString())
     }
 
-    let interval: NodeJS.Timeout | null = null
-
     // Auto-save every 30 seconds if there's content
     if (resumeText || jobDescription || analysisResults) {
-      try {
-        interval = setInterval(saveProgress, 30000)
-      } catch (error) {
-        console.error("[v0] Failed to create auto-save interval:", error)
-      }
-    }
-
-    return () => {
-      if (interval) {
-        clearInterval(interval)
-        interval = null
-      }
+      const interval = setInterval(saveProgress, 30000)
+      return () => clearInterval(interval)
     }
   }, [resumeText, jobDescription, analysisResults, currentStep, setSavedProgress, setLastSaved])
 

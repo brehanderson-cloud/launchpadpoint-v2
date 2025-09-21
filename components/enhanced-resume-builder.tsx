@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import AIChatAssistant from "./ai-chat-assistant"
 import StepByStepAnalysis from "./step-by-step-analysis"
 import LearningFeedbackSystem from "./learning-feedback-system"
+import VerificationDialog from "./verification-dialog"
 
 const EnhancedResumeBuilder = () => {
   const { darkMode, toggleTheme } = useTheme()
@@ -80,7 +81,7 @@ const EnhancedResumeBuilder = () => {
 NRG Energy, Inc
 Houston, TX (Hybrid)
 
-We're looking for a dynamic Director of Talent Acquisition to lead our high-volume recruiting efforts. 
+We're looking for a dynamic Director of Talent Acquisition to lead our high-volume recruiting efforts.
 
 What You'll Bring:
 - Bachelor's degree in HR, Business, or related field, with 10+ years in talent acquisition
@@ -243,26 +244,19 @@ What You'll Bring:
     const userId = localStorage.getItem("userId") || `user_${Date.now()}`
     localStorage.setItem("userId", userId)
 
-    try {
-      const storedCredits = localStorage.getItem(`credits_${userId}`)
-      if (storedCredits && Number.parseInt(storedCredits) > 0) {
-        setHasCredits(true)
-        setCreditsRemaining(Number.parseInt(storedCredits))
-      } else if (!storedCredits) {
-        // New user - give 3 free credits
-        const freeCredits = 3
-        localStorage.setItem(`credits_${userId}`, freeCredits.toString())
-        setHasCredits(true)
-        setCreditsRemaining(freeCredits)
-        console.log("[v0] New user detected - granted 3 free credits")
-      } else {
-        // Existing user with 0 credits
-        setHasCredits(false)
-        setCreditsRemaining(0)
-      }
-    } catch (error) {
-      console.error("[v0] Error accessing localStorage:", error)
-      // Fallback to no credits if localStorage fails
+    const storedCredits = localStorage.getItem(`credits_${userId}`)
+    if (storedCredits && Number.parseInt(storedCredits) > 0) {
+      setHasCredits(true)
+      setCreditsRemaining(Number.parseInt(storedCredits))
+    } else if (!storedCredits) {
+      // New user - give 3 free credits
+      const freeCredits = 3
+      localStorage.setItem(`credits_${userId}`, freeCredits.toString())
+      setHasCredits(true)
+      setCreditsRemaining(freeCredits)
+      console.log("[v0] New user detected - granted 3 free credits")
+    } else {
+      // Existing user with 0 credits
       setHasCredits(false)
       setCreditsRemaining(0)
     }
@@ -1108,6 +1102,13 @@ What You'll Bring:
             analysisResults={analysisResults}
             isOpen={showLearningFeedback}
             onClose={() => setShowLearningFeedback(false)}
+            darkMode={darkMode}
+          />
+
+          {/* Verification Dialog component */}
+          <VerificationDialog
+            isOpen={showVerificationDialog}
+            onClose={() => setShowVerificationDialog(false)}
             darkMode={darkMode}
           />
         </div>
