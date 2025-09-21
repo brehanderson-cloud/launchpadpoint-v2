@@ -49,12 +49,23 @@ export default function VerificationDialog({ improvement, onVerify, onClose }: V
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="verification-dialog-title"
+    >
       <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">Verify Improvement</h3>
-            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <h3 className="text-lg font-semibold" id="verification-dialog-title">
+              Verify Improvement
+            </h3>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+              aria-label="Close verification dialog"
+            >
               <X size={24} />
             </button>
           </div>
@@ -70,23 +81,31 @@ export default function VerificationDialog({ improvement, onVerify, onClose }: V
                 <p className="text-sm text-gray-600">Let's verify you can authentically support this improvement:</p>
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="block text-sm font-medium mb-1" htmlFor="examples-textarea">
                       Can you provide specific examples of this achievement?
                     </label>
                     <textarea
+                      id="examples-textarea"
                       className="w-full p-2 border rounded"
                       rows={3}
                       placeholder="Describe specific instances..."
                       onChange={(e) => setUserAnswers({ ...userAnswers, examples: e.target.value })}
+                      aria-required="true"
+                      aria-describedby="examples-help"
                     />
+                    <span id="examples-help" className="sr-only">
+                      Provide specific examples to verify the authenticity of your achievement
+                    </span>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="block text-sm font-medium mb-1" htmlFor="evidence-select">
                       Do you have evidence/documentation to support this?
                     </label>
                     <select
+                      id="evidence-select"
                       className="w-full p-2 border rounded"
                       onChange={(e) => setUserAnswers({ ...userAnswers, evidence: e.target.value })}
+                      aria-required="true"
                     >
                       <option value="">Select...</option>
                       <option value="yes-documented">Yes, I have documentation</option>
@@ -100,9 +119,14 @@ export default function VerificationDialog({ improvement, onVerify, onClose }: V
                   onClick={handleVerify}
                   disabled={loading || !userAnswers.examples}
                   className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+                  aria-describedby="verify-button-help"
+                  aria-disabled={loading || !userAnswers.examples}
                 >
                   {loading ? "Verifying..." : "Verify Authenticity"}
                 </button>
+                <span id="verify-button-help" className="sr-only">
+                  Click to verify the authenticity of your proposed improvement
+                </span>
               </div>
             )}
 
@@ -116,20 +140,25 @@ export default function VerificationDialog({ improvement, onVerify, onClose }: V
                         ? "bg-yellow-50 border border-yellow-200"
                         : "bg-red-50 border border-red-200"
                   }`}
+                  role="status"
+                  aria-live="polite"
+                  aria-label={`Verification result: ${verification.authentic ? "Verified" : "Concerns found"}`}
                 >
                   {verification.riskLevel === "low" ? (
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
+                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" aria-hidden="true" />
                   ) : (
-                    <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
+                    <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" aria-hidden="true" />
                   )}
                   <div>
                     <p className="font-medium">
                       {verification.authentic ? "Improvement Verified" : "Authenticity Concerns"}
                     </p>
                     {verification.concerns.length > 0 && (
-                      <ul className="text-sm mt-2 space-y-1">
+                      <ul className="text-sm mt-2 space-y-1" role="list">
                         {verification.concerns.map((concern, i) => (
-                          <li key={i}>• {concern}</li>
+                          <li key={i} role="listitem">
+                            • {concern}
+                          </li>
                         ))}
                       </ul>
                     )}
@@ -139,12 +168,13 @@ export default function VerificationDialog({ improvement, onVerify, onClose }: V
                 {verification.alternativePhrasing && verification.alternativePhrasing.length > 0 && (
                   <div>
                     <p className="font-medium mb-2">Suggested Authentic Alternatives:</p>
-                    <div className="space-y-2">
+                    <div className="space-y-2" role="group" aria-label="Alternative phrasing options">
                       {verification.alternativePhrasing.map((alt, i) => (
                         <button
                           key={i}
                           className="w-full text-left p-3 border rounded hover:bg-gray-50"
                           onClick={() => onVerify(alt)}
+                          aria-label={`Select alternative phrasing: ${alt}`}
                         >
                           {alt}
                         </button>
@@ -153,16 +183,21 @@ export default function VerificationDialog({ improvement, onVerify, onClose }: V
                   </div>
                 )}
 
-                <div className="flex gap-3">
+                <div className="flex gap-3" role="group" aria-label="Verification actions">
                   {verification.recommendation === "approve" && (
                     <button
                       onClick={() => onVerify(improvement.improvedText)}
                       className="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700"
+                      aria-label="Apply the verified improvement to your resume"
                     >
                       Apply Improvement
                     </button>
                   )}
-                  <button onClick={onClose} className="flex-1 bg-gray-600 text-white py-2 rounded hover:bg-gray-700">
+                  <button
+                    onClick={onClose}
+                    className="flex-1 bg-gray-600 text-white py-2 rounded hover:bg-gray-700"
+                    aria-label="Cancel verification and close dialog"
+                  >
                     Cancel
                   </button>
                 </div>

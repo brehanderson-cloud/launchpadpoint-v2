@@ -17,21 +17,49 @@ function ResumePreview({ resumeData, onDownloadComplete }: ResumePreviewProps) {
   const [selectedTemplate, setSelectedTemplate] = useState("professional-modern")
 
   const handleDownload = () => {
-    const resumeHTML = generateResumeHTML(resumeData, selectedTemplate)
-    const blob = new Blob([resumeHTML], { type: "text/html" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `${resumeData.personalInfo.fullName || "resume"}.html`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    console.log("[v0] Download requested...", {
+      hasResumeData: !!resumeData?.personalInfo?.fullName,
+      selectedTemplate,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      location: window.location.href,
+    })
 
-    if (onDownloadComplete) {
-      setTimeout(() => {
-        onDownloadComplete()
-      }, 1000) // Small delay to ensure download starts
+    try {
+      const resumeHTML = generateResumeHTML(resumeData, selectedTemplate)
+      const blob = new Blob([resumeHTML], { type: "text/html" })
+      const downloadUrl = URL.createObjectURL(blob)
+
+      console.log("[v0] Download details:", {
+        downloadUrl,
+        filename: `${resumeData.personalInfo.fullName || "resume"}.html`,
+        contentLength: resumeHTML.length,
+        blobType: blob.type,
+        blobSize: blob.size,
+        isValidBlobUrl: downloadUrl.startsWith("blob:"),
+      })
+
+      const a = document.createElement("a")
+      a.href = downloadUrl
+      a.download = `${resumeData.personalInfo.fullName || "resume"}.html`
+      a.style.display = "none"
+      document.body.appendChild(a)
+
+      a.click()
+
+      document.body.removeChild(a)
+      URL.revokeObjectURL(downloadUrl)
+
+      console.log("[v0] Download initiated successfully - no API calls needed")
+
+      if (onDownloadComplete) {
+        setTimeout(() => {
+          onDownloadComplete()
+        }, 1000)
+      }
+    } catch (error) {
+      console.error("[v0] Download failed:", error)
+      alert("Download failed. Please try again or contact support if the issue persists.")
     }
   }
 

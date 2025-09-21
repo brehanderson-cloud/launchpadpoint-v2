@@ -76,7 +76,8 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
+  /* Ensured font variables match Geist fonts from layout to prevent preload warnings */
+  --font-sans: var(--font-geist);
   --font-mono: var(--font-geist-mono);
   --color-background: var(--background);
   --color-foreground: var(--foreground);

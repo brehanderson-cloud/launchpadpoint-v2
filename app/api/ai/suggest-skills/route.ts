@@ -1,10 +1,5 @@
 import { groq } from "@ai-sdk/groq"
-import { generateObject } from "ai"
-import { z } from "zod"
-
-const skillsSchema = z.object({
-  skills: z.array(z.string()).describe("Array of relevant skills for the job role"),
-})
+import { generateText } from "ai"
 
 export async function POST(req: Request) {
   const { jobTitle, currentSkills, industry } = await req.json()
@@ -20,14 +15,33 @@ export async function POST(req: Request) {
     - Don't repeat skills already listed
     - Focus on in-demand skills for this position
     - Include industry-specific tools and technologies
+
+    Return ONLY a JSON object with this structure:
+    {
+      "skills": ["skill1", "skill2", "skill3", ...]
+    }
   `
 
-  const { object } = await generateObject({
-    model: groq("llama-3.1-8b-instant"),
-    schema: skillsSchema,
+  const { text } = await generateText({
+    model: groq("llama-3.3-70b-versatile"),
     prompt,
-    maxOutputTokens: 300,
+    maxTokens: 300,
   })
 
-  return Response.json({ suggestedSkills: object.skills })
+  try {
+    const result = JSON.parse(text)
+    return Response.json({ suggestedSkills: result.skills || [] })
+  } catch (parseError) {
+    console.error("Failed to parse AI response:", parseError)
+    // Fallback skills based on job title
+    const fallbackSkills = [
+      "Communication",
+      "Problem Solving",
+      "Teamwork",
+      "Time Management",
+      "Leadership",
+      "Analytical Thinking",
+    ]
+    return Response.json({ suggestedSkills: fallbackSkills })
+  }
 }

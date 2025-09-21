@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     }
 
     const { text } = await generateText({
-      model: groq("llama-3.1-8b-instant"),
+      model: groq("llama-3.3-70b-versatile"),
       prompt: `Score this resume against the job description and provide detailed feedback.
 
 Resume Data:

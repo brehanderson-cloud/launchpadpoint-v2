@@ -1,7 +1,7 @@
 // components/ProgressSaver.tsx
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Check } from "lucide-react"
 import { useLocalStorage } from "@/hooks/use-local-storage"
 
@@ -22,6 +22,11 @@ export default function ProgressSaver({
 }: ProgressSaverProps) {
   const [savedProgress, setSavedProgress] = useLocalStorage("resume-builder-progress", null)
   const [lastSaved, setLastSaved] = useLocalStorage("resume-builder-last-saved", null)
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   useEffect(() => {
     const saveProgress = () => {
@@ -45,18 +50,26 @@ export default function ProgressSaver({
   }, [resumeText, jobDescription, analysisResults, currentStep, setSavedProgress, setLastSaved])
 
   const formatLastSaved = (timestamp: string) => {
-    const date = new Date(timestamp)
-    const now = new Date()
-    const diffMs = now.getTime() - date.getTime()
-    const diffMins = Math.floor(diffMs / 60000)
+    try {
+      const date = new Date(timestamp)
+      const now = new Date()
+      const diffMs = now.getTime() - date.getTime()
+      const diffMins = Math.floor(diffMs / 60000)
 
-    if (diffMins < 1) return "Just now"
-    if (diffMins < 60) return `${diffMins}m ago`
-    if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`
-    return date.toLocaleDateString()
+      if (diffMins < 1) return "Just now"
+      if (diffMins < 60) return `${diffMins}m ago`
+      if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
+      })
+    } catch (error) {
+      return "Recently"
+    }
   }
 
-  if (!lastSaved) return null
+  if (!isClient || !lastSaved) return null
 
   return (
     <div

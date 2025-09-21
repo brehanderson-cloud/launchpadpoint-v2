@@ -60,6 +60,12 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 }
 
 function DefaultErrorFallback({ error, retry }: { error: Error; retry: () => void }) {
+  const isHydrationError =
+    error.message.includes("Hydration") ||
+    error.message.includes("Text content") ||
+    error.message.includes("418") ||
+    error.stack?.includes("hydrate")
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center p-6">
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
@@ -67,10 +73,14 @@ function DefaultErrorFallback({ error, retry }: { error: Error; retry: () => voi
           <span className="text-2xl text-red-600">⚠️</span>
         </div>
 
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">Something went wrong</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          {isHydrationError ? "App Loading Issue" : "Something went wrong"}
+        </h2>
 
         <p className="text-gray-600 mb-6">
-          We encountered an unexpected error. Don't worry - your data is safe and we've been notified.
+          {isHydrationError
+            ? "We detected a loading issue. This usually resolves with a refresh."
+            : "We encountered an unexpected error. Don't worry - your data is safe and we've been notified."}
         </p>
 
         <div className="space-y-3">
@@ -94,8 +104,13 @@ function DefaultErrorFallback({ error, retry }: { error: Error; retry: () => voi
         <details className="mt-6 text-left">
           <summary className="text-sm text-gray-500 cursor-pointer hover:text-gray-700">Technical Details</summary>
           <pre className="mt-2 text-xs text-gray-600 bg-gray-50 p-3 rounded overflow-auto max-h-32">
-            {error.message}
+            {error.message || "Unknown error"}
           </pre>
+          {isHydrationError && (
+            <div className="mt-2 text-xs text-blue-600 bg-blue-50 p-2 rounded">
+              Error Type: React Hydration/Rendering Issue (Error #418)
+            </div>
+          )}
         </details>
       </div>
     </div>

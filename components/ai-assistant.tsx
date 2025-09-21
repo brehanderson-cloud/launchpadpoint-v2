@@ -74,6 +74,9 @@ export default function AIAssistant({ analysisData }: AIAssistantProps) {
       {/* Chat Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? "Close AI Assistant chat" : "Open AI Assistant chat"}
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
         className="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 z-50"
       >
         <MessageCircle size={24} />
@@ -81,21 +84,38 @@ export default function AIAssistant({ analysisData }: AIAssistantProps) {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-80 h-96 bg-white rounded-lg shadow-xl border z-50 flex flex-col">
+        <div
+          className="fixed bottom-24 right-6 w-80 h-96 bg-white rounded-lg shadow-xl border z-50 flex flex-col"
+          role="dialog"
+          aria-label="AI Assistant Chat"
+          aria-modal="false"
+        >
           <div className="flex items-center justify-between p-4 border-b bg-blue-600 text-white rounded-t-lg">
             <h3 className="font-semibold">AI Assistant</h3>
-            <button onClick={() => setIsOpen(false)} className="text-white hover:text-gray-200">
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-white hover:text-gray-200"
+              aria-label="Close AI Assistant"
+            >
               <Minimize2 size={20} />
             </button>
           </div>
 
-          <div ref={messagesRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div
+            ref={messagesRef}
+            className="flex-1 overflow-y-auto p-4 space-y-3"
+            role="log"
+            aria-live="polite"
+            aria-label="Chat messages"
+          >
             {messages.map((msg, index) => (
               <div key={index} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div
                   className={`max-w-[80%] p-3 rounded-lg text-sm ${
                     msg.role === "user" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-800"
                   }`}
+                  role={msg.role === "user" ? "text" : "status"}
+                  aria-label={`${msg.role === "user" ? "Your message" : "AI response"}`}
                 >
                   {msg.content}
                 </div>
@@ -103,7 +123,9 @@ export default function AIAssistant({ analysisData }: AIAssistantProps) {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-gray-100 p-3 rounded-lg text-sm text-gray-600">Thinking...</div>
+                <div className="bg-gray-100 p-3 rounded-lg text-sm text-gray-600" aria-live="polite" role="status">
+                  Thinking...
+                </div>
               </div>
             )}
           </div>
@@ -118,14 +140,22 @@ export default function AIAssistant({ analysisData }: AIAssistantProps) {
                 placeholder="Ask about your analysis..."
                 className="flex-1 p-2 border rounded text-sm"
                 disabled={loading}
+                aria-label="Type your question about the resume analysis"
+                aria-describedby="send-button-description"
               />
               <button
                 onClick={sendMessage}
                 disabled={loading || !input.trim()}
                 className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:opacity-50"
+                aria-label="Send message"
+                id="send-button-description"
+                aria-describedby="send-button-help"
               >
                 <Send size={16} />
               </button>
+              <span id="send-button-help" className="sr-only">
+                Press Enter or click to send your message to the AI assistant
+              </span>
             </div>
           </div>
         </div>

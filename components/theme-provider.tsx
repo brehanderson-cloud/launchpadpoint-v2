@@ -12,23 +12,30 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [darkMode, setDarkMode] = useState(false)
+  const [darkMode, setDarkMode] = useState<boolean | undefined>(undefined)
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    // Check for saved theme preference or default to light mode
-    const savedTheme = localStorage.getItem("theme")
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+    setIsClient(true)
 
-    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
-      setDarkMode(true)
-      document.documentElement.classList.add("dark")
-    } else {
-      setDarkMode(false)
-      document.documentElement.classList.remove("dark")
+    // Check for saved theme preference or default to light mode
+    if (typeof window !== "undefined") {
+      const savedTheme = localStorage.getItem("theme")
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        setDarkMode(true)
+        document.documentElement.classList.add("dark")
+      } else {
+        setDarkMode(false)
+        document.documentElement.classList.remove("dark")
+      }
     }
   }, [])
 
   const toggleTheme = () => {
+    if (typeof window === "undefined" || darkMode === undefined) return
+
     const newDarkMode = !darkMode
     setDarkMode(newDarkMode)
 
@@ -41,7 +48,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  return <ThemeContext.Provider value={{ darkMode, toggleTheme }}>{children}</ThemeContext.Provider>
+  const contextValue = {
+    darkMode: darkMode ?? false,
+    toggleTheme,
+  }
+
+  return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>
 }
 
 export function useTheme() {

@@ -124,7 +124,7 @@ export function ResumeForm({ resumeData, setResumeData }: ResumeFormProps) {
                 </h3>
                 <div className="text-2xl font-bold text-accent">{resumeScore.score}%</div>
               </div>
-              <Progress value={resumeScore.score} className="mb-3" />
+              <Progress value={resumeScore.score} className="mb-3" aria-label={`Resume score: ${resumeScore.score}%`} />
               <div className="grid grid-cols-2 gap-2 text-xs">
                 {Object.entries(resumeScore.breakdown).map(([key, value]: [string, any]) => (
                   <div key={key} className="flex justify-between">
@@ -137,59 +137,77 @@ export function ResumeForm({ resumeData, setResumeData }: ResumeFormProps) {
           )}
 
           <Tabs defaultValue="resume" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="resume" className="flex items-center gap-2">
+            <TabsList className="grid w-full grid-cols-2" role="tablist">
+              <TabsTrigger value="resume" className="flex items-center gap-2" role="tab">
                 <span>📄</span>
                 Your Resume
               </TabsTrigger>
-              <TabsTrigger value="job" className="flex items-center gap-2">
+              <TabsTrigger value="job" className="flex items-center gap-2" role="tab">
                 <span>💼</span>
                 Job Description
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="resume" className="space-y-4 mt-6">
+            <TabsContent value="resume" className="space-y-4 mt-6" role="tabpanel">
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <span className="text-accent">📄</span>
-                  <Label className="text-base font-medium">Paste Your Current Resume</Label>
+                  <Label htmlFor="resume-textarea" className="text-base font-medium">
+                    Paste Your Current Resume
+                  </Label>
                 </div>
                 <Textarea
+                  id="resume-textarea"
                   value={currentResume}
                   onChange={(e) => handleResumeTextChange(e.target.value)}
                   placeholder="Paste your current resume text here..."
                   rows={12}
                   className="min-h-[300px]"
+                  aria-describedby="resume-help"
+                  aria-required="true"
                 />
+                <span id="resume-help" className="sr-only">
+                  Paste your complete resume text for AI analysis and optimization
+                </span>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setCurrentResume("")}
                   disabled={!currentResume.trim()}
+                  aria-label="Clear resume text"
                 >
                   Clear
                 </Button>
               </div>
             </TabsContent>
 
-            <TabsContent value="job" className="space-y-4 mt-6">
+            <TabsContent value="job" className="space-y-4 mt-6" role="tabpanel">
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <span>💼</span>
-                  <Label className="text-base font-medium">Target Job Description</Label>
+                  <Label htmlFor="job-textarea" className="text-base font-medium">
+                    Target Job Description
+                  </Label>
                 </div>
                 <Textarea
+                  id="job-textarea"
                   value={jobDescription}
                   onChange={(e) => handleJobDescriptionChange(e.target.value)}
                   placeholder="Paste the complete job description you're applying for here..."
                   rows={12}
                   className="min-h-[300px]"
+                  aria-describedby="job-help"
+                  aria-required="true"
                 />
+                <span id="job-help" className="sr-only">
+                  Paste the complete job description to analyze requirements and match with your resume
+                </span>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setJobDescription("")}
                   disabled={!jobDescription.trim()}
+                  aria-label="Clear job description text"
                 >
                   Clear
                 </Button>
@@ -202,14 +220,23 @@ export function ResumeForm({ resumeData, setResumeData }: ResumeFormProps) {
               onClick={runAIAnalysis}
               disabled={aiLoading === "comprehensive-analysis" || !currentResume.trim() || !jobDescription.trim()}
               className="bg-accent hover:bg-accent/90 text-white px-8"
+              aria-describedby="analysis-help"
+              aria-disabled={aiLoading === "comprehensive-analysis" || !currentResume.trim() || !jobDescription.trim()}
             >
               {aiLoading === "comprehensive-analysis" ? (
-                <span className="mr-2">⏳</span>
+                <span className="mr-2" aria-hidden="true">
+                  ⏳
+                </span>
               ) : (
-                <span className="mr-2">🧠</span>
+                <span className="mr-2" aria-hidden="true">
+                  🧠
+                </span>
               )}
               {aiLoading === "comprehensive-analysis" ? "Analyzing..." : "Run AI Analysis"}
             </Button>
+            <span id="analysis-help" className="sr-only">
+              Start comprehensive AI analysis of your resume against the job requirements
+            </span>
           </div>
 
           {optimization && (
@@ -251,29 +278,36 @@ export function ResumeForm({ resumeData, setResumeData }: ResumeFormProps) {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    {optimization.suggestions.map((suggestion, index) => (
-                      <div key={index} className="flex items-start gap-3 p-3 bg-white rounded-lg border">
-                        <Badge
-                          variant={
-                            suggestion.priority === "high"
-                              ? "destructive"
-                              : suggestion.priority === "medium"
-                                ? "default"
-                                : "secondary"
-                          }
-                          className="text-xs"
+                    <div role="list" aria-label="AI recommendations for resume improvement">
+                      {optimization.suggestions.map((suggestion, index) => (
+                        <div
+                          key={index}
+                          className="flex items-start gap-3 p-3 bg-white rounded-lg border"
+                          role="listitem"
                         >
-                          {suggestion.priority}
-                        </Badge>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium capitalize">
-                            {suggestion.type} {suggestion.section}
-                          </p>
-                          <p className="text-sm text-muted-foreground mt-1">{suggestion.content}</p>
-                          <p className="text-xs text-muted-foreground mt-1 italic">{suggestion.reason}</p>
+                          <Badge
+                            variant={
+                              suggestion.priority === "high"
+                                ? "destructive"
+                                : suggestion.priority === "medium"
+                                  ? "default"
+                                  : "secondary"
+                            }
+                            className="text-xs"
+                            aria-label={`Priority: ${suggestion.priority}`}
+                          >
+                            {suggestion.priority}
+                          </Badge>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium capitalize">
+                              {suggestion.type} {suggestion.section}
+                            </p>
+                            <p className="text-sm text-muted-foreground mt-1">{suggestion.content}</p>
+                            <p className="text-xs text-muted-foreground mt-1 italic">{suggestion.reason}</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               )}
@@ -292,9 +326,9 @@ export function ResumeForm({ resumeData, setResumeData }: ResumeFormProps) {
                 <div>
                   <p className="text-sm font-medium mb-2">Experience Level: {jobAnalysis.experienceLevel}</p>
                   <p className="text-sm font-medium mb-2">Required Skills ({jobAnalysis.requiredSkills.length}):</p>
-                  <div className="flex flex-wrap gap-1">
+                  <div className="flex flex-wrap gap-1" role="list" aria-label="Required skills from job analysis">
                     {jobAnalysis.requiredSkills.slice(0, 8).map((skill, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
+                      <Badge key={index} variant="outline" className="text-xs" role="listitem">
                         {skill}
                       </Badge>
                     ))}
