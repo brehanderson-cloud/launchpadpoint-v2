@@ -2,9 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createGroq } from "@ai-sdk/groq"
 import { generateText } from "ai"
 
-export const config = {
-  maxDuration: 120, // 2 minutes max
-}
+export const maxDuration = 120 // 2 minutes max
 
 const groq = createGroq({
   apiKey: process.env.GROQ_API_KEY,

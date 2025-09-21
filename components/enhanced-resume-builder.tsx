@@ -38,38 +38,39 @@ const EnhancedResumeBuilder = () => {
   const runComprehensiveTest = async () => {
     console.log("[v0] Starting comprehensive test of analysis flow...")
 
-    // Add test data first
-    const testResumeData = {
-      personalInfo: {
-        fullName: "Herbert Essien, SHRM-CP",
-        email: "Herbertessien01@gmail.com",
-        phone: "(346) 530-3020",
-        location: "North America",
-      },
-      summary:
-        "Results-driven Talent Acquisition Business Partner & HR Manager with expertise in strategic workforce planning, recruitment, and HR operations across North America. Proven track record in reducing time-to-fill by 25%, enhancing candidate quality by 30%, and driving HR process improvements that optimize talent strategies.",
-      experience: [
-        {
-          company: "AkzoNobel",
-          position: "TA Business Partner / HR Manager",
-          duration: "09/2021 – Present",
-          responsibilities: [
-            "Led end-to-end recruitment strategies that decreased time-to-fill by 25% and improved offer acceptance rates to 95%",
-            "Partnered with 50+ hiring managers to align hiring strategies with evolving workforce needs across North America",
-          ],
+    try {
+      // Add test data first
+      const testResumeData = {
+        personalInfo: {
+          fullName: "Herbert Essien, SHRM-CP",
+          email: "Herbertessien01@gmail.com",
+          phone: "(346) 530-3020",
+          location: "North America",
         },
-      ],
-      skills: ["Talent Acquisition", "Workforce Planning", "HR Operations", "SuccessFactors"],
-      education: [
-        {
-          degree: "Bachelor of Science, Sport Administration",
-          school: "Louisiana State University",
-          year: "December 2013",
-        },
-      ],
-    }
+        summary:
+          "Results-driven Talent Acquisition Business Partner & HR Manager with expertise in strategic workforce planning, recruitment, and HR operations across North America. Proven track record in reducing time-to-fill by 25%, enhancing candidate quality by 30%, and driving HR process improvements that optimize talent strategies.",
+        experience: [
+          {
+            company: "AkzoNobel",
+            position: "TA Business Partner / HR Manager",
+            duration: "09/2021 – Present",
+            responsibilities: [
+              "Led end-to-end recruitment strategies that decreased time-to-fill by 25% and improved offer acceptance rates to 95%",
+              "Partnered with 50+ hiring managers to align hiring strategies with evolving workforce needs across North America",
+            ],
+          },
+        ],
+        skills: ["Talent Acquisition", "Workforce Planning", "HR Operations", "SuccessFactors"],
+        education: [
+          {
+            degree: "Bachelor of Science, Sport Administration",
+            school: "Louisiana State University",
+            year: "December 2013",
+          },
+        ],
+      }
 
-    const testJobDescription = `Director, Talent Acquisition
+      const testJobDescription = `Director, Talent Acquisition
 NRG Energy, Inc
 Houston, TX (Hybrid)
 
@@ -82,78 +83,130 @@ What You'll Bring:
 - Team management experience
 - Data analysis skills`
 
-    setResumeData(testResumeData)
-    setResumeText(JSON.stringify(testResumeData, null, 2))
-    setJobDescription(testJobDescription.trim())
-    setCurrentStep("analysis")
+      console.log("[v0] Setting test data...")
+      setResumeData(testResumeData)
+      setResumeText(JSON.stringify(testResumeData, null, 2))
+      setJobDescription(testJobDescription.trim())
+      setCurrentStep("analysis")
 
-    // Wait a moment for state to update
-    await new Promise((resolve) => setTimeout(resolve, 100))
+      // Clear any previous errors
+      setAnalysisError(null)
+      setTimeoutError(false)
+
+      // Wait a moment for state to update
+      await new Promise((resolve) => setTimeout(resolve, 100))
+
+      console.log("[v0] Starting real analysis with test data...")
+      await performRealAnalysis(JSON.stringify(testResumeData, null, 2), testJobDescription.trim())
+    } catch (error) {
+      console.error("[v0] Comprehensive test failed:", error)
+      setAnalysisError(error instanceof Error ? error : new Error("Test failed"))
+      setCurrentStep("analysis")
+    }
+  }
+
+  const performRealAnalysis = async (resumeText: string, jobDescription: string) => {
+    console.log("[v0] Starting real API analysis...")
+    console.log("[v0] Resume text length:", resumeText.length)
+    console.log("[v0] Job description length:", jobDescription.length)
 
     setIsAnalyzing(true)
+    setAnalysisError(null)
+    setTimeoutError(false)
 
-    // Simulate analysis results immediately for demonstration
-    const mockAnalysisResults = {
-      matchPercentage: 87,
-      jobAnalysis: {
-        requirements: [
-          "10+ years in talent acquisition",
-          "5+ years in high-volume recruiting",
-          "Experience with ATS systems (SuccessFactors)",
-          "Team management experience",
-          "Data analysis skills",
-        ],
-        keySkills: ["Talent Acquisition", "High-Volume Recruiting", "SuccessFactors", "Team Leadership"],
-      },
-      qualificationsAnalysis: {
-        skillsAnalysis: [
-          {
-            skill: "Talent Acquisition",
-            evidence: "Led end-to-end recruitment strategies at AkzoNobel, reducing time-to-fill by 25%",
-            strength: "Strong - 3+ years as TA Business Partner with proven results",
-          },
-          {
-            skill: "High-Volume Recruiting",
-            evidence: "Managed pipeline of 200+ candidates at Randstad, developed high-volume strategies",
-            strength: "Strong - Direct experience in high-volume environments",
-          },
-        ],
-        gapAnalysis: [
-          {
-            skill: "Director-Level Experience",
-            currentLevel: "Business Partner/Manager level",
-            requiredLevel: "Director level with P&L responsibility",
-            developmentTime: "12-18 months",
-            actionSteps: "Seek stretch assignments with budget/P&L responsibility",
-          },
-        ],
-        beforeAfterExamples: [
-          {
-            context: "Leadership Experience",
-            before: "Managed recruitment teams",
-            after:
-              "Led cross-functional recruitment teams of 8+ members, driving 25% improvement in time-to-fill while maintaining 95% offer acceptance rates",
-            explanation: "Quantified team size and specific business impact",
-          },
-        ],
-        overallAssessment: {
-          qualificationLevel:
-            "Strong candidate with 85-90% qualification match. Herbert has the core competencies and proven track record in talent acquisition.",
-          realisticTimeline: "Ready to apply immediately with proper preparation.",
-          honestRecommendation: "APPLY WITH CONFIDENCE. Herbert's experience directly aligns with NRG's needs.",
+    try {
+      // Step 1: Analyze job description
+      console.log("[v0] Calling job analysis API...")
+      const jobResponse = await fetch("/api/analyze-job", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      },
-      resumeScore: { score: 87 },
+        body: JSON.stringify({ jobDescription }),
+      })
+
+      console.log("[v0] Job analysis response status:", jobResponse.status)
+
+      if (!jobResponse.ok) {
+        const errorText = await jobResponse.text()
+        console.error("[v0] Job analysis failed:", errorText)
+        let errorData
+        try {
+          errorData = JSON.parse(errorText)
+        } catch {
+          errorData = { error: errorText }
+        }
+        throw new Error(errorData.error || `Job analysis failed: ${jobResponse.status}`)
+      }
+
+      const jobAnalysis = await jobResponse.json()
+      console.log("[v0] Job analysis completed:", jobAnalysis)
+
+      // Step 2: Analyze qualifications
+      console.log("[v0] Calling qualifications analysis API...")
+      const qualificationsResponse = await fetch("/api/analyze-qualifications", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ resumeText, jobDescription }),
+      })
+
+      console.log("[v0] Qualifications analysis response status:", qualificationsResponse.status)
+
+      if (!qualificationsResponse.ok) {
+        const errorText = await qualificationsResponse.text()
+        console.error("[v0] Qualifications analysis failed:", errorText)
+        let errorData
+        try {
+          errorData = JSON.parse(errorText)
+        } catch {
+          errorData = { error: errorText }
+        }
+        throw new Error(errorData.error || `Qualifications analysis failed: ${qualificationsResponse.status}`)
+      }
+
+      const qualificationsAnalysis = await qualificationsResponse.json()
+      console.log("[v0] Qualifications analysis completed:", qualificationsAnalysis)
+
+      // Combine results
+      const combinedResults = {
+        matchPercentage: Math.round(
+          (qualificationsAnalysis.skillsMatch +
+            qualificationsAnalysis.experienceMatch +
+            qualificationsAnalysis.educationMatch) /
+            3,
+        ),
+        jobAnalysis,
+        qualificationsAnalysis,
+        resumeScore: {
+          score: Math.round(
+            (qualificationsAnalysis.skillsMatch +
+              qualificationsAnalysis.experienceMatch +
+              qualificationsAnalysis.educationMatch) /
+              3,
+          ),
+        },
+      }
+
+      console.log("[v0] Combined analysis results:", combinedResults)
+
+      setAnalysisResults(combinedResults)
+      setAiEnhancements({
+        suggestions: qualificationsAnalysis.beforeAfterExamples || [],
+      })
+
+      console.log("[v0] Real API analysis completed successfully")
+    } catch (error) {
+      console.error("[v0] Analysis error:", error)
+      setAnalysisError(error instanceof Error ? error : new Error("Analysis failed"))
+
+      if (error instanceof Error && error.message.includes("timeout")) {
+        setTimeoutError(true)
+      }
+    } finally {
+      setIsAnalyzing(false)
     }
-
-    // Set results immediately
-    setAnalysisResults(mockAnalysisResults)
-    setAiEnhancements({
-      suggestions: mockAnalysisResults.qualificationsAnalysis.beforeAfterExamples,
-    })
-    setIsAnalyzing(false)
-
-    console.log("[v0] Test analysis results displayed")
   }
 
   useEffect(() => {
@@ -245,9 +298,10 @@ What You'll Bring:
 
       <div className="text-center space-y-4">
         <button
-          onClick={() => {
+          onClick={async () => {
             if (resumeText.trim() && jobDescription.trim()) {
               setCurrentStep("analysis")
+              await performRealAnalysis(resumeText.trim(), jobDescription.trim())
             } else {
               alert("Please provide both resume and job description")
             }
@@ -282,6 +336,41 @@ What You'll Bring:
           <p className={darkMode ? "text-gray-300" : "text-gray-600"}>
             Our AI is analyzing your resume and the job requirements...
           </p>
+          <p className={`text-sm mt-2 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+            This may take up to 2 minutes
+          </p>
+        </div>
+      ) : analysisError ? (
+        <div className={`rounded-2xl shadow-lg p-8 text-center ${darkMode ? "bg-red-900/20" : "bg-red-50"}`}>
+          <h2 className={`text-xl font-semibold mb-2 ${darkMode ? "text-red-400" : "text-red-700"}`}>
+            Analysis Failed
+          </h2>
+          <p className={`mb-4 ${darkMode ? "text-red-300" : "text-red-600"}`}>{analysisError.message}</p>
+          <details className={`text-left mb-4 ${darkMode ? "text-red-300" : "text-red-600"}`}>
+            <summary className="cursor-pointer font-semibold">Technical Details</summary>
+            <pre className="mt-2 text-xs bg-black/20 p-2 rounded overflow-auto">
+              {analysisError.stack || analysisError.message}
+            </pre>
+          </details>
+          <div className="space-x-4">
+            <button
+              onClick={() => {
+                setAnalysisError(null)
+                if (resumeText.trim() && jobDescription.trim()) {
+                  performRealAnalysis(resumeText.trim(), jobDescription.trim())
+                }
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+            >
+              Try Again
+            </button>
+            <button
+              onClick={() => setCurrentStep("upload")}
+              className={`px-6 py-2 rounded-lg border ${darkMode ? "border-gray-600 text-gray-300 hover:text-white" : "border-gray-300 text-gray-600 hover:text-gray-900"}`}
+            >
+              Back to Upload
+            </button>
+          </div>
         </div>
       ) : analysisResults ? (
         <div className="space-y-6">
@@ -332,6 +421,75 @@ What You'll Bring:
             </div>
           )}
 
+          {/* Gap Analysis */}
+          {analysisResults?.qualificationsAnalysis?.gapAnalysis && (
+            <div className={`rounded-2xl shadow-lg p-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+              <h3 className={`text-xl font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
+                Gap Analysis
+              </h3>
+              <div className="space-y-4">
+                {analysisResults.qualificationsAnalysis.gapAnalysis.map((gap: any, index: number) => (
+                  <div key={index} className={`p-4 rounded-lg ${darkMode ? "bg-yellow-900/20" : "bg-yellow-50"}`}>
+                    <h4 className={`font-semibold mb-2 ${darkMode ? "text-yellow-400" : "text-yellow-700"}`}>
+                      {gap?.skill || "Skill not specified"}
+                    </h4>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p className={`${darkMode ? "text-yellow-300" : "text-yellow-600"}`}>
+                          <strong>Current:</strong> {gap?.currentLevel || "Not assessed"}
+                        </p>
+                        <p className={`${darkMode ? "text-yellow-300" : "text-yellow-600"}`}>
+                          <strong>Required:</strong> {gap?.requiredLevel || "Not specified"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className={`${darkMode ? "text-yellow-300" : "text-yellow-600"}`}>
+                          <strong>Timeline:</strong> {gap?.developmentTime || "Not estimated"}
+                        </p>
+                        <p className={`${darkMode ? "text-yellow-300" : "text-yellow-600"}`}>
+                          <strong>Action:</strong> {gap?.actionSteps || "No steps provided"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Before/After Examples */}
+          {analysisResults?.qualificationsAnalysis?.beforeAfterExamples && (
+            <div className={`rounded-2xl shadow-lg p-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+              <h3 className={`text-xl font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
+                Resume Improvement Examples
+              </h3>
+              <div className="space-y-4">
+                {analysisResults.qualificationsAnalysis.beforeAfterExamples.map((example: any, index: number) => (
+                  <div key={index} className={`p-4 rounded-lg ${darkMode ? "bg-blue-900/20" : "bg-blue-50"}`}>
+                    <h4 className={`font-semibold mb-2 ${darkMode ? "text-blue-400" : "text-blue-700"}`}>
+                      {example?.context || "Context not provided"}
+                    </h4>
+                    <div className="space-y-2">
+                      <div className={`p-2 rounded ${darkMode ? "bg-red-900/30" : "bg-red-100"}`}>
+                        <p className={`text-sm ${darkMode ? "text-red-300" : "text-red-700"}`}>
+                          <strong>Before:</strong> {example?.before || "No before example"}
+                        </p>
+                      </div>
+                      <div className={`p-2 rounded ${darkMode ? "bg-green-900/30" : "bg-green-100"}`}>
+                        <p className={`text-sm ${darkMode ? "text-green-300" : "text-green-700"}`}>
+                          <strong>After:</strong> {example?.after || "No after example"}
+                        </p>
+                      </div>
+                      <p className={`text-xs ${darkMode ? "text-blue-300" : "text-blue-600"}`}>
+                        <strong>Why:</strong> {example?.explanation || "No explanation provided"}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Overall Assessment */}
           {analysisResults.qualificationsAnalysis?.overallAssessment && (
             <div className={`rounded-2xl shadow-lg p-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
@@ -350,9 +508,18 @@ What You'll Bring:
                 </div>
                 <div className={`p-4 rounded-lg ${darkMode ? "bg-green-900/20" : "bg-green-50"}`}>
                   <h4 className={`font-semibold mb-2 ${darkMode ? "text-green-400" : "text-green-700"}`}>
-                    Honest Recommendation
+                    Realistic Timeline
                   </h4>
                   <p className={`text-sm ${darkMode ? "text-green-300" : "text-green-600"}`}>
+                    {analysisResults.qualificationsAnalysis.overallAssessment?.realisticTimeline ||
+                      "Timeline not available"}
+                  </p>
+                </div>
+                <div className={`p-4 rounded-lg ${darkMode ? "bg-purple-900/20" : "bg-purple-50"}`}>
+                  <h4 className={`font-semibold mb-2 ${darkMode ? "text-purple-400" : "text-purple-700"}`}>
+                    Honest Recommendation
+                  </h4>
+                  <p className={`text-sm ${darkMode ? "text-purple-300" : "text-purple-600"}`}>
                     {analysisResults.qualificationsAnalysis.overallAssessment?.honestRecommendation ||
                       "Recommendation not available"}
                   </p>
@@ -360,6 +527,15 @@ What You'll Bring:
               </div>
             </div>
           )}
+
+          <div className="text-center">
+            <button
+              onClick={() => setCurrentStep("upload")}
+              className={`px-6 py-2 rounded-lg ${darkMode ? "text-gray-300 hover:text-white border border-gray-600" : "text-gray-600 hover:text-gray-900 border border-gray-300"}`}
+            >
+              Analyze Another Resume
+            </button>
+          </div>
         </div>
       ) : (
         <div className={`rounded-2xl shadow-lg p-8 text-center ${darkMode ? "bg-gray-800" : "bg-white"}`}>
