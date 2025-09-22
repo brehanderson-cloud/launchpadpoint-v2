@@ -23,7 +23,9 @@ async function verifyAuthenticity(original: string, improved: string, context: s
   PROPOSED: "${improved}"
   USER CONTEXT: "${context}"
 
-  Return JSON:
+  You MUST respond with valid JSON only. Do not include any explanatory text before or after the JSON.
+
+  Return this exact JSON structure:
   {
     "authentic": boolean,
     "riskLevel": "low|medium|high",
@@ -38,24 +40,56 @@ async function verifyAuthenticity(original: string, improved: string, context: s
   - Identify unsupported claims
   - Suggest authentic alternatives
   - Ask clarifying questions when needed
+  - RESPOND ONLY WITH VALID JSON
   `
 
   try {
     const { text } = await generateText({
       model: groq("llama-3.3-70b-versatile"),
       prompt,
-      temperature: 0.2,
+      temperature: 0.1, // Lower temperature for more consistent JSON output
       maxTokens: 800,
     })
 
-    return JSON.parse(text)
+    let parsedResponse
+    try {
+      // Try to find JSON in the response if it's wrapped in other text
+      const jsonMatch = text.match(/\{[\s\S]*\}/)
+      const jsonText = jsonMatch ? jsonMatch[0] : text
+      parsedResponse = JSON.parse(jsonText)
+    } catch (parseError) {
+      console.error("Failed to parse AI response as JSON:", text)
+      return {
+        authentic: false,
+        riskLevel: "high" as const,
+        concerns: ["Unable to verify authenticity - AI response format error"],
+        verificationQuestions: ["Please provide more context about this improvement"],
+        alternativePhrasing: ["Consider using more specific, verifiable language"],
+        recommendation: "modify" as const,
+      }
+    }
+
+    if (!parsedResponse || typeof parsedResponse.authentic !== "boolean") {
+      return {
+        authentic: false,
+        riskLevel: "high" as const,
+        concerns: ["Invalid verification response"],
+        verificationQuestions: ["Please provide more context"],
+        alternativePhrasing: [],
+        recommendation: "modify" as const,
+      }
+    }
+
+    return parsedResponse
   } catch (error) {
     console.error("AI verification failed:", error)
     return {
       authentic: false,
-      riskLevel: "high",
+      riskLevel: "high" as const,
       concerns: ["Unable to verify authenticity"],
-      recommendation: "reject",
+      verificationQuestions: ["Please provide more context about this improvement"],
+      alternativePhrasing: [],
+      recommendation: "reject" as const,
     }
   }
 }

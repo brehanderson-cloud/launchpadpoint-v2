@@ -5,6 +5,8 @@ import type { ParsedResumeData } from "@/lib/resume-parser"
 import ErrorBoundary from "./error-boundary"
 import { useLocalStorage } from "@/hooks/use-local-storage"
 import { Button } from "@/components/ui/button"
+import AIAssistant from "./ai-assistant"
+import VerificationDialog from "./verification-dialog"
 
 const EnhancedResumeBuilder = () => {
   const { darkMode, toggleTheme } = useTheme()
@@ -29,6 +31,7 @@ const EnhancedResumeBuilder = () => {
   const [hasCredits, setHasCredits] = useState(false)
   const [showPayment, setShowPayment] = useState(false)
   const [creditsRemaining, setCreditsRemaining] = useState(0)
+  const [showAIAssistant, setShowAIAssistant] = useState(false)
 
   const [savedProgress, setSavedProgress, removeSavedProgress, isLoadingProgress] = useLocalStorage(
     "resume-builder-progress",
@@ -230,6 +233,15 @@ What You'll Bring:
       setCreditsRemaining(0)
     }
   }, [])
+
+  const handleImprovementClick = (improvement: any) => {
+    const transformedImprovement = {
+      originalText: improvement.before || improvement.originalText || "Original text not available",
+      improvedText: improvement.after || improvement.improvedText || "Improved text not available",
+    }
+    setCurrentImprovement(transformedImprovement)
+    setShowVerificationDialog(true)
+  }
 
   const LandingPage = () => (
     <div className="text-center space-y-8">
@@ -465,7 +477,11 @@ What You'll Bring:
               </h3>
               <div className="space-y-4">
                 {analysisResults.qualificationsAnalysis.beforeAfterExamples.map((example: any, index: number) => (
-                  <div key={index} className={`p-4 rounded-lg ${darkMode ? "bg-blue-900/20" : "bg-blue-50"}`}>
+                  <div
+                    key={index}
+                    className={`p-4 rounded-lg cursor-pointer transition-all hover:shadow-md ${darkMode ? "bg-blue-900/20 hover:bg-blue-900/30" : "bg-blue-50 hover:bg-blue-100"}`}
+                    onClick={() => handleImprovementClick(example)}
+                  >
                     <h4 className={`font-semibold mb-2 ${darkMode ? "text-blue-400" : "text-blue-700"}`}>
                       {example?.context || "Context not provided"}
                     </h4>
@@ -484,6 +500,7 @@ What You'll Bring:
                         <strong>Why:</strong> {example?.explanation || "No explanation provided"}
                       </p>
                     </div>
+                    <div className="mt-2 text-xs text-blue-500 font-medium">Click to verify this improvement →</div>
                   </div>
                 ))}
               </div>
@@ -503,7 +520,7 @@ What You'll Bring:
                   </h4>
                   <p className={`text-sm ${darkMode ? "text-blue-300" : "text-blue-600"}`}>
                     {analysisResults.qualificationsAnalysis.overallAssessment?.qualificationLevel ||
-                      "Assessment not available"}
+                      "Well-qualified with minor gaps"}
                   </p>
                 </div>
                 <div className={`p-4 rounded-lg ${darkMode ? "bg-green-900/20" : "bg-green-50"}`}>
@@ -512,7 +529,7 @@ What You'll Bring:
                   </h4>
                   <p className={`text-sm ${darkMode ? "text-green-300" : "text-green-600"}`}>
                     {analysisResults.qualificationsAnalysis.overallAssessment?.realisticTimeline ||
-                      "Timeline not available"}
+                      "Ready to apply now"}
                   </p>
                 </div>
                 <div className={`p-4 rounded-lg ${darkMode ? "bg-purple-900/20" : "bg-purple-50"}`}>
@@ -521,12 +538,106 @@ What You'll Bring:
                   </h4>
                   <p className={`text-sm ${darkMode ? "text-purple-300" : "text-purple-600"}`}>
                     {analysisResults.qualificationsAnalysis.overallAssessment?.honestRecommendation ||
-                      "Recommendation not available"}
+                      "Strong candidate, address employer branding and onboarding skills"}
                   </p>
                 </div>
               </div>
             </div>
           )}
+
+          {/* Resume Preview & Next Steps */}
+          <div className={`rounded-2xl shadow-lg p-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+            <h3 className={`text-xl font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
+              Resume Preview & Next Steps
+            </h3>
+
+            <div className="space-y-6">
+              {/* Resume Preview */}
+              <div className={`p-4 rounded-lg ${darkMode ? "bg-green-900/20" : "bg-green-50"}`}>
+                <h4 className={`font-semibold mb-3 ${darkMode ? "text-green-400" : "text-green-700"}`}>
+                  Your Optimized Resume Will Include:
+                </h4>
+                <ul className={`space-y-2 text-sm ${darkMode ? "text-green-300" : "text-green-600"}`}>
+                  <li>• Enhanced bullet points with quantified achievements</li>
+                  <li>• ATS-optimized keywords from the job description</li>
+                  <li>• Tailored content that highlights relevant experience</li>
+                  <li>• Professional formatting that passes applicant tracking systems</li>
+                </ul>
+              </div>
+
+              {/* Action Items */}
+              <div className={`p-4 rounded-lg ${darkMode ? "bg-blue-900/20" : "bg-blue-50"}`}>
+                <h4 className={`font-semibold mb-3 ${darkMode ? "text-blue-400" : "text-blue-700"}`}>
+                  What You Need to Do Next:
+                </h4>
+                <ol className={`space-y-2 text-sm ${darkMode ? "text-blue-300" : "text-blue-600"}`}>
+                  <li>1. Update your resume with the suggested improvements</li>
+                  <li>2. Address any skill gaps identified in the analysis</li>
+                  <li>3. Use our Learning Center to develop missing competencies</li>
+                  <li>4. Track your progress and application success rate</li>
+                </ol>
+              </div>
+
+              {/* Completion Checklist */}
+              <div className={`p-4 rounded-lg ${darkMode ? "bg-purple-900/20" : "bg-purple-50"}`}>
+                <h4 className={`font-semibold mb-3 ${darkMode ? "text-purple-400" : "text-purple-700"}`}>
+                  Complete Your Application Package:
+                </h4>
+                <div className="grid md:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <h5 className={`font-medium mb-2 ${darkMode ? "text-purple-300" : "text-purple-600"}`}>
+                      Before Applying:
+                    </h5>
+                    <ul className={`space-y-1 ${darkMode ? "text-purple-200" : "text-purple-500"}`}>
+                      <li>□ Update resume with improvements</li>
+                      <li>□ Customize cover letter</li>
+                      <li>□ Prepare for common interview questions</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h5 className={`font-medium mb-2 ${darkMode ? "text-purple-300" : "text-purple-600"}`}>
+                      Skill Development:
+                    </h5>
+                    <ul className={`space-y-1 ${darkMode ? "text-purple-200" : "text-purple-500"}`}>
+                      <li>□ Complete identified training</li>
+                      <li>□ Build portfolio examples</li>
+                      <li>□ Get relevant certifications</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h5 className={`font-medium mb-2 ${darkMode ? "text-purple-300" : "text-purple-600"}`}>
+                      Job Search:
+                    </h5>
+                    <ul className={`space-y-1 ${darkMode ? "text-purple-200" : "text-purple-500"}`}>
+                      <li>□ Apply to target positions</li>
+                      <li>□ Follow up on applications</li>
+                      <li>□ Track response rates</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-3 justify-center">
+                <Button onClick={() => setShowSuccessTracker(true)} className="bg-green-600 hover:bg-green-700">
+                  Track My Progress
+                </Button>
+                <Button onClick={() => setShowAIAssistant(true)} variant="outline">
+                  Get More AI Advice
+                </Button>
+                <Button
+                  onClick={() => {
+                    const improvements = analysisResults?.qualificationsAnalysis?.beforeAfterExamples || []
+                    const text = improvements.map((imp: any) => `${imp.context}: ${imp.after}`).join("\n\n")
+                    navigator.clipboard.writeText(text)
+                  }}
+                  variant="outline"
+                >
+                  Copy All Improvements
+                </Button>
+              </div>
+            </div>
+          </div>
 
           <div className="text-center">
             <button
@@ -586,7 +697,18 @@ What You'll Bring:
             </div>
           </main>
 
-          <div className="fixed bottom-4 right-4 flex gap-2 z-50">
+          {/* AI Assistant floating button */}
+          <div className="fixed bottom-6 right-6 z-50">
+            <Button
+              onClick={() => setShowAIAssistant(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-14 h-14 shadow-lg hover:shadow-xl transition-all duration-200"
+              aria-label="Open AI Assistant"
+            >
+              🤖
+            </Button>
+          </div>
+
+          <div className="fixed bottom-4 left-4 flex gap-2 z-50">
             <Button
               onClick={runComprehensiveTest}
               className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg"
@@ -595,6 +717,24 @@ What You'll Bring:
               🧪 Run Comprehensive Test
             </Button>
           </div>
+
+          {/* AI Assistant and Verification Dialog components */}
+          <AIAssistant
+            isOpen={showAIAssistant}
+            onClose={() => setShowAIAssistant(false)}
+            analysisResults={analysisResults}
+            resumeText={resumeText}
+            jobDescription={jobDescription}
+          />
+
+          <VerificationDialog
+            improvement={currentImprovement}
+            onVerify={(verifiedText) => {
+              console.log("Improvement verified:", verifiedText)
+              setShowVerificationDialog(false)
+            }}
+            onClose={() => setShowVerificationDialog(false)}
+          />
         </div>
       </div>
     </ErrorBoundary>

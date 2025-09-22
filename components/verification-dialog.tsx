@@ -1,4 +1,3 @@
-// components/VerificationDialog.tsx
 "use client"
 
 import { useState } from "react"
@@ -18,7 +17,7 @@ interface VerificationResult {
 }
 
 interface VerificationDialogProps {
-  improvement: Improvement
+  improvement: Improvement | null
   onVerify: (text: string) => void
   onClose: () => void
 }
@@ -27,6 +26,10 @@ export default function VerificationDialog({ improvement, onVerify, onClose }: V
   const [verification, setVerification] = useState<VerificationResult | null>(null)
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
+
+  if (!improvement) {
+    return null
+  }
 
   const handleVerify = async () => {
     setLoading(true)
