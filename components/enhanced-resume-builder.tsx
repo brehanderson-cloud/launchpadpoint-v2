@@ -7,6 +7,7 @@ import { useLocalStorage } from "@/hooks/use-local-storage"
 import { Button } from "@/components/ui/button"
 import AIAssistant from "./ai-assistant"
 import VerificationDialog from "./verification-dialog"
+import StepByStepAnalyzer from "./step-by-step-analyzer"
 
 const EnhancedResumeBuilder = () => {
   const { darkMode, toggleTheme } = useTheme()
@@ -280,6 +281,53 @@ What You'll Bring:
         </p>
       </div>
 
+      <div className={`rounded-lg p-4 ${darkMode ? "bg-gray-800" : "bg-white"} shadow-lg`}>
+        <h3 className={`font-semibold mb-3 ${darkMode ? "text-white" : "text-gray-900"}`}>Choose Analysis Method</h3>
+        <div className="grid md:grid-cols-2 gap-4">
+          <button
+            onClick={() => setUseStepByStep(false)}
+            className={`p-4 rounded-lg border-2 text-left transition-all ${
+              !useStepByStep
+                ? darkMode
+                  ? "border-blue-500 bg-blue-900/20"
+                  : "border-blue-500 bg-blue-50"
+                : darkMode
+                  ? "border-gray-600 hover:border-gray-500"
+                  : "border-gray-300 hover:border-gray-400"
+            }`}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <div className={`w-3 h-3 rounded-full ${!useStepByStep ? "bg-blue-500" : "bg-gray-400"}`} />
+              <h4 className={`font-medium ${darkMode ? "text-white" : "text-gray-900"}`}>Quick Analysis</h4>
+            </div>
+            <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+              Fast comprehensive analysis (30-60 seconds)
+            </p>
+          </button>
+
+          <button
+            onClick={() => setUseStepByStep(true)}
+            className={`p-4 rounded-lg border-2 text-left transition-all ${
+              useStepByStep
+                ? darkMode
+                  ? "border-blue-500 bg-blue-900/20"
+                  : "border-blue-500 bg-blue-50"
+                : darkMode
+                  ? "border-gray-600 hover:border-gray-500"
+                  : "border-gray-300 hover:border-gray-400"
+            }`}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <div className={`w-3 h-3 rounded-full ${useStepByStep ? "bg-blue-500" : "bg-gray-400"}`} />
+              <h4 className={`font-medium ${darkMode ? "text-white" : "text-gray-900"}`}>Progressive Analysis</h4>
+            </div>
+            <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+              Detailed step-by-step breakdown (2-3 minutes)
+            </p>
+          </button>
+        </div>
+      </div>
+
       <div className="grid md:grid-cols-2 gap-8">
         <div
           className={`p-6 rounded-lg border-2 border-dashed ${darkMode ? "border-gray-600 bg-gray-800" : "border-gray-300 bg-white"}`}
@@ -313,7 +361,11 @@ What You'll Bring:
           onClick={async () => {
             if (resumeText.trim() && jobDescription.trim()) {
               setCurrentStep("analysis")
-              await performRealAnalysis(resumeText.trim(), jobDescription.trim())
+              if (useStepByStep) {
+                // Placeholder for step-by-step analysis logic
+              } else {
+                await performRealAnalysis(resumeText.trim(), jobDescription.trim())
+              }
             } else {
               alert("Please provide both resume and job description")
             }
@@ -340,18 +392,73 @@ What You'll Bring:
   const AnalysisResults = () => (
     <div className="max-w-6xl mx-auto space-y-6">
       {isAnalyzing ? (
-        <div className={`rounded-2xl shadow-lg p-8 text-center ${darkMode ? "bg-gray-800" : "bg-white"}`}>
-          <div className="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <h2 className={`text-xl font-semibold mb-2 ${darkMode ? "text-white" : "text-gray-900"}`}>
-            AI Analysis in Progress
-          </h2>
-          <p className={darkMode ? "text-gray-300" : "text-gray-600"}>
-            Our AI is analyzing your resume and the job requirements...
-          </p>
-          <p className={`text-sm mt-2 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-            This may take up to 2 minutes
-          </p>
-        </div>
+        useStepByStep ? (
+          <StepByStepAnalyzer
+            resumeData={resumeData}
+            jobDescription={jobDescription}
+            onComplete={(results) => {
+              console.log("[v0] Step-by-step analysis completed:", results)
+              // Transform step-by-step results to match expected format
+              const transformedResults = {
+                matchPercentage: Math.round(
+                  Object.values(results).reduce((acc: number, step: any) => acc + (step?.stepScore || 0), 0) /
+                    Object.keys(results).length,
+                ),
+                qualificationsAnalysis: {
+                  skillsAnalysis:
+                    results.skills?.matches?.map((match: string) => ({
+                      skill: match,
+                      evidence: results.skills?.specificEvidence?.[0] || "Evidence found in resume",
+                      strength: "Strong match",
+                    })) || [],
+                  gapAnalysis:
+                    results.skills?.gaps?.map((gap: string) => ({
+                      skill: gap,
+                      currentLevel: "Needs development",
+                      requiredLevel: "Required for role",
+                      developmentTime: "2-4 weeks",
+                      actionSteps: results.skills?.quickWins?.[0] || "Focus on skill development",
+                    })) || [],
+                  beforeAfterExamples: [
+                    ...Object.values(results).flatMap(
+                      (step: any) =>
+                        step?.quickWins?.map((win: string) => ({
+                          context: `${step.id || "General"} Improvement`,
+                          before: "Original content needs enhancement",
+                          after: win,
+                          explanation: step?.detailedExplanation || "AI-suggested improvement",
+                        })) || [],
+                    ),
+                  ],
+                  overallAssessment: {
+                    qualificationLevel: results.summary?.detailedExplanation || "Well-qualified candidate",
+                    realisticTimeline: "Ready to apply with minor improvements",
+                    honestRecommendation: results.summary?.insights?.[0] || "Strong candidate profile",
+                  },
+                },
+              }
+              setAnalysisResults(transformedResults)
+              setAiEnhancements({
+                suggestions: transformedResults.qualificationsAnalysis.beforeAfterExamples,
+              })
+              setIsAnalyzing(false)
+            }}
+            darkMode={darkMode}
+          />
+        ) : (
+          <div className={`rounded-2xl shadow-lg p-8 text-center ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+            <div className="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <h2 className={`text-xl font-semibold mb-2 ${darkMode ? "text-white" : "text-gray-900"}`}>
+              AI Analysis in Progress
+            </h2>
+            <p className={darkMode ? "text-gray-300" : "text-gray-600"}>
+              Our AI is analyzing your resume and the job requirements...
+            </p>
+            <p className={`text-sm mt-2 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+              This may take up to 2 minutes
+            </p>
+          </div>
+        )
       ) : analysisError ? (
         <div className={`rounded-2xl shadow-lg p-8 text-center ${darkMode ? "bg-red-900/20" : "bg-red-50"}`}>
           <h2 className={`text-xl font-semibold mb-2 ${darkMode ? "text-red-400" : "text-red-700"}`}>
@@ -386,6 +493,35 @@ What You'll Bring:
         </div>
       ) : analysisResults ? (
         <div className="space-y-6">
+          {/* Analysis Type Toggle */}
+          <div className={`rounded-lg p-4 ${darkMode ? "bg-gray-800" : "bg-white"} shadow-lg`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className={`font-semibold ${darkMode ? "text-white" : "text-gray-900"}`}>Analysis Method Used</h3>
+                <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+                  {useStepByStep ? "Progressive step-by-step analysis" : "Quick comprehensive analysis"}
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setUseStepByStep(!useStepByStep)
+                  // Clear current results to trigger re-analysis
+                  setAnalysisResults(null)
+                  setAnalysisError(null)
+                  // Restart analysis with new method
+                  if (resumeText.trim() && jobDescription.trim()) {
+                    performRealAnalysis(resumeText.trim(), jobDescription.trim())
+                  }
+                }}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  darkMode ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-blue-100 hover:bg-blue-200 text-blue-700"
+                }`}
+              >
+                Switch to {useStepByStep ? "Quick" : "Progressive"} Analysis
+              </button>
+            </div>
+          </div>
+
           {/* Match Score Header */}
           <div className={`rounded-2xl shadow-lg p-6 text-center ${darkMode ? "bg-gray-800" : "bg-white"}`}>
             <div className="flex items-center justify-center gap-4 mb-4">

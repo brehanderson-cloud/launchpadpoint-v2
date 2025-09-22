@@ -34,19 +34,31 @@ export default function VerificationDialog({ improvement, onVerify, onClose }: V
   const handleVerify = async () => {
     setLoading(true)
     try {
-      const response = await fetch("/api/verify-qualifications", {
+      const response = await fetch("/api/verify-improvement", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           originalText: improvement.originalText,
           proposedImprovement: improvement.improvedText,
-          userContext: JSON.stringify(userAnswers),
+          userContext: userAnswers,
         }),
       })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
       const result = await response.json()
       setVerification(result)
     } catch (error) {
       console.error("Verification failed:", error)
+      setVerification({
+        authentic: false,
+        riskLevel: "medium",
+        concerns: ["Unable to verify at this time. Please try again."],
+        alternativePhrasing: [],
+        recommendation: "modify",
+      })
     }
     setLoading(false)
   }
