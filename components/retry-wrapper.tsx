@@ -4,7 +4,6 @@
 import type React from "react"
 
 import { useState } from "react"
-import { AlertCircle, RefreshCw } from "lucide-react"
 
 interface RetryWrapperProps {
   children: React.ReactNode
@@ -53,7 +52,7 @@ export default function RetryWrapper({
       fallback || (
         <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
           <div className="flex items-center gap-3 mb-4">
-            <AlertCircle className="w-5 h-5 text-red-600" />
+            <span className="w-5 h-5 text-red-600">⚠️</span>
             <h3 className="font-medium text-red-800">Operation Failed</h3>
           </div>
           <p className="text-red-700 text-sm mb-4">
@@ -75,7 +74,7 @@ export default function RetryWrapper({
     return (
       <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
         <div className="flex items-center gap-3 mb-4">
-          <AlertCircle className="w-5 h-5 text-yellow-600" />
+          <span className="w-5 h-5 text-yellow-600">⚠️</span>
           <h3 className="font-medium text-yellow-800">Temporary Issue</h3>
         </div>
         <p className="text-yellow-700 text-sm mb-4">
@@ -93,7 +92,7 @@ export default function RetryWrapper({
             </>
           ) : (
             <>
-              <RefreshCw className="w-4 h-4" />
+              <span className="w-4 h-4">↻</span>
               Retry Now
             </>
           )}

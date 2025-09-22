@@ -2,7 +2,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Check } from "lucide-react"
 import { useLocalStorage } from "@/hooks/use-local-storage"
 
 interface ProgressSaverProps {
@@ -77,7 +76,7 @@ export default function ProgressSaver({
         darkMode ? "bg-gray-800 text-gray-300 border border-gray-700" : "bg-white text-gray-600 border border-gray-200"
       }`}
     >
-      <Check className="w-3 h-3 text-green-500" />
+      <span className="w-3 h-3 text-green-500">✓</span>
       <span>Saved {formatLastSaved(lastSaved)}</span>
     </div>
   )

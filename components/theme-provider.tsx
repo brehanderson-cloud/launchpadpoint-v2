@@ -1,65 +1,70 @@
 "use client"
 
 import type React from "react"
-
 import { createContext, useContext, useEffect, useState } from "react"
 
-interface ThemeContextType {
-  darkMode: boolean
-  toggleTheme: () => void
+type Theme = "dark" | "light" | "system"
+
+type ThemeProviderProps = {
+  children: React.ReactNode
+  defaultTheme?: Theme
+  storageKey?: string
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+type ThemeProviderState = {
+  theme: Theme
+  setTheme: (theme: Theme) => void
+}
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [darkMode, setDarkMode] = useState<boolean | undefined>(undefined)
-  const [isClient, setIsClient] = useState(false)
+const initialState: ThemeProviderState = {
+  theme: "system",
+  setTheme: () => null,
+}
+
+const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
+
+export function ThemeProvider({
+  children,
+  defaultTheme = "system",
+  storageKey = "vite-ui-theme",
+  ...props
+}: ThemeProviderProps) {
+  const [theme, setTheme] = useState<Theme>(() => (localStorage?.getItem(storageKey) as Theme) || defaultTheme)
 
   useEffect(() => {
-    setIsClient(true)
+    const root = window.document.documentElement
 
-    // Check for saved theme preference or default to light mode
-    if (typeof window !== "undefined") {
-      const savedTheme = localStorage.getItem("theme")
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+    root.classList.remove("light", "dark")
 
-      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
-        setDarkMode(true)
-        document.documentElement.classList.add("dark")
-      } else {
-        setDarkMode(false)
-        document.documentElement.classList.remove("dark")
-      }
+    if (theme === "system") {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+
+      root.classList.add(systemTheme)
+      return
     }
-  }, [])
 
-  const toggleTheme = () => {
-    if (typeof window === "undefined" || darkMode === undefined) return
+    root.classList.add(theme)
+  }, [theme])
 
-    const newDarkMode = !darkMode
-    setDarkMode(newDarkMode)
-
-    if (newDarkMode) {
-      document.documentElement.classList.add("dark")
-      localStorage.setItem("theme", "dark")
-    } else {
-      document.documentElement.classList.remove("dark")
-      localStorage.setItem("theme", "light")
-    }
+  const value = {
+    theme,
+    setTheme: (theme: Theme) => {
+      localStorage?.setItem(storageKey, theme)
+      setTheme(theme)
+    },
   }
 
-  const contextValue = {
-    darkMode: darkMode ?? false,
-    toggleTheme,
-  }
-
-  return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>
+  return (
+    <ThemeProviderContext.Provider {...props} value={value}>
+      {children}
+    </ThemeProviderContext.Provider>
+  )
 }
 
-export function useTheme() {
-  const context = useContext(ThemeContext)
-  if (context === undefined) {
-    throw new Error("useTheme must be used within a ThemeProvider")
-  }
+export const useTheme = () => {
+  const context = useContext(ThemeProviderContext)
+
+  if (context === undefined) throw new Error("useTheme must be used within a ThemeProvider")
+
   return context
 }

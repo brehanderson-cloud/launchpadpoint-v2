@@ -1,12 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server"
 
+export const dynamic = "force-dynamic"
+
 export async function GET(request: NextRequest) {
   console.log("[v0] Download API called - this should not be used for client-side downloads")
 
   try {
-    const { searchParams } = new URL(request.url)
-    const url = searchParams.get("url")
-    const filename = searchParams.get("filename") || "resume.html"
+    const url = request.nextUrl.searchParams.get("url")
+    const filename = request.nextUrl.searchParams.get("filename") || "resume.html"
 
     console.log("[v0] Download request:", { url, filename })
 

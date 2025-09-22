@@ -8,6 +8,15 @@ import { Button } from "@/components/ui/button"
 import AIAssistant from "./ai-assistant"
 import VerificationDialog from "./verification-dialog"
 import StepByStepAnalyzer from "./step-by-step-analyzer"
+import JobRequirementsAnalyzer from "./job-requirements-analyzer"
+import SkillChartPreview from "./skill-chart-preview"
+import ContactCollectionForm from "./contact-collection-form"
+import dynamic from "next/dynamic"
+
+const ResumeTemplate = dynamic(() => import("./resume-template"), { ssr: false })
+const PDFDownloadLink = dynamic(() => import("@react-pdf/renderer").then((mod) => ({ default: mod.PDFDownloadLink })), {
+  ssr: false,
+})
 
 const EnhancedResumeBuilder = () => {
   const { darkMode, toggleTheme } = useTheme()
@@ -34,10 +43,49 @@ const EnhancedResumeBuilder = () => {
   const [creditsRemaining, setCreditsRemaining] = useState(0)
   const [showAIAssistant, setShowAIAssistant] = useState(false)
 
+  const [jobAnalysisResults, setJobAnalysisResults] = useState<any>(null)
+  const [showJobAnalyzer, setShowJobAnalyzer] = useState(false)
+  const [skillChartData, setSkillChartData] = useState<any>(null)
+
+  const [showContactForm, setShowContactForm] = useState(false)
+  const [contactData, setContactData] = useState<any>(null)
+  const [finalResumeData, setFinalResumeData] = useState<any>(null)
+  const [isGeneratingResume, setIsGeneratingResume] = useState(false)
+
   const [savedProgress, setSavedProgress, removeSavedProgress, isLoadingProgress] = useLocalStorage(
     "resume-builder-progress",
     null,
   )
+
+  const handleContactSubmission = async (completeData: any) => {
+    console.log("[v0] Contact data submitted:", completeData)
+    setContactData(completeData.contactInfo)
+    setIsGeneratingResume(true)
+
+    try {
+      const finalData = {
+        name: completeData.contactInfo.name || "Professional Name",
+        email: completeData.contactInfo.email || "email@example.com",
+        phone: completeData.contactInfo.phone || "",
+        location: completeData.contactInfo.location || "",
+        linkedin: completeData.contactInfo.linkedin || "",
+        targetRole: jobAnalysisResults?.jobTitle || resumeData?.targetRole || "Professional",
+        experience: resumeData?.experience || [],
+        education: resumeData?.education || [],
+        skills: resumeData?.skills || [],
+      }
+
+      setFinalResumeData(finalData)
+      setShowContactForm(false)
+      setCurrentStep("resume-complete")
+      console.log("[v0] Resume generation completed successfully")
+    } catch (error) {
+      console.error("[v0] Resume generation failed:", error)
+      setAnalysisError(error instanceof Error ? error : new Error("Resume generation failed"))
+    } finally {
+      setIsGeneratingResume(false)
+    }
+  }
 
   const runComprehensiveTest = async () => {
     console.log("[v0] Starting comprehensive test of analysis flow...")
@@ -134,6 +182,10 @@ What You'll Bring:
       if (!jobResponse.ok) {
         const errorText = await jobResponse.text()
         console.error("[v0] Job analysis failed:", errorText)
+        if (errorText.includes("llama-3.1-70b-versatile")) {
+          console.error("[v0] DEPRECATED MODEL ERROR DETECTED IN JOB ANALYSIS")
+          throw new Error("The AI model has been updated. Please refresh the page and try again.")
+        }
         let errorData
         try {
           errorData = JSON.parse(errorText)
@@ -161,6 +213,10 @@ What You'll Bring:
       if (!qualificationsResponse.ok) {
         const errorText = await qualificationsResponse.text()
         console.error("[v0] Qualifications analysis failed:", errorText)
+        if (errorText.includes("llama-3.1-70b-versatile")) {
+          console.error("[v0] DEPRECATED MODEL ERROR DETECTED IN QUALIFICATIONS ANALYSIS")
+          throw new Error("The AI model has been updated. Please refresh the page and try again.")
+        }
         let errorData
         try {
           errorData = JSON.parse(errorText)
@@ -274,15 +330,15 @@ What You'll Bring:
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="text-center">
         <h2 className={`text-3xl font-bold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
-          Upload Your Documents
+          Job-Specific Resume Analysis
         </h2>
         <p className={`text-lg ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
-          Provide your resume and the job description you're targeting
+          Get honest feedback on your qualifications and build a targeted resume
         </p>
       </div>
 
       <div className={`rounded-lg p-4 ${darkMode ? "bg-gray-800" : "bg-white"} shadow-lg`}>
-        <h3 className={`font-semibold mb-3 ${darkMode ? "text-white" : "text-gray-900"}`}>Choose Analysis Method</h3>
+        <h3 className={`font-semibold mb-3 ${darkMode ? "text-white" : "text-gray-900"}`}>Analysis Approach</h3>
         <div className="grid md:grid-cols-2 gap-4">
           <button
             onClick={() => setUseStepByStep(false)}
@@ -298,10 +354,10 @@ What You'll Bring:
           >
             <div className="flex items-center gap-2 mb-2">
               <div className={`w-3 h-3 rounded-full ${!useStepByStep ? "bg-blue-500" : "bg-gray-400"}`} />
-              <h4 className={`font-medium ${darkMode ? "text-white" : "text-gray-900"}`}>Quick Analysis</h4>
+              <h4 className={`font-medium ${darkMode ? "text-white" : "text-gray-900"}`}>Standard Analysis</h4>
             </div>
             <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
-              Fast comprehensive analysis (30-60 seconds)
+              Traditional resume analysis with improvements
             </p>
           </button>
 
@@ -319,10 +375,10 @@ What You'll Bring:
           >
             <div className="flex items-center gap-2 mb-2">
               <div className={`w-3 h-3 rounded-full ${useStepByStep ? "bg-blue-500" : "bg-gray-400"}`} />
-              <h4 className={`font-medium ${darkMode ? "text-white" : "text-gray-900"}`}>Progressive Analysis</h4>
+              <h4 className={`font-medium ${darkMode ? "text-white" : "text-gray-900"}`}>Job-Specific Analysis</h4>
             </div>
             <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
-              Detailed step-by-step breakdown (2-3 minutes)
+              Honest skill assessment with probing questions
             </p>
           </button>
         </div>
@@ -345,11 +401,13 @@ What You'll Bring:
         <div
           className={`p-6 rounded-lg border-2 border-dashed ${darkMode ? "border-gray-600 bg-gray-800" : "border-gray-300 bg-white"}`}
         >
-          <h3 className={`text-xl font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>Job Description</h3>
+          <h3 className={`text-xl font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
+            Target Job Description
+          </h3>
           <textarea
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
-            placeholder="Paste the job description here..."
+            placeholder="Paste the specific job description you're targeting..."
             className={`w-full h-64 p-4 rounded-lg border ${darkMode ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} resize-none`}
             aria-label="Job description text input"
           />
@@ -362,7 +420,7 @@ What You'll Bring:
             if (resumeText.trim() && jobDescription.trim()) {
               setCurrentStep("analysis")
               if (useStepByStep) {
-                // Placeholder for step-by-step analysis logic
+                setShowJobAnalyzer(true)
               } else {
                 await performRealAnalysis(resumeText.trim(), jobDescription.trim())
               }
@@ -374,7 +432,7 @@ What You'll Bring:
           className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors"
           aria-label="Analyze resume and job description"
         >
-          Analyze Resume
+          {useStepByStep ? "Start Job Analysis" : "Analyze Resume"}
         </button>
 
         <div className="flex justify-center space-x-4">
@@ -389,8 +447,171 @@ What You'll Bring:
     </div>
   )
 
+  const ResumeComplete = () => (
+    <div className="max-w-4xl mx-auto space-y-8">
+      <div className="text-center">
+        <h2 className={`text-3xl font-bold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
+          🎉 Your Resume is Ready!
+        </h2>
+        <p className={`text-lg ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+          Your AI-optimized, job-targeted resume has been generated successfully.
+        </p>
+      </div>
+
+      {finalResumeData && (
+        <div className={`rounded-2xl shadow-lg p-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+          <h3 className={`text-xl font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>Resume Preview</h3>
+
+          <div className={`p-4 rounded-lg ${darkMode ? "bg-gray-700" : "bg-gray-50"} mb-6`}>
+            <h4 className={`font-semibold mb-2 ${darkMode ? "text-white" : "text-gray-900"}`}>
+              {finalResumeData.name}
+            </h4>
+            <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+              {finalResumeData.email}
+              {finalResumeData.phone ? ` | ${finalResumeData.phone}` : ""}
+            </p>
+            {finalResumeData.location && (
+              <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>{finalResumeData.location}</p>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-4 justify-center">
+            {typeof window !== "undefined" && PDFDownloadLink && (
+              <PDFDownloadLink
+                document={
+                  <ResumeTemplate
+                    userData={finalResumeData}
+                    jobAnalysis={jobAnalysisResults || {}}
+                    skillsAnalysis={skillChartData?.skills || []}
+                  />
+                }
+                fileName={`${finalResumeData.name.replace(/\s+/g, "_")}_Resume.pdf`}
+                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              >
+                {({ blob, url, loading, error }) => (loading ? "Generating PDF..." : "Download Resume PDF")}
+              </PDFDownloadLink>
+            )}
+
+            <Button onClick={() => setCurrentStep("landing")} variant="outline">
+              Create Another Resume
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+
   const AnalysisResults = () => (
     <div className="max-w-6xl mx-auto space-y-6">
+      {showJobAnalyzer && (
+        <JobRequirementsAnalyzer
+          jobDescription={jobDescription}
+          darkMode={darkMode}
+          onAnalysisComplete={(analysis) => {
+            setJobAnalysisResults(analysis)
+            setShowJobAnalyzer(false)
+            if (analysis.assessment?.skillsAnalysis) {
+              setSkillChartData({
+                skills: analysis.assessment.skillsAnalysis,
+                overallMatch: analysis.assessment.overallMatch,
+              })
+            }
+          }}
+        />
+      )}
+
+      {skillChartData && (
+        <SkillChartPreview
+          skills={skillChartData.skills}
+          overallMatch={skillChartData.overallMatch}
+          darkMode={darkMode}
+        />
+      )}
+
+      {jobAnalysisResults?.assessment && (
+        <div className={`rounded-2xl shadow-lg p-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+          <h3 className={`text-xl font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
+            Honest Assessment
+          </h3>
+
+          <div className="grid md:grid-cols-3 gap-4 mb-6">
+            <div className={`p-4 rounded-lg ${darkMode ? "bg-blue-900/20" : "bg-blue-50"}`}>
+              <h4 className={`font-semibold mb-2 ${darkMode ? "text-blue-400" : "text-blue-700"}`}>
+                Qualification Level
+              </h4>
+              <p className={`text-sm ${darkMode ? "text-blue-300" : "text-blue-600"}`}>
+                {jobAnalysisResults.assessment.honestAssessment.qualificationLevel}
+              </p>
+            </div>
+
+            <div className={`p-4 rounded-lg ${darkMode ? "bg-green-900/20" : "bg-green-50"}`}>
+              <h4 className={`font-semibold mb-2 ${darkMode ? "text-green-400" : "text-green-700"}`}>
+                Realistic Timeline
+              </h4>
+              <p className={`text-sm ${darkMode ? "text-green-300" : "text-green-600"}`}>
+                {jobAnalysisResults.assessment.honestAssessment.realisticTimeline}
+              </p>
+            </div>
+
+            <div className={`p-4 rounded-lg ${darkMode ? "bg-purple-900/20" : "bg-purple-50"}`}>
+              <h4 className={`font-semibold mb-2 ${darkMode ? "text-purple-400" : "text-purple-700"}`}>
+                Recommendation
+              </h4>
+              <p className={`text-sm ${darkMode ? "text-purple-300" : "text-purple-600"}`}>
+                {jobAnalysisResults.assessment.honestAssessment.recommendation}
+              </p>
+            </div>
+          </div>
+
+          {jobAnalysisResults.assessment.actionPlan && (
+            <div className={`p-4 rounded-lg ${darkMode ? "bg-yellow-900/20" : "bg-yellow-50"}`}>
+              <h4 className={`font-semibold mb-3 ${darkMode ? "text-yellow-400" : "text-yellow-700"}`}>
+                Your Action Plan
+              </h4>
+              <div className="space-y-3">
+                {jobAnalysisResults.assessment.actionPlan.map((action: any, index: number) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div
+                      className={`px-2 py-1 rounded text-xs font-medium ${
+                        action.priority === "high"
+                          ? "bg-red-500 text-white"
+                          : action.priority === "medium"
+                            ? "bg-yellow-500 text-white"
+                            : "bg-green-500 text-white"
+                      }`}
+                    >
+                      {action.priority}
+                    </div>
+                    <div className="flex-1">
+                      <p className={`text-sm font-medium ${darkMode ? "text-yellow-300" : "text-yellow-700"}`}>
+                        {action.action}
+                      </p>
+                      <p className={`text-xs ${darkMode ? "text-yellow-200" : "text-yellow-600"}`}>
+                        Timeline: {action.timeline}
+                      </p>
+                      {action.resources && (
+                        <p className={`text-xs ${darkMode ? "text-yellow-200" : "text-yellow-600"}`}>
+                          Resources: {action.resources.join(", ")}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="mt-6 text-center">
+            <Button
+              onClick={() => setShowContactForm(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg"
+            >
+              Generate My Resume →
+            </Button>
+          </div>
+        </div>
+      )}
+
       {isAnalyzing ? (
         useStepByStep ? (
           <StepByStepAnalyzer
@@ -398,7 +619,6 @@ What You'll Bring:
             jobDescription={jobDescription}
             onComplete={(results) => {
               console.log("[v0] Step-by-step analysis completed:", results)
-              // Transform step-by-step results to match expected format
               const transformedResults = {
                 matchPercentage: Math.round(
                   Object.values(results).reduce((acc: number, step: any) => acc + (step?.stepScore || 0), 0) /
@@ -493,7 +713,6 @@ What You'll Bring:
         </div>
       ) : analysisResults ? (
         <div className="space-y-6">
-          {/* Analysis Type Toggle */}
           <div className={`rounded-lg p-4 ${darkMode ? "bg-gray-800" : "bg-white"} shadow-lg`}>
             <div className="flex items-center justify-between">
               <div>
@@ -505,10 +724,8 @@ What You'll Bring:
               <button
                 onClick={() => {
                   setUseStepByStep(!useStepByStep)
-                  // Clear current results to trigger re-analysis
                   setAnalysisResults(null)
                   setAnalysisError(null)
-                  // Restart analysis with new method
                   if (resumeText.trim() && jobDescription.trim()) {
                     performRealAnalysis(resumeText.trim(), jobDescription.trim())
                   }
@@ -522,7 +739,6 @@ What You'll Bring:
             </div>
           </div>
 
-          {/* Match Score Header */}
           <div className={`rounded-2xl shadow-lg p-6 text-center ${darkMode ? "bg-gray-800" : "bg-white"}`}>
             <div className="flex items-center justify-center gap-4 mb-4">
               <div
@@ -545,7 +761,6 @@ What You'll Bring:
             </div>
           </div>
 
-          {/* Skills Analysis */}
           {analysisResults?.qualificationsAnalysis?.skillsAnalysis && (
             <div className={`rounded-2xl shadow-lg p-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
               <h3 className={`text-xl font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
@@ -569,7 +784,6 @@ What You'll Bring:
             </div>
           )}
 
-          {/* Gap Analysis */}
           {analysisResults?.qualificationsAnalysis?.gapAnalysis && (
             <div className={`rounded-2xl shadow-lg p-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
               <h3 className={`text-xl font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
@@ -605,7 +819,6 @@ What You'll Bring:
             </div>
           )}
 
-          {/* Before/After Examples */}
           {analysisResults?.qualificationsAnalysis?.beforeAfterExamples && (
             <div className={`rounded-2xl shadow-lg p-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
               <h3 className={`text-xl font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
@@ -643,7 +856,6 @@ What You'll Bring:
             </div>
           )}
 
-          {/* Overall Assessment */}
           {analysisResults.qualificationsAnalysis?.overallAssessment && (
             <div className={`rounded-2xl shadow-lg p-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
               <h3 className={`text-xl font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
@@ -681,14 +893,12 @@ What You'll Bring:
             </div>
           )}
 
-          {/* Resume Preview & Next Steps */}
           <div className={`rounded-2xl shadow-lg p-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
             <h3 className={`text-xl font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
               Resume Preview & Next Steps
             </h3>
 
             <div className="space-y-6">
-              {/* Resume Preview */}
               <div className={`p-4 rounded-lg ${darkMode ? "bg-green-900/20" : "bg-green-50"}`}>
                 <h4 className={`font-semibold mb-3 ${darkMode ? "text-green-400" : "text-green-700"}`}>
                   Your Optimized Resume Will Include:
@@ -701,7 +911,6 @@ What You'll Bring:
                 </ul>
               </div>
 
-              {/* Action Items */}
               <div className={`p-4 rounded-lg ${darkMode ? "bg-blue-900/20" : "bg-blue-50"}`}>
                 <h4 className={`font-semibold mb-3 ${darkMode ? "text-blue-400" : "text-blue-700"}`}>
                   What You Need to Do Next:
@@ -714,7 +923,6 @@ What You'll Bring:
                 </ol>
               </div>
 
-              {/* Completion Checklist */}
               <div className={`p-4 rounded-lg ${darkMode ? "bg-purple-900/20" : "bg-purple-50"}`}>
                 <h4 className={`font-semibold mb-3 ${darkMode ? "text-purple-400" : "text-purple-700"}`}>
                   Complete Your Application Package:
@@ -753,7 +961,6 @@ What You'll Bring:
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex flex-wrap gap-3 justify-center">
                 <Button onClick={() => setShowSuccessTracker(true)} className="bg-green-600 hover:bg-green-700">
                   Track My Progress
@@ -799,7 +1006,6 @@ What You'll Bring:
     <ErrorBoundary>
       <div className={`min-h-screen transition-colors duration-300 ${darkMode ? "dark" : ""}`}>
         <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 min-h-screen">
-          {/* Header */}
           <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
@@ -820,7 +1026,6 @@ What You'll Bring:
             </div>
           </header>
 
-          {/* Main Content */}
           <main
             className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
             role="main"
@@ -830,10 +1035,36 @@ What You'll Bring:
               {currentStep === "landing" && <LandingPage />}
               {currentStep === "upload" && <UploadInterface />}
               {currentStep === "analysis" && <AnalysisResults />}
+              {currentStep === "resume-complete" && <ResumeComplete />}
             </div>
           </main>
 
-          {/* AI Assistant floating button */}
+          {showContactForm && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Complete Your Resume</h2>
+                  <button
+                    onClick={() => setShowContactForm(false)}
+                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="p-6">
+                  <ContactCollectionForm
+                    onSubmit={handleContactSubmission}
+                    assessmentData={{
+                      jobAnalysis: jobAnalysisResults,
+                      skillsAnalysis: skillChartData,
+                      resumeData: resumeData,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="fixed bottom-6 right-6 z-50">
             <Button
               onClick={() => setShowAIAssistant(true)}
@@ -854,7 +1085,6 @@ What You'll Bring:
             </Button>
           </div>
 
-          {/* AI Assistant and Verification Dialog components */}
           <AIAssistant
             isOpen={showAIAssistant}
             onClose={() => setShowAIAssistant(false)}
