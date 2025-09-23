@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 
+export const dynamic = "force-dynamic"
+
 export default function SuccessPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -10,8 +12,11 @@ export default function SuccessPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [sessionData, setSessionData] = useState(null)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+
     if (typeof window !== "undefined") {
       try {
         // Check for any stored session data
@@ -53,6 +58,10 @@ export default function SuccessPage() {
       setLoading(false)
     }
   }, [sessionId, router])
+
+  if (!mounted) {
+    return null
+  }
 
   if (loading) {
     return (
